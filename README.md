@@ -30,7 +30,7 @@ Ensure you have the following installed:
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/sunil-gumatimath/emp-management-vibecode.git
    cd react-browser
    ```
 
@@ -72,6 +72,8 @@ src/
 ├── data/           # Mock data and constants
 ├── features/       # Feature-specific components (e.g., EmployeeList)
 ├── layouts/        # Layout components
+├── App.css         # App-specific styles
 ├── App.jsx         # Main application component
+├── index.css       # Global styles and Tailwind directives
 └── main.jsx        # Entry point
 ```
