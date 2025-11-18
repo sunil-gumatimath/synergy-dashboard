@@ -5,6 +5,21 @@ import {
 } from 'recharts';
 import { TrendingUp, Users, DollarSign, Activity } from 'lucide-react';
 
+const StatCard = ({ title, value, change, icon: Icon, color }) => (
+    <div className="card flex items-center justify-between">
+        <div>
+            <p className="text-sm text-gray-500 mb-1">{title}</p>
+            <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
+            <p className={`text-xs font-medium mt-2 ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {change >= 0 ? '+' : ''}{change}% from last month
+            </p>
+        </div>
+        <div className={`p-3 rounded-lg bg-opacity-10`} style={{ backgroundColor: `${color}20`, color: color }}>
+            <Icon size={24} />
+        </div>
+    </div>
+);
+
 const AnalyticsDashboard = () => {
     // Mock Data
     const employeeGrowthData = [
@@ -31,21 +46,6 @@ const AnalyticsDashboard = () => {
         { name: 'Thu', performance: 89 },
         { name: 'Fri', performance: 94 },
     ];
-
-    const StatCard = ({ title, value, change, icon: Icon, color }) => (
-        <div className="card flex items-center justify-between">
-            <div>
-                <p className="text-sm text-gray-500 mb-1">{title}</p>
-                <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
-                <p className={`text-xs font-medium mt-2 ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {change >= 0 ? '+' : ''}{change}% from last month
-                </p>
-            </div>
-            <div className={`p-3 rounded-lg bg-opacity-10`} style={{ backgroundColor: `${color}20`, color: color }}>
-                <Icon size={24} />
-            </div>
-        </div>
-    );
 
     return (
         <div className="flex flex-col gap-6">

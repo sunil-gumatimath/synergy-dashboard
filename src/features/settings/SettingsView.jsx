@@ -1,13 +1,12 @@
-```javascript
 import React, { useState } from 'react';
-import { 
-  User, Bell, Lock, Globe, Moon, Shield, Mail, Smartphone, 
-  Check, ChevronRight, Camera, LogOut, Key, Sun, Monitor, Laptop
+import {
+  User, Bell, Globe, Moon, Shield,
+  Camera, LogOut, Sun, Laptop
 } from 'lucide-react';
 
 const SettingsView = () => {
   const [activeSection, setActiveSection] = useState('profile');
-  
+
   // Profile State
   const [profile, setProfile] = useState({
     fullName: 'Tedz Admin',
@@ -57,84 +56,84 @@ const SettingsView = () => {
   ];
 
   const renderProfileSection = () => (
-    <div className="max-w-3xl animate-in fade-in duration-300">
-      <div className="flex items-start gap-6 mb-10">
+    <div className="space-y-6">
+      <div className="flex items-start gap-6">
         <div className="relative group">
-          <img 
-            src="https://api.dicebear.com/9.x/micah/svg?seed=Tedz" 
-            alt="Profile" 
-            className="w-20 h-20 rounded-full bg-gray-100 object-cover ring-4 ring-white shadow-sm"
+          <img
+            src="https://api.dicebear.com/9.x/micah/svg?seed=Tedz"
+            alt="Profile"
+            className="w-20 h-20 rounded-full bg-gray-50 object-cover border border-gray-200"
           />
-          <button className="absolute -bottom-1 -right-1 p-1.5 bg-white text-gray-600 rounded-full border border-gray-200 shadow-sm hover:text-indigo-600 transition-colors">
-            <Camera size={14} />
+          <button className="absolute -bottom-1 -right-1 p-1.5 bg-white text-gray-500 rounded-full border border-gray-200 hover:text-gray-900 transition-colors">
+            <Camera size={16} />
           </button>
         </div>
-        <div className="pt-1">
+        <div className="flex-1 pt-2">
           <h3 className="text-lg font-semibold text-gray-900">{profile.fullName}</h3>
-          <p className="text-sm text-gray-500">Administrator • Engineering</p>
-          <div className="flex gap-3 mt-3">
-            <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700">Change Avatar</button>
+          <p className="text-sm text-gray-500 mt-1">Administrator - Engineering</p>
+          <div className="flex gap-4 mt-3 text-sm">
+            <button className="font-medium text-gray-700 hover:text-gray-900">Change Avatar</button>
             <span className="text-gray-300">|</span>
-            <button className="text-sm font-medium text-red-600 hover:text-red-700">Remove</button>
+            <button className="font-medium text-red-600 hover:text-red-700">Remove</button>
           </div>
         </div>
       </div>
 
-      <div className="space-y-6">
-        <div className="grid grid-cols-2 gap-6">
-          <div className="space-y-1.5">
+      <div className="space-y-6 pt-6 border-t border-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">Full Name</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={profile.fullName}
-              onChange={(e) => setProfile({...profile, fullName: e.target.value})}
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-sm"
+              onChange={(e) => setProfile({ ...profile, fullName: e.target.value })}
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md bg-white outline-none focus:border-gray-900 focus:ring-0 transition-colors"
             />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">Email Address</label>
-            <input 
-              type="email" 
+            <input
+              type="email"
               value={profile.email}
-              onChange={(e) => setProfile({...profile, email: e.target.value})}
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-sm"
+              onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md bg-white outline-none focus:border-gray-900 focus:ring-0 transition-colors"
             />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">Phone Number</label>
-            <input 
-              type="tel" 
+            <input
+              type="tel"
               value={profile.phone}
-              onChange={(e) => setProfile({...profile, phone: e.target.value})}
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-sm"
+              onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md bg-white outline-none focus:border-gray-900 focus:ring-0 transition-colors"
             />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">Role</label>
-            <input 
-              type="text" 
-              defaultValue="Administrator" 
+            <input
+              type="text"
+              defaultValue="Administrator"
               disabled
-              className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-500 text-sm"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md bg-gray-50 text-gray-500"
             />
           </div>
         </div>
 
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Bio</label>
-          <textarea 
+          <textarea
             rows="4"
             value={profile.bio}
-            onChange={(e) => setProfile({...profile, bio: e.target.value})}
-            className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-sm resize-none"
+            onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md bg-white outline-none focus:border-gray-900 focus:ring-0 transition-colors resize-none"
           />
-          <p className="text-xs text-gray-500 text-right">{240 - profile.bio.length} characters left</p>
+          <p className="text-xs text-gray-500 text-right mt-1">{240 - profile.bio.length} characters left</p>
         </div>
 
         <div className="pt-6 border-t border-gray-100 flex justify-end">
-          <button 
+          <button
             onClick={handleSave}
-            className="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-black transition-colors shadow-sm"
+            className="px-5 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-black transition-colors"
           >
             Save Changes
           </button>
@@ -144,27 +143,27 @@ const SettingsView = () => {
   );
 
   const renderNotificationsSection = () => (
-    <div className="max-w-3xl animate-in fade-in duration-300">
-      <div className="mb-8">
+    <div className="space-y-6">
+      <div>
         <h3 className="text-lg font-semibold text-gray-900">Email Notifications</h3>
-        <p className="text-sm text-gray-500 mt-1">Choose what updates you want to receive via email.</p>
+        <p className="text-sm text-gray-500 mt-2">Choose what updates you want to receive via email.</p>
       </div>
 
-      <div className="space-y-1 divide-y divide-gray-100">
+      <div className="space-y-1 divide-y divide-gray-100 pt-4">
         {notifications.map((item) => (
-          <div key={item.id} className="flex items-center justify-between py-4">
-            <div className="pr-8">
+          <div key={item.id} className="flex items-center justify-between gap-8 py-5 first:pt-0">
+            <div className="flex-1">
               <h4 className="text-sm font-medium text-gray-900">{item.title}</h4>
-              <p className="text-xs text-gray-500 mt-0.5">{item.desc}</p>
+              <p className="text-sm text-gray-500 mt-1">{item.desc}</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer shrink-0">
-              <input 
-                type="checkbox" 
-                className="sr-only peer" 
+              <input
+                type="checkbox"
+                className="sr-only peer"
                 checked={item.checked}
                 onChange={() => {
-                  setNotifications(notifications.map(n => 
-                    n.id === item.id ? {...n, checked: !n.checked} : n
+                  setNotifications(notifications.map(n =>
+                    n.id === item.id ? { ...n, checked: !n.checked } : n
                   ));
                 }}
               />
@@ -177,55 +176,55 @@ const SettingsView = () => {
   );
 
   const renderSecuritySection = () => (
-    <div className="max-w-3xl animate-in fade-in duration-300">
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-900">Security</h3>
-        <p className="text-sm text-gray-500 mt-1">Manage your password and security preferences.</p>
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-semibold text-gray-900">Change Password</h3>
+        <p className="text-sm text-gray-500 mt-2">Update your password to keep your account secure.</p>
       </div>
 
-      <div className="space-y-6">
-        <div className="space-y-4 pb-8 border-b border-gray-100">
-          <div className="space-y-1.5">
+      <div className="space-y-6 pt-4">
+        <div className="space-y-5 pb-6 border-b border-gray-100">
+          <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">Current Password</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               value={passwords.current}
-              onChange={(e) => setPasswords({...passwords, current: e.target.value})}
-              className="w-full max-w-md px-3 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-sm" 
+              onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
+              className="w-full max-w-md px-3 py-2 text-sm border border-gray-200 rounded-md bg-white outline-none focus:border-gray-900 focus:ring-0 transition-colors"
             />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">New Password</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               value={passwords.new}
-              onChange={(e) => setPasswords({...passwords, new: e.target.value})}
-              className="w-full max-w-md px-3 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-sm" 
+              onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
+              className="w-full max-w-md px-3 py-2 text-sm border border-gray-200 rounded-md bg-white outline-none focus:border-gray-900 focus:ring-0 transition-colors"
             />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">Confirm New Password</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               value={passwords.confirm}
-              onChange={(e) => setPasswords({...passwords, confirm: e.target.value})}
-              className="w-full max-w-md px-3 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-sm" 
+              onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
+              className="w-full max-w-md px-3 py-2 text-sm border border-gray-200 rounded-md bg-white outline-none focus:border-gray-900 focus:ring-0 transition-colors"
             />
           </div>
-          <button 
+          <button
             onClick={handleSave}
-            className="mt-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+            className="mt-2 px-4 py-2 bg-white border border-gray-200 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
           >
             Update Password
           </button>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex items-start justify-between gap-8">
+          <div className="flex-1">
             <h4 className="text-sm font-medium text-gray-900">Two-Factor Authentication</h4>
-            <p className="text-xs text-gray-500 mt-0.5">Add an extra layer of security to your account.</p>
+            <p className="text-sm text-gray-500 mt-1">Add an extra layer of security to your account.</p>
           </div>
-          <button className="px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors">
+          <button className="shrink-0 px-4 py-2 bg-white border border-gray-200 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
             Enable 2FA
           </button>
         </div>
@@ -234,27 +233,23 @@ const SettingsView = () => {
   );
 
   const renderPreferencesSection = () => (
-    <div className="max-w-3xl animate-in fade-in duration-300">
-      <div className="mb-8">
+    <div className="space-y-6">
+      <div>
         <h3 className="text-lg font-semibold text-gray-900">Appearance</h3>
-        <p className="text-sm text-gray-500 mt-1">Customize how the application looks on your device.</p>
+        <p className="text-sm text-gray-500 mt-2">Customize how the application looks on your device.</p>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4">
         {['light', 'dark', 'system'].map((theme) => (
           <button
             key={theme}
-            onClick={() => setPreferences({...preferences, theme})}
-              className={`
-p - 4 rounded - lg border text - left transition - all
-                ${
-    preferences.theme === theme
-    ? 'border-indigo-600 bg-indigo-50/30 ring-1 ring-indigo-600'
-    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-}
-`}
+            onClick={() => setPreferences({ ...preferences, theme })}
+            className={`p-4 rounded-md border text-left transition-colors ${preferences.theme === theme
+                ? 'border-gray-900 bg-white'
+                : 'border-gray-200 hover:border-gray-300'
+              }`}
           >
-            <div className="mb-3 text-gray-900">
+            <div className="mb-3 text-gray-700">
               {theme === 'light' && <Sun size={20} />}
               {theme === 'dark' && <Moon size={20} />}
               {theme === 'system' && <Laptop size={20} />}
@@ -264,30 +259,30 @@ p - 4 rounded - lg border text - left transition - all
         ))}
       </div>
 
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-900">Regional</h3>
-        <p className="text-sm text-gray-500 mt-1">Set your language and timezone preferences.</p>
+      <div className="pt-6 border-t border-gray-100">
+        <h3 className="text-lg font-semibold text-gray-900">Regional Settings</h3>
+        <p className="text-sm text-gray-500 mt-2">Set your language and timezone preferences.</p>
       </div>
 
-      <div className="space-y-4 max-w-md">
-        <div className="space-y-1.5">
+      <div className="space-y-5 max-w-md pt-4">
+        <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Language</label>
-          <select 
+          <select
             value={preferences.language}
-            onChange={(e) => setPreferences({...preferences, language: e.target.value})}
-            className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all bg-white text-sm"
+            onChange={(e) => setPreferences({ ...preferences, language: e.target.value })}
+            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md bg-white outline-none focus:border-gray-900 focus:ring-0 transition-colors"
           >
             <option value="en">English (United States)</option>
             <option value="es">Spanish</option>
             <option value="fr">French</option>
           </select>
         </div>
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Timezone</label>
-          <select 
+          <select
             value={preferences.timezone}
-            onChange={(e) => setPreferences({...preferences, timezone: e.target.value})}
-            className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all bg-white text-sm"
+            onChange={(e) => setPreferences({ ...preferences, timezone: e.target.value })}
+            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md bg-white outline-none focus:border-gray-900 focus:ring-0 transition-colors"
           >
             <option value="UTC-5">Eastern Time (US & Canada)</option>
             <option value="UTC-8">Pacific Time (US & Canada)</option>
@@ -308,52 +303,64 @@ p - 4 rounded - lg border text - left transition - all
     }
   };
 
-  return (
-    <div className="flex flex-col lg:flex-row h-full bg-white min-h-[calc(100vh-4rem)]">
-      {/* Settings Sidebar */}
-      <div className="w-full lg:w-64 shrink-0 border-r border-gray-100 p-6">
-        <h2 className="text-lg font-bold text-gray-900 mb-6 px-2">Settings</h2>
-        <nav className="space-y-1">
-          {sections.map(section => {
-            const Icon = section.icon;
-            const isActive = activeSection === section.id;
-            return (
-              <button
-                key={section.id}
-                onClick={() => setActiveSection(section.id)}
-                className={`
-w - full flex items - center gap - 3 px - 3 py - 2 rounded - md text - sm font - medium transition - colors
-                  ${
-    isActive
-        ? 'bg-gray-100 text-gray-900'
-        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-}
-`}
-              >
-                <Icon size={18} className={isActive ? 'text-gray-900' : 'text-gray-400'} />
-                {section.label}
-              </button>
-            );
-          })}
-        </nav>
-        <div className="mt-8 pt-6 border-t border-gray-100">
-          <button 
-            onClick={handleSignOut}
-            className="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md transition-colors"
-          >
-            <LogOut size={18} />
-            Sign Out
-          </button>
-        </div>
-      </div>
+  const activeSectionMeta = sections.find(section => section.id === activeSection);
 
-      {/* Main Content */}
-      <div className="flex-1 p-8 lg:p-12 overflow-y-auto">
-        {renderContent()}
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[260px,1fr] gap-6 items-start">
+        <aside className="bg-white border border-gray-200 rounded-lg p-0 overflow-hidden">
+          <div className="px-4 pt-4 pb-3 border-b border-gray-100">
+            <h2 className="text-base font-semibold text-gray-900">Settings</h2>
+            <p className="text-xs text-gray-500 mt-1">Manage your workspace preferences</p>
+          </div>
+          <nav className="p-3 flex flex-col gap-1">
+            {sections.map(section => {
+              const Icon = section.icon;
+              const isActive = activeSection === section.id;
+              return (
+                <button
+                  type="button"
+                  key={section.id}
+                  onClick={() => setActiveSection(section.id)}
+                  className={`w-full flex items-start gap-3 px-3 py-3 rounded-md text-left transition-colors ${isActive
+                      ? 'bg-gray-50 text-gray-900'
+                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                >
+                  <Icon size={18} className={`mt-0.5 shrink-0 ${isActive ? 'text-gray-900' : 'text-gray-400'}`} />
+                  <span className="flex flex-col min-w-0">
+                    <span className="text-sm font-medium">{section.label}</span>
+                    <span className="text-xs text-gray-500 mt-0.5">{section.description}</span>
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
+          <div className="px-4 py-3 border-t border-gray-100 bg-white">
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-red-600 border border-red-100 rounded-md hover:bg-red-50 transition-colors"
+            >
+              <LogOut size={18} />
+              Sign Out
+            </button>
+          </div>
+        </aside>
+
+        <section className="bg-white border border-gray-200 rounded-lg p-0">
+          <div className="px-8 py-6 border-b border-gray-100">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-medium">Active Section</p>
+            <h3 className="text-xl font-semibold text-gray-900 mt-3">{activeSectionMeta?.label}</h3>
+            <p className="text-sm text-gray-500 mt-1">{activeSectionMeta?.description}</p>
+          </div>
+          <div className="p-8">
+            {renderContent()}
+          </div>
+        </section>
       </div>
     </div>
   );
 };
 
 export default SettingsView;
-```
