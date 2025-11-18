@@ -46,15 +46,14 @@ const PasswordStrengthIndicator = ({ password }) => {
           {[1, 2, 3, 4, 5].map((bar) => (
             <div
               key={bar}
-              className={`flex-1 rounded-full transition-all duration-300 ${
-                bar <= passedChecks ? strengthColors[strength] : 'bg-slate-200'
-              }`}
+              className={`flex-1 rounded-none transition-all duration-300 ${bar <= passedChecks ? strengthColors[strength] : 'bg-slate-200'
+                }`}
             />
           ))}
         </div>
       </div>
 
-      <div className="space-y-1.5 bg-slate-50 rounded-lg p-3 border border-slate-200">
+      <div className="space-y-1.5 bg-slate-50 rounded-none p-3 border border-slate-200">
         {checks.map((check, index) => (
           <div key={index} className="flex items-center gap-2 text-xs">
             <div className={`shrink-0 ${check.test ? 'text-emerald-600' : 'text-slate-400'}`}>

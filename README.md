@@ -6,8 +6,9 @@ A modern, responsive Employee Management Dashboard built with React, Vite, and T
 
 - **Dashboard Overview**: Visual statistics and key metrics at a glance.
 - **Employee Management**: View, manage, and track employee information.
+- **Settings Management**: Comprehensive settings for profile, notifications, security, and preferences.
+- **Sharp & Premium UI**: A modern, high-end interface featuring a sharp design language (no rounded corners) for a professional look.
 - **Responsive Design**: Fully responsive layout that works seamlessly on desktop and mobile devices.
-- **Modern UI**: Clean and professional interface designed with Tailwind CSS.
 - **Sidebar Navigation**: Easy access to different modules of the application.
 
 ## 🛠️ Tech Stack

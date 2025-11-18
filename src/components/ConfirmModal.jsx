@@ -1,15 +1,15 @@
 import React from 'react';
 import { AlertTriangle, X } from 'lucide-react';
 
-const ConfirmModal = ({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
-  title, 
-  message, 
-  confirmText = 'Confirm', 
+const ConfirmModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText = 'Confirm',
   cancelText = 'Cancel',
-  type = 'danger' 
+  type = 'danger'
 }) => {
   if (!isOpen) return null;
 
@@ -21,11 +21,11 @@ const ConfirmModal = ({
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 animate-fade-in">
-      <div 
+      <div
         className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full animate-scale-in">
+      <div className="relative bg-white rounded-none shadow-2xl max-w-md w-full animate-scale-in">
         <div className="p-6">
           <button
             onClick={onClose}
@@ -36,7 +36,7 @@ const ConfirmModal = ({
           </button>
 
           <div className="flex items-start gap-4">
-            <div className={`p-3 rounded-full ${type === 'danger' ? 'bg-red-100 text-red-600' : type === 'warning' ? 'bg-amber-100 text-amber-600' : 'bg-indigo-100 text-indigo-600'}`}>
+            <div className={`p-3 rounded-none ${type === 'danger' ? 'bg-red-100 text-red-600' : type === 'warning' ? 'bg-amber-100 text-amber-600' : 'bg-indigo-100 text-indigo-600'}`}>
               <AlertTriangle size={24} />
             </div>
             <div className="flex-1 pt-1">
@@ -49,7 +49,7 @@ const ConfirmModal = ({
         <div className="flex gap-3 px-6 pb-6">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors"
+            className="flex-1 px-4 py-2.5 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-none hover:bg-slate-50 transition-colors"
           >
             {cancelText}
           </button>
@@ -58,7 +58,7 @@ const ConfirmModal = ({
               onConfirm();
               onClose();
             }}
-            className={`flex-1 px-4 py-2.5 text-white text-sm font-semibold rounded-lg transition-colors ${typeStyles[type]}`}
+            className={`flex-1 px-4 py-2.5 text-white text-sm font-semibold rounded-none transition-colors ${typeStyles[type]}`}
           >
             {confirmText}
           </button>

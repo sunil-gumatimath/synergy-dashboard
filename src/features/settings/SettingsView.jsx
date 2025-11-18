@@ -90,17 +90,17 @@ const SettingsView = () => {
 
     setErrors({});
     setIsSaving(true);
-    
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     setIsSaving(false);
     setToast({ message: 'Profile updated successfully!', type: 'success' });
   };
 
   const handlePasswordUpdate = async () => {
     const newErrors = {};
-    
+
     if (!passwords.current) newErrors.current = 'Current password is required';
     if (!passwords.new) newErrors.new = 'New password is required';
     if (passwords.new.length < 8) newErrors.new = 'Password must be at least 8 characters';
@@ -114,7 +114,7 @@ const SettingsView = () => {
 
     setIsUpdatingPassword(true);
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
+
     setPasswords({ current: '', new: '', confirm: '' });
     setIsUpdatingPassword(false);
     setToast({ message: 'Password updated successfully!', type: 'success' });
@@ -151,9 +151,9 @@ const SettingsView = () => {
 
   const toggleAllNotifications = (enable) => {
     setNotifications(notifications.map(n => ({ ...n, checked: enable })));
-    setToast({ 
-      message: enable ? 'All notifications enabled' : 'All notifications disabled', 
-      type: 'success' 
+    setToast({
+      message: enable ? 'All notifications enabled' : 'All notifications disabled',
+      type: 'success'
     });
   };
 
@@ -170,7 +170,7 @@ const SettingsView = () => {
       <ProfileCompletionBar profile={profile} />
 
       {/* Account Info */}
-      <div className="flex items-center justify-between bg-gradient-to-r from-slate-50 to-indigo-50/30 border border-slate-200 rounded-xl p-4">
+      <div className="flex items-center justify-between bg-gradient-to-r from-slate-50 to-indigo-50/30 border border-slate-200 rounded-none p-4">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm">
             <Clock size={16} className="text-slate-400" />
@@ -185,7 +185,7 @@ const SettingsView = () => {
           </div>
         </div>
         {profile.emailVerified && (
-          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-full">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-none">
             <Check size={14} />
             <span className="text-xs font-semibold">Email Verified</span>
           </div>
@@ -215,10 +215,10 @@ const SettingsView = () => {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <button className="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">
+            <button className="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm font-medium rounded-none hover:bg-slate-50 transition-colors">
               Remove
             </button>
-            <button className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+            <button className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-none hover:bg-indigo-700 transition-colors">
               Upload new
             </button>
           </div>
@@ -238,9 +238,8 @@ const SettingsView = () => {
                 setProfile({ ...profile, fullName: e.target.value });
                 if (errors.fullName) setErrors({ ...errors, fullName: null });
               }}
-              className={`w-full pl-10 pr-4 py-2.5 bg-white border rounded-lg text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none placeholder:text-slate-400 ${
-                errors.fullName ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
-              }`}
+              className={`w-full pl-10 pr-4 py-2.5 bg-white border rounded-none text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none placeholder:text-slate-400 ${errors.fullName ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
+                }`}
             />
             {errors.fullName && (
               <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
@@ -262,9 +261,8 @@ const SettingsView = () => {
                 setProfile({ ...profile, email: e.target.value });
                 if (errors.email) setErrors({ ...errors, email: null });
               }}
-              className={`w-full pl-10 pr-4 py-2.5 bg-white border rounded-lg text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none placeholder:text-slate-400 ${
-                errors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
-              }`}
+              className={`w-full pl-10 pr-4 py-2.5 bg-white border rounded-none text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none placeholder:text-slate-400 ${errors.email ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
+                }`}
             />
             {errors.email && (
               <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
@@ -286,9 +284,8 @@ const SettingsView = () => {
                 setProfile({ ...profile, phone: e.target.value });
                 if (errors.phone) setErrors({ ...errors, phone: null });
               }}
-              className={`w-full pl-10 pr-4 py-2.5 bg-white border rounded-lg text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none placeholder:text-slate-400 ${
-                errors.phone ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
-              }`}
+              className={`w-full pl-10 pr-4 py-2.5 bg-white border rounded-none text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none placeholder:text-slate-400 ${errors.phone ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
+                }`}
             />
             {errors.phone && (
               <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
@@ -307,7 +304,7 @@ const SettingsView = () => {
               type="text"
               value={profile.role}
               disabled
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-500 cursor-not-allowed font-medium"
+              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-none text-sm text-slate-500 cursor-not-allowed font-medium"
             />
           </div>
         </div>
@@ -318,7 +315,7 @@ const SettingsView = () => {
             rows="4"
             value={profile.bio}
             onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none resize-none placeholder:text-slate-400"
+            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-none text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none resize-none placeholder:text-slate-400"
           />
           <div className="flex justify-between items-center">
             <span className="text-xs text-slate-400">Brief description for your profile.</span>
@@ -344,7 +341,7 @@ const SettingsView = () => {
 
     return (
       <div className="space-y-6 animate-fade-in">
-        <div className="bg-indigo-50/70 border border-indigo-100 rounded-xl p-4">
+        <div className="bg-indigo-50/70 border border-indigo-100 rounded-none p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3">
               <div className="p-2 rounded-full bg-indigo-100">
@@ -361,14 +358,14 @@ const SettingsView = () => {
               <button
                 onClick={() => toggleAllNotifications(true)}
                 disabled={allEnabled}
-                className="px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-100 rounded-lg hover:bg-indigo-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-xs font-semibold text-indigo-700 bg-indigo-100 rounded-none hover:bg-indigo-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Enable all
               </button>
               <button
                 onClick={() => toggleAllNotifications(false)}
                 disabled={allDisabled}
-                className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 rounded-none hover:bg-slate-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Disable all
               </button>
@@ -377,7 +374,7 @@ const SettingsView = () => {
         </div>
 
         {/* Email Frequency */}
-        <div className="bg-white border border-slate-200 rounded-xl p-5">
+        <div className="bg-white border border-slate-200 rounded-none p-5">
           <div className="flex items-center justify-between">
             <div>
               <h4 className="text-sm font-semibold text-slate-900">Email frequency</h4>
@@ -389,7 +386,7 @@ const SettingsView = () => {
                 setPreferences({ ...preferences, emailFrequency: e.target.value });
                 setToast({ message: 'Email frequency updated', type: 'success' });
               }}
-              className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none cursor-pointer"
+              className="px-4 py-2 bg-white border border-slate-200 rounded-none text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none cursor-pointer"
             >
               <option value="instant">Instantly</option>
               <option value="daily">Daily digest</option>
@@ -399,43 +396,41 @@ const SettingsView = () => {
         </div>
 
         <div className="space-y-4">
-        {notifications.map((item) => (
-          <div
-            key={item.id}
-            className={`group flex items-start gap-4 p-4 rounded-xl border transition-all duration-200 ${
-              item.checked
-                ? 'bg-white border-indigo-100 shadow-sm shadow-indigo-50'
-                : 'bg-slate-50 border-slate-200 hover:bg-white'
-            }`}
-          >
-            <div className="flex-1 min-w-0">
-              <h4
-                className={`text-sm font-semibold transition-colors ${
-                  item.checked ? 'text-slate-900' : 'text-slate-800'
+          {notifications.map((item) => (
+            <div
+              key={item.id}
+              className={`group flex items-start gap-4 p-4 rounded-none border transition-all duration-200 ${item.checked
+                  ? 'bg-white border-indigo-100 shadow-sm shadow-indigo-50'
+                  : 'bg-slate-50 border-slate-200 hover:bg-white'
                 }`}
-              >
-                {item.title}
-              </h4>
-              <p className="text-sm text-slate-500 mt-1 leading-relaxed">{item.desc}</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={item.checked}
-                onChange={() => {
-                  setNotifications(notifications.map(n =>
-                    n.id === item.id ? { ...n, checked: !n.checked } : n
-                  ));
-                }}
-              />
-              {/* Rounded toggle */}
-              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:bg-indigo-600 relative transition-colors">
-                <span className="absolute top-[2px] left-[2px] h-5 w-5 bg-white rounded-full shadow-sm transition-transform peer-checked:translate-x-5" />
+            >
+              <div className="flex-1 min-w-0">
+                <h4
+                  className={`text-sm font-semibold transition-colors ${item.checked ? 'text-slate-900' : 'text-slate-800'
+                    }`}
+                >
+                  {item.title}
+                </h4>
+                <p className="text-sm text-slate-500 mt-1 leading-relaxed">{item.desc}</p>
               </div>
-            </label>
-          </div>
-        ))}
+              <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
+                <input
+                  type="checkbox"
+                  className="sr-only peer"
+                  checked={item.checked}
+                  onChange={() => {
+                    setNotifications(notifications.map(n =>
+                      n.id === item.id ? { ...n, checked: !n.checked } : n
+                    ));
+                  }}
+                />
+                {/* Rounded toggle */}
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:bg-indigo-600 relative transition-colors">
+                  <span className="absolute top-[2px] left-[2px] h-5 w-5 bg-white rounded-full shadow-sm transition-transform peer-checked:translate-x-5" />
+                </div>
+              </label>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -443,9 +438,9 @@ const SettingsView = () => {
 
   const renderSecuritySection = () => (
     <div className="space-y-6 animate-fade-in">
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-6">
+      <div className="bg-white rounded-none border border-slate-200 p-6 shadow-sm space-y-6">
         <div className="flex items-start gap-4 pb-5 border-b border-slate-100">
-          <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl shrink-0">
+          <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-none shrink-0">
             <Key size={20} />
           </div>
           <div className="flex-1">
@@ -467,9 +462,8 @@ const SettingsView = () => {
                   setPasswords({ ...passwords, current: e.target.value });
                   if (errors.current) setErrors({ ...errors, current: null });
                 }}
-                className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-lg text-sm text-slate-900 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none ${
-                  errors.current ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
-                }`}
+                className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-none text-sm text-slate-900 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none ${errors.current ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
+                  }`}
                 placeholder="••••••••"
               />
               {errors.current && (
@@ -491,9 +485,8 @@ const SettingsView = () => {
                   setPasswords({ ...passwords, new: e.target.value });
                   if (errors.new) setErrors({ ...errors, new: null });
                 }}
-                className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-lg text-sm text-slate-900 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none ${
-                  errors.new ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
-                }`}
+                className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-none text-sm text-slate-900 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none ${errors.new ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
+                  }`}
                 placeholder="••••••••"
               />
               {errors.new && (
@@ -516,9 +509,8 @@ const SettingsView = () => {
                   setPasswords({ ...passwords, confirm: e.target.value });
                   if (errors.confirm) setErrors({ ...errors, confirm: null });
                 }}
-                className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-lg text-sm text-slate-900 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none ${
-                  errors.confirm ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
-                }`}
+                className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border rounded-none text-sm text-slate-900 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none ${errors.confirm ? 'border-red-300 focus:border-red-500 focus:ring-red-100' : 'border-slate-200'
+                  }`}
                 placeholder="••••••••"
               />
               {errors.confirm && (
@@ -537,10 +529,10 @@ const SettingsView = () => {
           </div>
 
           <div className="pt-2">
-            <button 
+            <button
               onClick={handlePasswordUpdate}
               disabled={isUpdatingPassword || !passwords.current || !passwords.new || !passwords.confirm}
-              className="px-6 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-none hover:bg-slate-800 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isUpdatingPassword ? (
                 <>
@@ -556,9 +548,9 @@ const SettingsView = () => {
       </div>
 
       {/* Active Sessions */}
-      <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+      <div className="bg-white rounded-none border border-slate-200 p-6 shadow-sm space-y-4">
         <div className="flex items-start gap-4 pb-4 border-b border-slate-100">
-          <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl shrink-0">
+          <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-none shrink-0">
             <Activity size={20} />
           </div>
           <div className="flex-1">
@@ -569,16 +561,16 @@ const SettingsView = () => {
 
         <div className="space-y-3">
           {sessions.map((session) => (
-            <div key={session.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <div key={session.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-none border border-slate-200">
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-white rounded-lg border border-slate-200">
+                <div className="p-2 bg-white rounded-none border border-slate-200">
                   <Laptop size={18} className="text-slate-600" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <h4 className="text-sm font-semibold text-slate-900">{session.device}</h4>
                     {session.current && (
-                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded">
+                      <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-none">
                         Current
                       </span>
                     )}
@@ -594,7 +586,7 @@ const SettingsView = () => {
               {!session.current && (
                 <button
                   onClick={() => handleRevokeSession(session.id)}
-                  className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-none transition-colors"
                 >
                   Revoke
                 </button>
@@ -604,10 +596,10 @@ const SettingsView = () => {
         </div>
       </div>
 
-      <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-800 rounded-xl p-6 text-white shadow-md">
+      <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-800 rounded-none p-6 text-white shadow-md">
         <div className="flex flex-col sm:flex-row items-start justify-between gap-6">
           <div className="flex items-start gap-4">
-            <div className="p-2.5 bg-white/10 rounded-xl shrink-0">
+            <div className="p-2.5 bg-white/10 rounded-none shrink-0">
               <Shield className="text-indigo-300" size={20} />
             </div>
             <div className="space-y-1">
@@ -617,16 +609,16 @@ const SettingsView = () => {
               </p>
             </div>
           </div>
-          <button className="px-6 py-2.5 bg-white text-slate-900 text-sm font-semibold rounded-full hover:bg-slate-100 transition-colors whitespace-nowrap shrink-0">
+          <button className="px-6 py-2.5 bg-white text-slate-900 text-sm font-semibold rounded-none hover:bg-slate-100 transition-colors whitespace-nowrap shrink-0">
             Enable 2FA
           </button>
         </div>
       </div>
 
       {/* Danger Zone */}
-      <div className="bg-white rounded-xl border-2 border-red-200 p-6 shadow-sm space-y-4">
+      <div className="bg-white rounded-none border-2 border-red-200 p-6 shadow-sm space-y-4">
         <div className="flex items-start gap-4 pb-4 border-b border-red-100">
-          <div className="p-2.5 bg-red-50 text-red-600 rounded-xl shrink-0">
+          <div className="p-2.5 bg-red-50 text-red-600 rounded-none shrink-0">
             <AlertTriangle size={20} />
           </div>
           <div className="flex-1">
@@ -636,28 +628,28 @@ const SettingsView = () => {
         </div>
 
         <div className="space-y-3">
-          <div className="flex items-start justify-between gap-4 p-4 bg-red-50/50 rounded-lg border border-red-100">
+          <div className="flex items-start justify-between gap-4 p-4 bg-red-50/50 rounded-none border border-red-100">
             <div>
               <h4 className="text-sm font-semibold text-slate-900">Export account data</h4>
               <p className="text-sm text-slate-600 mt-1">Download a copy of your personal data and activity</p>
             </div>
             <button
               onClick={handleExportData}
-              className="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors shrink-0 flex items-center gap-2"
+              className="px-4 py-2 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-none hover:bg-slate-50 transition-colors shrink-0 flex items-center gap-2"
             >
               <Download size={16} />
               Export
             </button>
           </div>
 
-          <div className="flex items-start justify-between gap-4 p-4 bg-red-50 rounded-lg border border-red-200">
+          <div className="flex items-start justify-between gap-4 p-4 bg-red-50 rounded-none border border-red-200">
             <div>
               <h4 className="text-sm font-semibold text-red-900">Delete account</h4>
               <p className="text-sm text-red-700 mt-1">Permanently delete your account and all associated data. This action cannot be undone.</p>
             </div>
             <button
               onClick={handleDeleteAccount}
-              className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-lg hover:bg-red-700 transition-colors shrink-0 flex items-center gap-2"
+              className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-none hover:bg-red-700 transition-colors shrink-0 flex items-center gap-2"
             >
               <Trash2 size={16} />
               Delete
@@ -673,7 +665,7 @@ const SettingsView = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-slate-900">Appearance</h3>
-          <span className="text-xs font-medium px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full uppercase tracking-wide">
+          <span className="text-xs font-medium px-2.5 py-1 bg-slate-100 text-slate-600 rounded-none uppercase tracking-wide">
             Visuals
           </span>
         </div>
@@ -683,25 +675,22 @@ const SettingsView = () => {
             <button
               key={theme}
               onClick={() => setPreferences({ ...preferences, theme })}
-              className={`relative p-5 rounded-xl border text-left transition-all duration-200 group ${
-                preferences.theme === theme
+              className={`relative p-5 rounded-none border text-left transition-all duration-200 group ${preferences.theme === theme
                   ? 'border-indigo-500/80 bg-indigo-50/60 shadow-sm shadow-indigo-100'
                   : 'border-slate-200 hover:border-indigo-200 hover:bg-slate-50'
-              }`}
+                }`}
             >
               <div
-                className={`mb-4 ${
-                  preferences.theme === theme ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-500'
-                }`}
+                className={`mb-4 ${preferences.theme === theme ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-500'
+                  }`}
               >
                 {theme === 'light' && <Sun size={28} strokeWidth={1.5} />}
                 {theme === 'dark' && <Moon size={28} strokeWidth={1.5} />}
                 {theme === 'system' && <Laptop size={28} strokeWidth={1.5} />}
               </div>
               <p
-                className={`font-semibold capitalize text-sm ${
-                  preferences.theme === theme ? 'text-slate-900' : 'text-slate-900'
-                }`}
+                className={`font-semibold capitalize text-sm ${preferences.theme === theme ? 'text-slate-900' : 'text-slate-900'
+                  }`}
               >
                 {theme} mode
               </p>
@@ -731,7 +720,7 @@ const SettingsView = () => {
               <select
                 value={preferences.language}
                 onChange={(e) => setPreferences({ ...preferences, language: e.target.value })}
-                className="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none cursor-pointer appearance-none"
+                className="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200 rounded-none text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none cursor-pointer appearance-none"
               >
                 <option value="en">English (United States)</option>
                 <option value="es">Spanish</option>
@@ -747,7 +736,7 @@ const SettingsView = () => {
               <select
                 value={preferences.timezone}
                 onChange={(e) => setPreferences({ ...preferences, timezone: e.target.value })}
-                className="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none cursor-pointer appearance-none"
+                className="w-full pl-10 pr-9 py-2.5 bg-white border border-slate-200 rounded-none text-sm text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all outline-none cursor-pointer appearance-none"
               >
                 <option value="UTC-5">Eastern Time (US & Canada)</option>
                 <option value="UTC-8">Pacific Time (US & Canada)</option>
@@ -796,114 +785,111 @@ const SettingsView = () => {
       />
 
       <div className="min-h-screen bg-slate-50/80">
-      <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Settings</h1>
-            <p className="text-slate-500 mt-1.5 text-sm">
-              Manage your account settings and preferences.
-            </p>
-          </div>
-          {activeSection === 'profile' && (
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className={`flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold text-white rounded-full transition-all shadow-sm hover:shadow-md disabled:opacity-80 disabled:cursor-default ${
-                isSaving
-                  ? 'bg-emerald-600'
-                  : 'bg-indigo-600 hover:bg-indigo-700'
-              }`}
-            >
-              {isSaving ? (
-                <>
-                  <Check size={18} />
-                  Saved
-                </>
-              ) : (
-                'Save changes'
-              )}
-            </button>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-[280px,1fr] gap-6">
-          {/* Sidebar Navigation */}
-          <nav className="flex flex-col bg-white border border-slate-200 rounded-2xl shadow-sm sticky top-4">
-            <div className="p-2 space-y-1 overflow-y-auto max-h-[70vh]">
-              {sections.map(section => {
-                const Icon = section.icon;
-                const isActive = activeSection === section.id;
-                return (
-                  <button
-                    type="button"
-                    key={section.id}
-                    onClick={() => setActiveSection(section.id)}
-                    className={`group w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left transition-all duration-200 ${
-                      isActive
-                        ? 'bg-indigo-50 text-indigo-900'
-                        : 'text-slate-600 hover:bg-slate-50'
-                    }`}
-                  >
-                    <div
-                      className={`p-2 rounded-lg border text-slate-500 bg-white ${
-                        isActive
-                          ? 'border-indigo-200 bg-indigo-50 text-indigo-600'
-                          : 'border-slate-200 group-hover:border-slate-300'
-                      }`}
-                    >
-                      <Icon size={18} className="shrink-0" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <span className="block font-medium text-sm truncate">{section.label}</span>
-                      <span className="block text-xs text-slate-400 truncate">
-                        {section.description}
-                      </span>
-                    </div>
-                    {isActive && (
-                      <ChevronRight size={16} className="shrink-0 text-indigo-500" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="mt-1 pt-2 border-t border-slate-100 px-3 pb-3 bg-slate-50/60">
-              <button
-                type="button"
-                onClick={handleSignOut}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors"
-              >
-                <span className="p-2 rounded-lg bg-red-50 text-red-600">
-                  <LogOut size={16} className="shrink-0" />
-                </span>
-                Sign out
-              </button>
-            </div>
-          </nav>
-
-          {/* Main Content Area */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col">
-            <div className="px-6 py-5 sm:px-8 border-b border-slate-100 bg-slate-50/60">
-              <h2 className="text-xl font-semibold text-slate-900">
-                {activeSectionMeta?.label}
-              </h2>
-              <p className="text-slate-500 mt-1 text-sm">
-                {activeSectionMeta?.description}
+        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+          <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Settings</h1>
+              <p className="text-slate-500 mt-1.5 text-sm">
+                Manage your account settings and preferences.
               </p>
             </div>
+            {activeSection === 'profile' && (
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className={`flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-semibold text-white rounded-none transition-all shadow-sm hover:shadow-md disabled:opacity-80 disabled:cursor-default ${isSaving
+                    ? 'bg-emerald-600'
+                    : 'bg-indigo-600 hover:bg-indigo-700'
+                  }`}
+              >
+                {isSaving ? (
+                  <>
+                    <Check size={18} />
+                    Saved
+                  </>
+                ) : (
+                  'Save changes'
+                )}
+              </button>
+            )}
+          </div>
 
-            <div className="px-6 py-6 sm:p-8 flex-1 overflow-auto">
-              {activeSection === 'profile'
-                ? renderProfileSection()
-                : activeSection === 'notifications'
-                ? renderNotificationsSection()
-                : activeSection === 'security'
-                ? renderSecuritySection()
-                : renderPreferencesSection()}
+          <div className="grid grid-cols-1 lg:grid-cols-[280px,1fr] gap-6">
+            {/* Sidebar Navigation */}
+            <nav className="flex flex-col bg-white border border-slate-200 rounded-none shadow-sm sticky top-4">
+              <div className="p-2 space-y-1 overflow-y-auto max-h-[70vh]">
+                {sections.map(section => {
+                  const Icon = section.icon;
+                  const isActive = activeSection === section.id;
+                  return (
+                    <button
+                      type="button"
+                      key={section.id}
+                      onClick={() => setActiveSection(section.id)}
+                      className={`group w-full flex items-center gap-3 px-3.5 py-2.5 rounded-none text-left transition-all duration-200 ${isActive
+                          ? 'bg-indigo-50 text-indigo-900'
+                          : 'text-slate-600 hover:bg-slate-50'
+                        }`}
+                    >
+                      <div
+                        className={`p-2 rounded-none border text-slate-500 bg-white ${isActive
+                            ? 'border-indigo-200 bg-indigo-50 text-indigo-600'
+                            : 'border-slate-200 group-hover:border-slate-300'
+                          }`}
+                      >
+                        <Icon size={18} className="shrink-0" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <span className="block font-medium text-sm truncate">{section.label}</span>
+                        <span className="block text-xs text-slate-400 truncate">
+                          {section.description}
+                        </span>
+                      </div>
+                      {isActive && (
+                        <ChevronRight size={16} className="shrink-0 text-indigo-500" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mt-1 pt-2 border-t border-slate-100 px-3 pb-3 bg-slate-50/60">
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="w-full flex items-center gap-3 px-3.5 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-none transition-colors"
+                >
+                  <span className="p-2 rounded-none bg-red-50 text-red-600">
+                    <LogOut size={16} className="shrink-0" />
+                  </span>
+                  Sign out
+                </button>
+              </div>
+            </nav>
+
+            {/* Main Content Area */}
+            <div className="bg-white border border-slate-200 rounded-none shadow-sm flex flex-col">
+              <div className="px-6 py-5 sm:px-8 border-b border-slate-100 bg-slate-50/60">
+                <h2 className="text-xl font-semibold text-slate-900">
+                  {activeSectionMeta?.label}
+                </h2>
+                <p className="text-slate-500 mt-1 text-sm">
+                  {activeSectionMeta?.description}
+                </p>
+              </div>
+
+              <div className="px-6 py-6 sm:p-8 flex-1 overflow-auto">
+                {activeSection === 'profile'
+                  ? renderProfileSection()
+                  : activeSection === 'notifications'
+                    ? renderNotificationsSection()
+                    : activeSection === 'security'
+                      ? renderSecuritySection()
+                      : renderPreferencesSection()}
+              </div>
             </div>
           </div>
         </div>
-      </div>
       </div>
     </>
   );

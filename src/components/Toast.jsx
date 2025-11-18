@@ -33,7 +33,7 @@ const Toast = ({ message, type = 'success', onClose, duration = 4000 }) => {
 
   return (
     <div className={`fixed top-6 right-6 z-[100] max-w-md animate-slide-in-right`}>
-      <div className={`flex items-start gap-3 p-4 rounded-xl border shadow-lg backdrop-blur-sm ${styles[type]}`}>
+      <div className={`flex items-start gap-3 p-4 rounded-none border shadow-lg backdrop-blur-sm ${styles[type]}`}>
         <div className={iconStyles[type]}>
           {icons[type]}
         </div>

@@ -16,7 +16,7 @@ const ProfileCompletionBar = ({ profile }) => {
 
   if (percentage === 100) {
     return (
-      <div className="mb-6 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+      <div className="mb-6 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-none p-4">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-emerald-100 rounded-full">
             <CheckCircle className="text-emerald-600" size={20} />
@@ -31,24 +31,24 @@ const ProfileCompletionBar = ({ profile }) => {
   }
 
   return (
-    <div className="mb-6 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-xl p-4">
+    <div className="mb-6 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-none p-4">
       <div className="flex items-start justify-between gap-4 mb-3">
         <div>
           <h4 className="text-sm font-semibold text-indigo-900">
             Profile {Math.round(percentage)}% complete
           </h4>
           <p className="text-sm text-indigo-700 mt-0.5">
-            {missingItems.length === 1 
+            {missingItems.length === 1
               ? `Add your ${missingItems[0].label.toLowerCase()} to complete your profile`
               : `Complete ${missingItems.length} more items`}
           </p>
         </div>
         <span className="text-lg font-bold text-indigo-600">{Math.round(percentage)}%</span>
       </div>
-      
-      <div className="relative h-2 bg-indigo-100 rounded-full overflow-hidden">
-        <div 
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full transition-all duration-500"
+
+      <div className="relative h-2 bg-indigo-100 rounded-none overflow-hidden">
+        <div
+          className="absolute inset-y-0 left-0 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-none transition-all duration-500"
           style={{ width: `${percentage}%` }}
         />
       </div>
