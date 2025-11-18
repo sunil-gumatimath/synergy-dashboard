@@ -2,6 +2,9 @@ import React from "react";
 import EmployeeList from "./features/employees/EmployeeList";
 import Sidebar from "./components/Sidebar";
 import Stats from "./components/Stats";
+import AnalyticsDashboard from "./features/analytics/AnalyticsDashboard";
+import CalendarView from "./features/calendar/CalendarView";
+import SettingsView from "./features/settings/SettingsView";
 
 function App() {
   const [activeTab, setActiveTab] = React.useState("employees");
@@ -35,12 +38,20 @@ function App() {
           </div>
         </header>
 
-        {activeTab === "employees" ? (
+        {activeTab === "employees" && (
           <>
             <Stats />
             <EmployeeList />
           </>
-        ) : (
+        )}
+
+        {activeTab === "analytics" && <AnalyticsDashboard />}
+
+        {activeTab === "calendar" && <CalendarView />}
+
+        {activeTab === "settings" && <SettingsView />}
+
+        {activeTab !== "employees" && activeTab !== "analytics" && activeTab !== "calendar" && activeTab !== "settings" && (
           <div className="flex items-center justify-center h-64 text-gray-500">
             {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} module
             coming soon...

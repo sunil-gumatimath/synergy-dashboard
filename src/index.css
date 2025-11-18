@@ -159,7 +159,7 @@ button {
 
 /* Sidebar */
 .sidebar {
-  width: 16rem;
+  width: 18rem;
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border);
   height: 100vh;
@@ -167,78 +167,134 @@ button {
   flex-direction: column;
   position: sticky;
   top: 0;
+  transition: all 0.3s ease;
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+  z-index: 50;
 }
 
 .sidebar-header {
-  padding: var(--space-lg);
-  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 2rem;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .brand-logo {
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   background: var(--text-main);
   color: white;
-  border-radius: var(--radius-sm);
+  border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  box-shadow: var(--shadow-sm);
 }
 
 .brand-name {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-main);
+  letter-spacing: -0.025em;
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: var(--space-md);
+  padding: 0 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: 0.5rem;
 }
 
 .nav-item {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius-md);
+  gap: 0.875rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
   border: none;
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
-  transition: all 0.2s;
   text-align: left;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
 }
 
-.nav-item:hover {
-  background-color: var(--bg-body);
-  color: var(--text-main);
-}
+
 
 .nav-item.active {
-  background-color: var(--primary-light);
+  background: linear-gradient(to right, var(--primary-light), transparent);
   color: var(--primary);
   font-weight: 600;
 }
 
-.sidebar-footer {
-  padding: var(--space-md);
-  border-top: 1px solid var(--border);
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background-color: var(--primary);
+  border-radius: 0 4px 4px 0;
 }
 
-.pro-card {
-  background: var(--bg-body);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
+.sidebar-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.5));
+}
+
+.user-profile-sidebar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  cursor: pointer;
+}
+
+
+
+.user-avatar-sidebar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.user-info-sidebar {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.user-name-sidebar {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-email-sidebar {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Stats */
