@@ -18,7 +18,7 @@ const ProfileCompletionBar = ({ profile }) => {
     return (
       <div className="mb-6 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-none p-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-emerald-100 rounded-full">
+          <div className="p-2 bg-emerald-100 rounded-none">
             <CheckCircle className="text-emerald-600" size={20} />
           </div>
           <div>
