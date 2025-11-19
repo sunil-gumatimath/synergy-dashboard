@@ -188,11 +188,11 @@ const SettingsView = () => {
         <h3 className="text-lg font-semibold text-gray-900">Notification Preferences</h3>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div className="flex-1" className="flex-1">
-              <h4 className="font-medium text-gray-900">Email Notifications</h4>
-              <p className="text-sm text-gray-600">Receive email updates about system activities</p>
-            </div>
+            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex-1">
+                <h4 className="font-medium text-gray-900">Email Notifications</h4>
+                <p className="text-sm text-gray-600">Receive email updates about system activities</p>
+              </div>
             <label className="relative inline-flex items-center cursor-pointer flex-shrink-0 ml-4">
               <input
                 type="checkbox"

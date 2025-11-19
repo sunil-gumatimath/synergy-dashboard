@@ -51,12 +51,17 @@ function App() {
 
         {activeTab === "settings" && <SettingsView />}
 
-        {activeTab !== "employees" && activeTab !== "analytics" && activeTab !== "calendar" && activeTab !== "settings" && (
-          <div className="flex items-center justify-center h-64 text-gray-500">
-            {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} module
-            coming soon...
-          </div>
-        )}
+        {(() => {
+          const validTabs = ["employees", "analytics", "calendar", "settings"];
+          if (!validTabs.includes(activeTab)) {
+            return (
+              <div className="flex items-center justify-center h-64 text-gray-500">
+                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} module coming soon...
+              </div>
+            );
+          }
+          return null;
+        })()}
       </main>
     </div>
   );

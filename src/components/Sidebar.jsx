@@ -1,14 +1,6 @@
 import React from "react";
 import { Users, LayoutDashboard, Calendar, Settings, LogOut, ChevronRight } from "lucide-react";
 
-const Logo = () => (
-  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white">
-    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" fill="currentColor" fillOpacity="0.2" />
-    <path d="M16 8L8 16M8 8L16 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M12 12L12 12.01" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
 const BrandLogo = () => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white">
     <path d="M4 15C4 15 5 16 8 16C11 16 11 14 11 14C11 14 11 12 8 12C5 12 5 10 5 10C5 10 5 8 8 8C11 8 12 9 12 9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />

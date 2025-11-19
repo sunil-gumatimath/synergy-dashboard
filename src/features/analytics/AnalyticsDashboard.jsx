@@ -14,7 +14,7 @@ const StatCard = ({ title, value, change, icon: Icon, color }) => (
                 {change >= 0 ? '+' : ''}{change}% from last month
             </p>
         </div>
-        <div className={`p-3 rounded-lg bg-opacity-10`} style={{ backgroundColor: `${color}20`, color: color }}>
+        <div className="p-3 rounded-lg" style={{ backgroundColor: `${color}20`, color: color }}>
             <Icon size={24} />
         </div>
     </div>

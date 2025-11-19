@@ -41,7 +41,7 @@ const EmployeeList = () => {
 
 			<div className="employee-grid">
 				{filteredEmployees.map((employee) => (
-					<Card key={employee.id} className="flex flex-col gap-4">
+					<Card key={employee.id}>
 						<div className="employee-card-header">
 							<div className="employee-info">
 								<img
