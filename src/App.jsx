@@ -1,13 +1,22 @@
-import React, { Suspense } from "react";
-import EmployeeList from "./features/employees/EmployeeList";
+import React, { Suspense, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Stats from "./components/Stats";
-const AnalyticsDashboard = React.lazy(() => import("./features/analytics/AnalyticsDashboard"));
-const CalendarView = React.lazy(() => import("./features/calendar/CalendarView"));
+import EmployeeList from "./features/employees/EmployeeList";
 import SettingsView from "./features/settings/SettingsView";
 
+const AnalyticsDashboard = React.lazy(() => import("./features/analytics/AnalyticsDashboard"));
+const CalendarView = React.lazy(() => import("./features/calendar/CalendarView"));
+
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center h-64">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+  </div>
+);
+
 function App() {
-  const [activeTab, setActiveTab] = React.useState("employees");
+  const [activeTab, setActiveTab] = useState("employees");
+
+  const validTabs = ["employees", "analytics", "calendar", "settings"];
 
   return (
     <div className="app-container">
@@ -26,12 +35,12 @@ function App() {
             <button className="icon-btn">🔔</button>
             <div className="user-profile">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-medium text-gray-900">Aditya Sharma</p>
+                <p className="text-sm font-medium text-gray-900">Sunil Kumar</p>
                 <p className="text-xs text-gray-500">Admin</p>
               </div>
               <img
-                src="https://api.dicebear.com/9.x/micah/svg?seed=Aditya"
-                alt="Aditya Sharma"
+                src="https://api.dicebear.com/9.x/micah/svg?seed=Felix"
+                alt="Sunil Kumar"
                 className="user-avatar"
               />
             </div>
@@ -46,34 +55,24 @@ function App() {
         )}
 
         {activeTab === "analytics" && (
-          <Suspense fallback={<div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          </div>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <AnalyticsDashboard />
           </Suspense>
         )}
 
         {activeTab === "calendar" && (
-          <Suspense fallback={<div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          </div>}>
+          <Suspense fallback={<LoadingSpinner />}>
             <CalendarView />
           </Suspense>
         )}
 
         {activeTab === "settings" && <SettingsView />}
 
-        {(() => {
-          const validTabs = ["employees", "analytics", "calendar", "settings"];
-          if (!validTabs.includes(activeTab)) {
-            return (
-              <div className="flex items-center justify-center h-64 text-gray-500">
-                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} module coming soon...
-              </div>
-            );
-          }
-          return null;
-        })()}
+        {!validTabs.includes(activeTab) && (
+          <div className="flex items-center justify-center h-64 text-gray-500">
+            {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} module coming soon...
+          </div>
+        )}
       </main>
     </div>
   );

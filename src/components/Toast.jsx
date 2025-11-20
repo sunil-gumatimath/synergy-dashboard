@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { CheckCircle, XCircle, Info, AlertTriangle, X } from 'lucide-react';
 
 const Toast = ({ message, type = 'success', onClose, duration = 4000 }) => {
@@ -48,6 +49,13 @@ const Toast = ({ message, type = 'success', onClose, duration = 4000 }) => {
       </div>
     </div>
   );
+};
+
+Toast.propTypes = {
+  message: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(['success', 'error', 'info', 'warning']),
+  onClose: PropTypes.func.isRequired,
+  duration: PropTypes.number,
 };
 
 export default Toast;

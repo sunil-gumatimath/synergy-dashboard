@@ -11,8 +11,8 @@ const SettingsView = () => {
   // Load settings from localStorage or use defaults
   const [settings, setSettings] = useState(() => {
     const defaults = {
-      name: "Aditya Sharma",
-      email: "aditya.sharma@staffly.com",
+      name: "Sunil Kumar",
+      email: "sunil.kumar@staffly.com",
       bio: "Admin of Staffly employee management system",
       emailNotifications: true,
       pushNotifications: false,
@@ -145,7 +145,7 @@ const SettingsView = () => {
           <div className="space-y-8">
             <div className="flex items-center gap-6">
               <img
-                src="https://api.dicebear.com/9.x/micah/svg?seed=Aditya"
+                src="https://api.dicebear.com/9.x/micah/svg?seed=Felix"
                 alt="Profile"
                 className="w-16 h-16 rounded-full"
               />
