@@ -141,7 +141,7 @@ const AnalyticsDashboard = () => {
                                 <p className="text-sm text-indigo-600 font-medium">Top Performer</p>
                                 <span className="text-xs text-indigo-500 font-medium bg-indigo-100 px-2 py-1 rounded-sm">Engineering</span>
                             </div>
-                            <p className="text-base font-bold text-indigo-900">Sarah Wilson</p>
+                            <p className="text-base font-bold text-indigo-900">Ananya Gupta</p>
                         </div>
                         <div className="p-4 bg-purple-50 rounded-sm border border-purple-100 flex flex-col gap-3">
                             <div className="flex justify-between items-center">

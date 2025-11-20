@@ -26,12 +26,12 @@ function App() {
             <button className="icon-btn">🔔</button>
             <div className="user-profile">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-medium text-gray-900">Tedz</p>
+                <p className="text-sm font-medium text-gray-900">Aditya Sharma</p>
                 <p className="text-xs text-gray-500">Admin</p>
               </div>
               <img
-                src="https://api.dicebear.com/9.x/micah/svg?seed=Tedz"
-                alt="Tedz"
+                src="https://api.dicebear.com/9.x/micah/svg?seed=Aditya"
+                alt="Aditya Sharma"
                 className="user-avatar"
               />
             </div>

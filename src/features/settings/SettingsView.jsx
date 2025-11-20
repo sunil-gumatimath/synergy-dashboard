@@ -11,8 +11,8 @@ const SettingsView = () => {
   // Load settings from localStorage or use defaults
   const [settings, setSettings] = useState(() => {
     const defaults = {
-      name: "Tedz",
-      email: "tedz@staffly.com",
+      name: "Aditya Sharma",
+      email: "aditya.sharma@staffly.com",
       bio: "Admin of Staffly employee management system",
       emailNotifications: true,
       pushNotifications: false,
@@ -108,20 +108,20 @@ const SettingsView = () => {
     }
 
     setIsSaving(true);
-    
+
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Save to localStorage
       const settingsToSave = { ...settings };
       // Don't save password fields for security
       delete settingsToSave.currentPassword;
       delete settingsToSave.newPassword;
       delete settingsToSave.confirmPassword;
-      
+
       localStorage.setItem('userSettings', JSON.stringify(settingsToSave));
-      
+
       // Reset password fields
       setSettings(prev => ({
         ...prev,
@@ -129,7 +129,7 @@ const SettingsView = () => {
         newPassword: "",
         confirmPassword: ""
       }));
-      
+
       setToast({ type: 'success', message: 'Settings saved successfully!' });
     } catch {
       setToast({ type: 'error', message: 'Failed to save settings. Please try again.' });
@@ -145,7 +145,7 @@ const SettingsView = () => {
           <div className="space-y-8">
             <div className="flex items-center gap-6">
               <img
-                src="https://api.dicebear.com/9.x/micah/svg?seed=Tedz"
+                src="https://api.dicebear.com/9.x/micah/svg?seed=Aditya"
                 alt="Profile"
                 className="w-16 h-16 rounded-full"
               />
@@ -156,16 +156,15 @@ const SettingsView = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-1">
+              <div className="space-y-1">
                 <label className="text-sm font-medium text-gray-700">Full Name</label>
                 <input
                   type="text"
                   value={settings.name}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("name", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${
-                    errors.name ? 'border-red-500' : 'border-gray-200'
-                  } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${errors.name ? 'border-red-500' : 'border-gray-200'
+                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
                   placeholder="Enter your full name"
                 />
                 {errors.name && <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
@@ -180,9 +179,8 @@ const SettingsView = () => {
                   value={settings.email}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("email", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${
-                    errors.email ? 'border-red-500' : 'border-gray-200'
-                  } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${errors.email ? 'border-red-500' : 'border-gray-200'
+                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
                   placeholder="Enter your email"
                 />
                 {errors.email && <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
@@ -329,9 +327,8 @@ const SettingsView = () => {
                   value={settings.currentPassword}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("currentPassword", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${
-                    errors.currentPassword ? 'border-red-500' : 'border-gray-200'
-                  } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${errors.currentPassword ? 'border-red-500' : 'border-gray-200'
+                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
                   placeholder="Enter current password"
                 />
                 {errors.currentPassword && <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
@@ -346,9 +343,8 @@ const SettingsView = () => {
                   value={settings.newPassword}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("newPassword", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${
-                    errors.newPassword ? 'border-red-500' : 'border-gray-200'
-                  } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${errors.newPassword ? 'border-red-500' : 'border-gray-200'
+                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
                   placeholder="Enter new password"
                 />
                 {errors.newPassword && <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
@@ -363,9 +359,8 @@ const SettingsView = () => {
                   value={settings.confirmPassword}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("confirmPassword", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${
-                    errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
-                  } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
+                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
                   placeholder="Confirm new password"
                 />
                 {errors.confirmPassword && <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
@@ -409,11 +404,10 @@ const SettingsView = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 py-3 px-2 border-b-2 font-medium text-sm transition-colors ${
-                  activeTab === tab.id
-                    ? "border-primary text-primary"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                }`}
+                className={`flex items-center gap-2 py-3 px-2 border-b-2 font-medium text-sm transition-colors ${activeTab === tab.id
+                  ? "border-primary text-primary"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                  }`}
               >
                 <Icon size={20} />
                 <span className="min-w-0">{tab.label}</span>
@@ -426,24 +420,23 @@ const SettingsView = () => {
       {/* Content */}
       <div className="max-w-2xl">
         {renderTabContent()}
-        
+
         {/* Save Button */}
         <div className="flex justify-end mt-8 pt-6 border-t border-gray-200">
           <button
             onClick={saveSettings}
             disabled={isSaving}
-            className={`flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors ${
-              isSaving
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-primary hover:bg-primary/90'
-            } text-white`}
+            className={`flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors ${isSaving
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-primary hover:bg-primary/90'
+              } text-white`}
           >
             <Save size={16} />
             {isSaving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </div>
-      
+
       {/* Toast Notifications */}
       {toast && (
         <Toast
