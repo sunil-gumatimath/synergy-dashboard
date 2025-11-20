@@ -179,23 +179,29 @@ button {
 }
 
 .sidebar-header {
-  padding: 1.5rem 2rem;
+  padding: var(--space-lg) var(--space-xl);
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
 }
 
 .brand-logo {
   width: 2.5rem;
   height: 2.5rem;
-  background: var(--text-main);
+  background: var(--primary);
   color: white;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.brand-logo:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
 }
 
 .brand-name {
@@ -207,19 +213,19 @@ button {
 
 .sidebar-nav {
   flex: 1;
-  padding: 0 1.5rem;
+  padding: 0 var(--space-lg);
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 }
 
 .nav-item {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.875rem;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-md);
+  border-radius: var(--radius-md);
   border: none;
   background: transparent;
   color: var(--text-muted);
@@ -228,12 +234,17 @@ button {
   font-weight: 500;
   position: relative;
   overflow: hidden;
+  transition: all 0.2s ease;
 }
 
-
+.nav-item:hover:not(.active) {
+  background: var(--bg-body);
+  color: var(--text-main);
+  transform: translateX(2px);
+}
 
 .nav-item.active {
-  background: linear-gradient(to right, var(--primary-light), transparent);
+  background: var(--primary-light);
   color: var(--primary);
   font-weight: 600;
 }
@@ -246,11 +257,11 @@ button {
   bottom: 0;
   width: 3px;
   background-color: var(--primary);
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
 .sidebar-footer {
-  padding: 1.5rem 2rem;
+  padding: var(--space-lg) var(--space-xl);
   border-top: 1px solid var(--border);
   background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.5));
 }
@@ -258,32 +269,43 @@ button {
 .user-profile-sidebar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 0.75rem;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-
+.user-profile-sidebar:hover {
+  background: var(--bg-body);
+}
 
 .user-avatar-sidebar {
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background-color: var(--primary-light);
   color: var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  font-size: 0.875rem;
   border: 2px solid white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.user-profile-sidebar:hover .user-avatar-sidebar {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
 }
 
 .user-info-sidebar {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  flex: 1;
 }
 
 .user-name-sidebar {
@@ -302,6 +324,7 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 
 /* Stats */
 .stats-grid {
