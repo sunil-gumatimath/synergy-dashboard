@@ -5,7 +5,9 @@ A modern, responsive Employee Management Dashboard built with React, Vite, and T
 ## 🚀 Features
 
 - **Dashboard Overview**: Visual statistics and key metrics at a glance.
-- **Employee Management**: View, manage, and track employee information.
+- **Analytics Dashboard**: Interactive charts and graphs for tracking employee growth, department distribution, and performance trends.
+- **Calendar & Scheduling**: Integrated calendar view for managing team events, meetings, and schedules.
+- **Employee Management**: View, manage, and track employee information with localized data support (Indian context).
 - **Settings Management**: Comprehensive settings for profile, notifications, security, and preferences.
 - **Sharp & Premium UI**: A modern, high-end interface featuring a sharp design language (no rounded corners) for a professional look.
 - **Responsive Design**: Fully responsive layout that works seamlessly on desktop and mobile devices.
