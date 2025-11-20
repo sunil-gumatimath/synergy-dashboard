@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { User, Bell, Shield, Palette, Save, AlertCircle } from "lucide-react";
 import Toast from "../../components/Toast";
+import "./settings-styles.css";
 
 const SettingsView = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -12,8 +13,8 @@ const SettingsView = () => {
   const [settings, setSettings] = useState(() => {
     const defaults = {
       name: "Sunil Kumar",
-      email: "sunil.kumar@staffly.com",
-      bio: "Admin of Staffly employee management system",
+      email: "sunil.kumar@aurora.app",
+      bio: "Admin of Aurora employee management system",
       emailNotifications: true,
       pushNotifications: false,
       newEmployeeAlerts: true,
@@ -142,61 +143,59 @@ const SettingsView = () => {
     switch (activeTab) {
       case "profile":
         return (
-          <div className="space-y-8">
-            <div className="flex items-center gap-6">
+          <div className="settings-section">
+            <div className="settings-profile-header">
               <img
                 src="https://api.dicebear.com/9.x/micah/svg?seed=Felix"
                 alt="Profile"
-                className="w-16 h-16 rounded-full"
+                className="settings-profile-avatar"
               />
-              <div>
-                <h3 className="font-medium text-gray-900">{settings.name}</h3>
-                <p className="text-sm text-gray-500">Administrator</p>
+              <div className="settings-profile-info">
+                <h3>{settings.name}</h3>
+                <p>Administrator</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Full Name</label>
+            <div className="settings-grid">
+              <div className="settings-form-group">
+                <label className="settings-label">Full Name</label>
                 <input
                   type="text"
                   value={settings.name}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("name", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${errors.name ? 'border-red-500' : 'border-gray-200'
-                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`settings-input ${errors.name ? 'error' : ''}`}
                   placeholder="Enter your full name"
                 />
-                {errors.name && <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                {errors.name && <p className="settings-error-message">
                   <AlertCircle size={12} /> {errors.name}
                 </p>}
               </div>
 
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Email</label>
+              <div className="settings-form-group">
+                <label className="settings-label">Email</label>
                 <input
                   type="email"
                   value={settings.email}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("email", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${errors.email ? 'border-red-500' : 'border-gray-200'
-                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`settings-input ${errors.email ? 'error' : ''}`}
                   placeholder="Enter your email"
                 />
-                {errors.email && <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
+                {errors.email && <p className="settings-error-message">
                   <AlertCircle size={12} /> {errors.email}
                 </p>}
               </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Bio</label>
+            <div className="settings-form-group">
+              <label className="settings-label">Bio</label>
               <textarea
                 value={settings.bio}
                 disabled={isSaving}
                 onChange={(e) => updateSetting("bio", e.target.value)}
                 rows={3}
-                className={`w-full px-0 py-2 border-0 border-b border-gray-200 focus:border-primary focus:outline-none bg-transparent resize-none ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                className="settings-textarea"
                 placeholder="Tell us about yourself"
               />
             </div>
@@ -205,7 +204,7 @@ const SettingsView = () => {
 
       case "notifications":
         return (
-          <div className="space-y-4">
+          <div className="settings-section">
             {[
               { key: "emailNotifications", label: "Email notifications", desc: "Receive email updates" },
               { key: "pushNotifications", label: "Push notifications", desc: "Browser notifications" },
@@ -213,20 +212,21 @@ const SettingsView = () => {
               { key: "systemUpdates", label: "System updates", desc: "Maintenance notifications" },
               { key: "weeklyReports", label: "Weekly reports", desc: "Summary reports via email" }
             ].map(({ key, label, desc }) => (
-              <div key={key} className="flex items-center justify-between py-3">
+              <div key={key} className="settings-toggle-wrapper">
                 <div>
                   <p className="font-medium text-gray-900">{label}</p>
                   <p className="text-sm text-gray-500">{desc}</p>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+                <label className="settings-toggle-label">
                   <input
                     type="checkbox"
                     checked={settings[key]}
                     disabled={isSaving}
                     onChange={(e) => updateSetting(key, e.target.checked)}
-                    className="sr-only peer"
+                    className="settings-toggle-input"
+                    aria-label={label}
                   />
-                  <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/25 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                  <div className="settings-toggle-slider"></div>
                 </label>
               </div>
             ))}
@@ -235,15 +235,15 @@ const SettingsView = () => {
 
       case "system":
         return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Theme</label>
+          <div className="settings-section">
+            <div className="settings-grid">
+              <div className="settings-form-group">
+                <label className="settings-label">Theme</label>
                 <select
                   value={settings.theme}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("theme", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b border-gray-200 focus:border-primary focus:outline-none bg-transparent ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className="settings-select"
                 >
                   <option value="light">Light</option>
                   <option value="dark">Dark</option>
@@ -251,13 +251,13 @@ const SettingsView = () => {
                 </select>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Language</label>
+              <div className="settings-form-group">
+                <label className="settings-label">Language</label>
                 <select
                   value={settings.language}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("language", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b border-gray-200 focus:border-primary focus:outline-none bg-transparent ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className="settings-select"
                 >
                   <option value="en">English</option>
                   <option value="es">Spanish</option>
@@ -266,13 +266,13 @@ const SettingsView = () => {
                 </select>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Timezone</label>
+              <div className="settings-form-group">
+                <label className="settings-label">Timezone</label>
                 <select
                   value={settings.timezone}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("timezone", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b border-gray-200 focus:border-primary focus:outline-none bg-transparent ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className="settings-select"
                 >
                   <option value="Asia/Kolkata">Asia/Kolkata</option>
                   <option value="America/New_York">America/New_York</option>
@@ -281,13 +281,13 @@ const SettingsView = () => {
                 </select>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Data Retention</label>
+              <div className="settings-form-group">
+                <label className="settings-label">Data Retention</label>
                 <select
                   value={settings.dataRetention}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("dataRetention", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b border-gray-200 focus:border-primary focus:outline-none bg-transparent ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className="settings-select"
                 >
                   <option value="1year">1 Year</option>
                   <option value="2years">2 Years</option>
@@ -297,20 +297,21 @@ const SettingsView = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between py-3">
+            <div className="settings-toggle-wrapper">
               <div>
                 <p className="font-medium text-gray-900">Automatic backups</p>
                 <p className="text-sm text-gray-500">Daily data backup</p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
+              <label className="settings-toggle-label">
                 <input
                   type="checkbox"
                   checked={settings.autoBackup}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("autoBackup", e.target.checked)}
-                  className="sr-only peer"
+                  className="settings-toggle-input"
+                  aria-label="Automatic backups"
                 />
-                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/25 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                <div className="settings-toggle-slider"></div>
               </label>
             </div>
           </div>
@@ -318,71 +319,67 @@ const SettingsView = () => {
 
       case "security":
         return (
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Current Password</label>
-                <input
-                  type="password"
-                  value={settings.currentPassword}
-                  disabled={isSaving}
-                  onChange={(e) => updateSetting("currentPassword", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${errors.currentPassword ? 'border-red-500' : 'border-gray-200'
-                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  placeholder="Enter current password"
-                />
-                {errors.currentPassword && <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
-                  <AlertCircle size={12} /> {errors.currentPassword}
-                </p>}
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">New Password</label>
-                <input
-                  type="password"
-                  value={settings.newPassword}
-                  disabled={isSaving}
-                  onChange={(e) => updateSetting("newPassword", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${errors.newPassword ? 'border-red-500' : 'border-gray-200'
-                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  placeholder="Enter new password"
-                />
-                {errors.newPassword && <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
-                  <AlertCircle size={12} /> {errors.newPassword}
-                </p>}
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-700">Confirm Password</label>
-                <input
-                  type="password"
-                  value={settings.confirmPassword}
-                  disabled={isSaving}
-                  onChange={(e) => updateSetting("confirmPassword", e.target.value)}
-                  className={`w-full px-0 py-2 border-0 border-b focus:border-primary focus:outline-none bg-transparent ${errors.confirmPassword ? 'border-red-500' : 'border-gray-200'
-                    } ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  placeholder="Confirm new password"
-                />
-                {errors.confirmPassword && <p className="text-xs text-red-500 mt-1 flex items-center gap-1">
-                  <AlertCircle size={12} /> {errors.confirmPassword}
-                </p>}
-              </div>
+          <div className="settings-section">
+            <div className="settings-form-group">
+              <label className="settings-label">Current Password</label>
+              <input
+                type="password"
+                value={settings.currentPassword}
+                disabled={isSaving}
+                onChange={(e) => updateSetting("currentPassword", e.target.value)}
+                className={`settings-input ${errors.currentPassword ? 'error' : ''}`}
+                placeholder="Enter current password"
+              />
+              {errors.currentPassword && <p className="settings-error-message">
+                <AlertCircle size={12} /> {errors.currentPassword}
+              </p>}
             </div>
 
-            <div className="flex items-center justify-between py-3">
+            <div className="settings-form-group">
+              <label className="settings-label">New Password</label>
+              <input
+                type="password"
+                value={settings.newPassword}
+                disabled={isSaving}
+                onChange={(e) => updateSetting("newPassword", e.target.value)}
+                className={`settings-input ${errors.newPassword ? 'error' : ''}`}
+                placeholder="Enter new password"
+              />
+              {errors.newPassword && <p className="settings-error-message">
+                <AlertCircle size={12} /> {errors.newPassword}
+              </p>}
+            </div>
+
+            <div className="settings-form-group">
+              <label className="settings-label">Confirm Password</label>
+              <input
+                type="password"
+                value={settings.confirmPassword}
+                disabled={isSaving}
+                onChange={(e) => updateSetting("confirmPassword", e.target.value)}
+                className={`settings-input ${errors.confirmPassword ? 'error' : ''}`}
+                placeholder="Confirm new password"
+              />
+              {errors.confirmPassword && <p className="settings-error-message">
+                <AlertCircle size={12} /> {errors.confirmPassword}
+              </p>}
+            </div>
+
+            <div className="settings-toggle-wrapper">
               <div>
                 <p className="font-medium text-gray-900">Two-factor authentication</p>
                 <p className="text-sm text-gray-500">Extra security layer</p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
+              <label className="settings-toggle-label">
                 <input
                   type="checkbox"
                   checked={settings.twoFactorAuth}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("twoFactorAuth", e.target.checked)}
-                  className="sr-only peer"
+                  className="settings-toggle-input"
+                  aria-label="Two-factor authentication"
                 />
-                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/25 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+                <div className="settings-toggle-slider"></div>
               </label>
             </div>
           </div>
@@ -396,21 +393,18 @@ const SettingsView = () => {
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200 mb-12">
-        <nav className="flex space-x-8">
+      <div className="settings-tabs">
+        <nav className="settings-tabs-nav">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 py-3 px-2 border-b-2 font-medium text-sm transition-colors ${activeTab === tab.id
-                  ? "border-primary text-primary"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                  }`}
+                className={`settings-tab-button ${activeTab === tab.id ? 'active' : ''}`}
               >
                 <Icon size={20} />
-                <span className="min-w-0">{tab.label}</span>
+                <span>{tab.label}</span>
               </button>
             );
           })}
@@ -418,18 +412,15 @@ const SettingsView = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-2xl">
+      <div className="settings-content animate-fade-in">
         {renderTabContent()}
 
         {/* Save Button */}
-        <div className="flex justify-end mt-8 pt-6 border-t border-gray-200">
+        <div className="settings-save-section">
           <button
             onClick={saveSettings}
             disabled={isSaving}
-            className={`flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors ${isSaving
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-primary hover:bg-primary/90'
-              } text-white`}
+            className="settings-save-button"
           >
             <Save size={16} />
             {isSaving ? 'Saving...' : 'Save Changes'}
