@@ -14,10 +14,10 @@ const Sidebar = ({ activeTab, onTabChange }) => {
     <aside className="sidebar">
       <div className="sidebar-header">
         <div className="brand-logo">
-          <span className="text-xl font-bold">S</span>
+          <span className="text-xl font-bold">A</span>
         </div>
         <h1 className="brand-name">
-          Staffly
+          Aurora
         </h1>
       </div>
 
@@ -47,7 +47,7 @@ const Sidebar = ({ activeTab, onTabChange }) => {
           </div>
           <div className="user-info-sidebar">
             <span className="user-name-sidebar">Sunil Kumar</span>
-            <span className="user-email-sidebar">sunil.kumar@staffly.com</span>
+            <span className="user-email-sidebar">sunil.kumar@aurora.app</span>
           </div>
           <LogOut size={16} className="ml-auto text-gray-400 hover:text-red-500 transition-colors cursor-pointer" />
         </div>
