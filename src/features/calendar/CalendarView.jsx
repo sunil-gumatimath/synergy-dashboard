@@ -4,6 +4,7 @@ import {
     isSameMonth, isSameDay, isToday, addDays
 } from 'date-fns';
 import { ChevronLeft, ChevronRight, MapPin, Plus } from 'lucide-react';
+import './calendar-styles.css';
 
 const CalendarView = () => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -17,7 +18,7 @@ const CalendarView = () => {
             date: new Date(),
             time: "10:00 AM",
             type: "meeting",
-            color: "bg-indigo-100 text-indigo-700 border-indigo-200"
+            colorClass: "event-meeting"
         },
         {
             id: 2,
@@ -25,7 +26,7 @@ const CalendarView = () => {
             date: new Date(),
             time: "2:00 PM",
             type: "work",
-            color: "bg-purple-100 text-purple-700 border-purple-200"
+            colorClass: "event-work"
         },
         {
             id: 3,
@@ -33,7 +34,7 @@ const CalendarView = () => {
             date: addDays(new Date(), 2),
             time: "11:30 AM",
             type: "client",
-            color: "bg-orange-100 text-orange-700 border-orange-200"
+            colorClass: "event-client"
         },
         {
             id: 4,
@@ -41,7 +42,7 @@ const CalendarView = () => {
             date: addDays(new Date(), 5),
             time: "1:00 PM",
             type: "workshop",
-            color: "bg-pink-100 text-pink-700 border-pink-200"
+            colorClass: "event-workshop"
         }
     ];
 
@@ -51,30 +52,28 @@ const CalendarView = () => {
 
     const renderHeader = () => {
         return (
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-900">
-                        {format(currentMonth, 'MMMM yyyy')}
-                    </h2>
-                    <p className="text-gray-500 text-sm mt-1">Manage your schedule and events</p>
+            <div className="calendar-header">
+                <div className="calendar-header-title">
+                    <h2>{format(currentMonth, 'MMMM yyyy')}</h2>
+                    <p>Manage your schedule and events</p>
                 </div>
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    <div className="flex items-center bg-white rounded-xl border border-gray-200 p-1 shadow-sm">
-                        <button type="button" onClick={prevMonth} className="p-2.5 hover:bg-gray-50 rounded-lg text-gray-600 transition-colors">
+                <div className="calendar-header-actions">
+                    <div className="calendar-nav">
+                        <button type="button" onClick={prevMonth} className="calendar-nav-button">
                             <ChevronLeft size={20} />
                         </button>
                         <button
                             type="button"
                             onClick={() => setCurrentMonth(new Date())}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 border-x border-gray-200 transition-colors"
+                            className="calendar-nav-today"
                         >
                             Today
                         </button>
-                        <button type="button" onClick={nextMonth} className="p-2.5 hover:bg-gray-50 rounded-lg text-gray-600 transition-colors">
+                        <button type="button" onClick={nextMonth} className="calendar-nav-button">
                             <ChevronRight size={20} />
                         </button>
                     </div>
-                    <button type="button" className="btn btn-primary shadow-sm">
+                    <button type="button" className="btn btn-primary">
                         <Plus size={18} />
                         <span>Add Event</span>
                     </button>
@@ -90,12 +89,12 @@ const CalendarView = () => {
 
         for (let i = 0; i < 7; i++) {
             days.push(
-                <div key={i} className="text-center text-[11px] font-semibold text-gray-500 py-3 tracking-[0.2em] uppercase">
+                <div key={i} className="calendar-weekday">
                     {format(addDays(startDate, i), dateFormat)}
                 </div>
             );
         }
-        return <div className="grid grid-cols-7 border-b border-gray-100 bg-gray-50/60">{days}</div>;
+        return <div className="calendar-weekdays">{days}</div>;
     };
 
     const renderCells = () => {
@@ -116,6 +115,13 @@ const CalendarView = () => {
             const isCurrentMonth = isSameMonth(day, monthStart);
             const today = isToday(day);
 
+            const dayClasses = [
+                'calendar-day',
+                !isCurrentMonth && 'not-current-month',
+                isSelected && 'selected',
+                today && 'today'
+            ].filter(Boolean).join(' ');
+
             cells.push(
                 <div
                     key={cloneDay.toISOString()}
@@ -128,30 +134,23 @@ const CalendarView = () => {
                             onDateClick(cloneDay);
                         }
                     }}
-                    className={`relative group min-h-[120px] p-3 border border-gray-100 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2
-              ${!isCurrentMonth ? "bg-gray-50/70 text-gray-400" : "bg-white"}
-              ${isSelected ? "ring-1 ring-indigo-300 shadow-sm" : "hover:bg-gray-50"}
-              ${today ? "bg-indigo-50/40" : ""}
-            `}
+                    className={dayClasses}
                     aria-pressed={isSelected}
                 >
-                    <div className="flex justify-between items-start mb-2">
-                        <span className={`text-sm font-semibold w-8 h-8 flex items-center justify-center rounded-full transition-colors
-                ${today ? "bg-indigo-600 text-white shadow-md" : "text-gray-700"}
-                ${isSelected && !today ? "bg-indigo-100 text-indigo-700" : ""}
-              `}>
+                    <div className="calendar-day-header">
+                        <span className="calendar-day-number">
                             {formattedDate}
                         </span>
                         {dayEvents.length > 0 && (
-                            <span className="text-[11px] font-medium text-gray-400">{dayEvents.length} evt</span>
+                            <span className="calendar-day-event-count">{dayEvents.length} evt</span>
                         )}
                     </div>
 
-                    <div className="space-y-1.5">
+                    <div className="calendar-day-events">
                         {dayEvents.map((event) => (
                             <div
                                 key={event.id}
-                                className={`text-xs px-2 py-1 rounded border truncate ${event.color}`}
+                                className={`calendar-event ${event.colorClass}`}
                             >
                                 {event.time} - {event.title}
                             </div>
@@ -160,7 +159,7 @@ const CalendarView = () => {
 
                     <button
                         type="button"
-                        className="absolute bottom-3 right-3 p-1.5 rounded-full bg-indigo-50 text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-indigo-100"
+                        className="calendar-day-add-button"
                         aria-label="Add event"
                     >
                         <Plus size={14} />
@@ -171,7 +170,7 @@ const CalendarView = () => {
         }
 
         return (
-            <div className="grid grid-cols-7">
+            <div className="calendar-days">
                 {cells}
             </div>
         );
@@ -181,27 +180,23 @@ const CalendarView = () => {
         const selectedDayEvents = events.filter(e => isSameDay(e.date, selectedDate));
 
         return (
-            <div className="space-y-6">
-                <div>
-                    <h3 className="text-lg font-bold text-gray-900">
-                        {format(selectedDate, 'EEEE, MMMM do')}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                        {selectedDayEvents.length} events scheduled
-                    </p>
+            <div className="calendar-sidebar">
+                <div className="calendar-sidebar-header">
+                    <h3>{format(selectedDate, 'EEEE, MMMM do')}</h3>
+                    <p>{selectedDayEvents.length} events scheduled</p>
                 </div>
 
-                <div className="space-y-4">
+                <div className="calendar-sidebar-events">
                     {selectedDayEvents.length > 0 ? (
                         selectedDayEvents.map(event => (
-                            <div key={event.id} className="flex flex-col gap-1">
-                                <div className="text-xs font-semibold text-gray-500 mb-1">
+                            <div key={event.id} className="calendar-event-card">
+                                <div className="calendar-event-time">
                                     {event.time}
                                 </div>
-                                <div className={`p-5 rounded-xl border ${event.color}`}>
-                                    <div className="px-1">
-                                        <h4 className="font-bold text-sm text-gray-900 mb-1.5">{event.title}</h4>
-                                        <div className="flex items-center gap-1.5 text-xs opacity-75">
+                                <div className={`calendar-event-details ${event.colorClass}`}>
+                                    <div>
+                                        <h4>{event.title}</h4>
+                                        <div className="calendar-event-location">
                                             <MapPin size={12} />
                                             <span>Conference Room A</span>
                                         </div>
@@ -210,11 +205,9 @@ const CalendarView = () => {
                             </div>
                         ))
                     ) : (
-                        <div className="text-center py-10 text-gray-400 rounded-xl border border-dashed border-gray-200">
-                            <p className="text-sm">No events scheduled</p>
-                            <button type="button" className="mt-3 text-xs font-medium text-indigo-600 hover:text-indigo-700">
-                                + Add Event
-                            </button>
+                        <div className="calendar-empty-state">
+                            <p>No events scheduled</p>
+                            <button type="button">+ Add Event</button>
                         </div>
                     )}
                 </div>
@@ -227,16 +220,16 @@ const CalendarView = () => {
             <div className="card">
                 {renderHeader()}
             </div>
-            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr),320px] gap-6 items-start">
+            <div className="calendar-layout">
                 <div className="card p-0">
-                    <div className="overflow-x-auto">
-                        <div className="min-w-[720px]">
+                    <div className="calendar-grid-wrapper">
+                        <div className="calendar-grid-container">
                             {renderDays()}
                             {renderCells()}
                         </div>
                     </div>
                 </div>
-                <div className="card sticky top-6 p-8">
+                <div className="card p-8">
                     {renderSidebar()}
                 </div>
             </div>
