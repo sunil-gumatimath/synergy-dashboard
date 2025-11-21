@@ -184,20 +184,24 @@ aurora-emp-management/
 │   ├── index.css            # Global styles and design system
 │   └── main.jsx             # Entry point
 │
-├── .agent/                  # Documentation and implementation guides
-│   ├── settings-style-review.md
-│   ├── settings-implementation-complete.md
-│   ├── calendar-implementation-complete.md
-│   ├── analytics-implementation-complete.md
-│   ├── sidebar-implementation-complete.md
-│   └── aurora-rebrand-complete.md
-│
-├── index.html               # HTML entry point
-├── package.json             # Dependencies and scripts
-├── vite.config.js           # Vite configuration
-├── tailwind.config.js       # Tailwind configuration
 └── README.md                # This file
 ```
+
+## 🔄 Recent Updates
+
+### **v1.1.0 - Polish & Refinement**
+- **UI/UX Improvements**:
+  - Implemented a sharp, premium design language (removed rounded corners).
+  - Fixed sidebar toggle responsiveness across Desktop, Tablet, and Mobile.
+  - Refined input field styling in Settings for better visibility and focus states.
+- **Localization**:
+  - Updated default employee and profile names to Indian Hindu context.
+- **Code Quality**:
+  - Comprehensive code cleanup: removed unused styles, console logs, and TODOs.
+  - Added `PropTypes` validation for better type safety.
+  - Standardized formatting and removed stale documentation.
+- **Performance**:
+  - Optimized component rendering and removed unused assets.
 
 ## 🎯 Key Features Breakdown
 
