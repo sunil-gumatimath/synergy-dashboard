@@ -167,6 +167,7 @@ button {
 .sidebar-container {
   position: relative;
   display: flex;
+  overflow: visible;
 }
 
 /* Sidebar */
@@ -192,32 +193,32 @@ button {
 /* Collapse Toggle Button */
 .sidebar-collapse-toggle {
   position: absolute;
-  right: -12px;
+  right: -14px;
   top: 1.5rem;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   background: var(--primary);
   color: white;
-  border: 2px solid var(--bg-sidebar);
+  border: 3px solid white;
   border-radius: var(--radius-full);
   display: none;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  z-index: 10;
-  box-shadow: var(--shadow-sm);
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Adjust position when sidebar is collapsed */
 .sidebar.collapsed .sidebar-collapse-toggle {
-  right: -12px;
+  right: -14px;
 }
 
 .sidebar-collapse-toggle:hover {
   background: var(--primary-hover);
-  transform: scale(1.1);
-  box-shadow: var(--shadow-md);
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
 }
 
 .sidebar-collapse-toggle:active {
