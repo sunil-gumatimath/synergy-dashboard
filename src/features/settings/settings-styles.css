@@ -173,6 +173,16 @@
     cursor: not-allowed;
 }
 
+.settings-toggle-text-label {
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.settings-toggle-text-desc {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
 /* Profile Section */
 .settings-profile-header {
     display: flex;
