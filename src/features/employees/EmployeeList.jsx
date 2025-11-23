@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { UserPlus, Users, RefreshCw } from "lucide-react";
 import "./employees-styles.css";
 import { employeeService } from "../../services/employeeService";
@@ -6,10 +6,12 @@ import AddEmployeeModal from "../../components/AddEmployeeModal";
 import EditEmployeeModal from "../../components/EditEmployeeModal";
 import ConfirmModal from "../../components/ConfirmModal";
 import Toast from "../../components/Toast";
+import EmployeeCard from "../../components/EmployeeCard";
 
 const EmployeeList = () => {
 	const [employees, setEmployees] = useState([]);
 	const [searchTerm, setSearchTerm] = useState("");
+	const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	const [isRefreshing, setIsRefreshing] = useState(false);
 	const [actionLoading, setActionLoading] = useState(false);
@@ -23,12 +25,21 @@ const EmployeeList = () => {
 	// Toast state
 	const [toast, setToast] = useState(null);
 
+	// Debounce search term to reduce re-renders
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			setDebouncedSearchTerm(searchTerm);
+		}, 300); // 300ms debounce
+
+		return () => clearTimeout(timer);
+	}, [searchTerm]);
+
 	// Fetch employees on mount
 	useEffect(() => {
 		fetchEmployees();
 	}, []);
 
-	const fetchEmployees = async (showRefresh = false) => {
+	const fetchEmployees = useCallback(async (showRefresh = false) => {
 		if (showRefresh) {
 			setIsRefreshing(true);
 		} else {
@@ -49,11 +60,13 @@ const EmployeeList = () => {
 
 		setIsLoading(false);
 		setIsRefreshing(false);
-	};
+	}, []);
 
-	// Search/filter employees
+	// Search/filter employees with debounced search term
 	const filteredEmployees = useMemo(() => {
-		const term = searchTerm.toLowerCase();
+		if (!debouncedSearchTerm) return employees;
+
+		const term = debouncedSearchTerm.toLowerCase();
 		return employees.filter(
 			(emp) =>
 				emp.name.toLowerCase().includes(term) ||
@@ -61,10 +74,10 @@ const EmployeeList = () => {
 				emp.department.toLowerCase().includes(term) ||
 				emp.email.toLowerCase().includes(term),
 		);
-	}, [searchTerm, employees]);
+	}, [debouncedSearchTerm, employees]);
 
-	// Add employee
-	const handleAddEmployee = async (employeeData) => {
+	// Add employee - memoized to prevent re-creation
+	const handleAddEmployee = useCallback(async (employeeData) => {
 		setActionLoading(true);
 
 		const { data, error } = await employeeService.create(employeeData);
@@ -84,10 +97,10 @@ const EmployeeList = () => {
 		}
 
 		setActionLoading(false);
-	};
+	}, [fetchEmployees]);
 
-	// Edit employee
-	const handleEditEmployee = async (id, updates) => {
+	// Edit employee - memoized
+	const handleEditEmployee = useCallback(async (id, updates) => {
 		setActionLoading(true);
 
 		const { data, error } = await employeeService.update(id, updates);
@@ -108,10 +121,10 @@ const EmployeeList = () => {
 		}
 
 		setActionLoading(false);
-	};
+	}, [fetchEmployees]);
 
-	// Delete employee
-	const handleDeleteEmployee = async () => {
+	// Delete employee - memoized
+	const handleDeleteEmployee = useCallback(async () => {
 		if (!selectedEmployee) return;
 
 		setActionLoading(true);
@@ -134,30 +147,19 @@ const EmployeeList = () => {
 		}
 
 		setActionLoading(false);
-	};
+	}, [selectedEmployee, fetchEmployees]);
 
-	// Open edit modal
-	const openEditModal = (employee) => {
+	// Open edit modal - memoized to prevent re-creation
+	const openEditModal = useCallback((employee) => {
 		setSelectedEmployee(employee);
 		setShowEditModal(true);
-	};
+	}, []);
 
-	// Open delete confirmation
-	const openDeleteModal = (employee) => {
+	// Open delete confirmation - memoized
+	const openDeleteModal = useCallback((employee) => {
 		setSelectedEmployee(employee);
 		setShowDeleteModal(true);
-	};
-
-	const getStatusClass = (status) => {
-		switch (status) {
-			case "Active":
-				return "active";
-			case "On Leave":
-				return "leave";
-			default:
-				return "offline";
-		}
-	};
+	}, []);
 
 	if (isLoading) {
 		return (
@@ -206,54 +208,12 @@ const EmployeeList = () => {
 			{filteredEmployees.length > 0 ? (
 				<div className="employees-grid">
 					{filteredEmployees.map((employee) => (
-						<div key={employee.id} className="card employee-card">
-							<div className="employee-card-header">
-								<div className="employee-info">
-									<img
-										src={employee.avatar}
-										alt={employee.name}
-										className="employee-avatar"
-									/>
-									<div className="employee-details">
-										<h3>{employee.name}</h3>
-										<p>{employee.role}</p>
-									</div>
-								</div>
-								<span
-									className={`employee-status-badge ${getStatusClass(employee.status)}`}
-								>
-									{employee.status}
-								</span>
-							</div>
-
-							<div className="employee-meta">
-								<div className="employee-meta-row">
-									<span className="employee-meta-label">Department</span>
-									<span className="employee-meta-value">{employee.department}</span>
-								</div>
-								<div className="employee-meta-row">
-									<span className="employee-meta-label">Email</span>
-									<span className="employee-meta-value">{employee.email}</span>
-								</div>
-							</div>
-
-							<div className="employee-actions">
-								<button
-									type="button"
-									className="employee-action-btn"
-									onClick={() => openEditModal(employee)}
-								>
-									Edit
-								</button>
-								<button
-									type="button"
-									className="employee-action-btn danger"
-									onClick={() => openDeleteModal(employee)}
-								>
-									Delete
-								</button>
-							</div>
-						</div>
+						<EmployeeCard
+							key={employee.id}
+							employee={employee}
+							onEdit={openEditModal}
+							onDelete={openDeleteModal}
+						/>
 					))}
 				</div>
 			) : (
