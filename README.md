@@ -25,7 +25,7 @@ A modern, responsive employee management dashboard built with React, Vite, and T
 ```bash
 # Clone the repository
 git clone https://github.com/sunil-gumatimath/emp-management-vibecode.git
-cd aurora-emp-management
+cd react-browser
 
 # Install dependencies
 bun install
