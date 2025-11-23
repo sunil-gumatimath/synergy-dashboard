@@ -1,18 +1,26 @@
-import React from 'react';
-import { CheckCircle } from 'lucide-react';
+import React from "react";
+import { CheckCircle } from "lucide-react";
 
 const ProfileCompletionBar = ({ profile }) => {
   const checks = [
-    { key: 'fullName', label: 'Full name', complete: profile.fullName?.length > 0 },
-    { key: 'email', label: 'Email', complete: profile.email?.length > 0 },
-    { key: 'phone', label: 'Phone number', complete: profile.phone?.length > 0 },
-    { key: 'bio', label: 'Bio', complete: profile.bio?.length > 20 },
-    { key: 'avatar', label: 'Profile photo', complete: true }
+    {
+      key: "fullName",
+      label: "Full name",
+      complete: profile.fullName?.length > 0,
+    },
+    { key: "email", label: "Email", complete: profile.email?.length > 0 },
+    {
+      key: "phone",
+      label: "Phone number",
+      complete: profile.phone?.length > 0,
+    },
+    { key: "bio", label: "Bio", complete: profile.bio?.length > 20 },
+    { key: "avatar", label: "Profile photo", complete: true },
   ];
 
-  const completedCount = checks.filter(check => check.complete).length;
+  const completedCount = checks.filter((check) => check.complete).length;
   const percentage = (completedCount / checks.length) * 100;
-  const missingItems = checks.filter(check => !check.complete);
+  const missingItems = checks.filter((check) => !check.complete);
 
   if (percentage === 100) {
     return (
@@ -22,8 +30,12 @@ const ProfileCompletionBar = ({ profile }) => {
             <CheckCircle className="text-emerald-600" size={20} />
           </div>
           <div>
-            <h4 className="text-sm font-semibold text-emerald-900">Profile complete!</h4>
-            <p className="text-sm text-emerald-700 mt-0.5">Your profile is 100% complete</p>
+            <h4 className="text-sm font-semibold text-emerald-900">
+              Profile complete!
+            </h4>
+            <p className="text-sm text-emerald-700 mt-0.5">
+              Your profile is 100% complete
+            </p>
           </div>
         </div>
       </div>
@@ -43,7 +55,9 @@ const ProfileCompletionBar = ({ profile }) => {
               : `Complete ${missingItems.length} more items`}
           </p>
         </div>
-        <span className="text-lg font-bold text-indigo-600">{Math.round(percentage)}%</span>
+        <span className="text-lg font-bold text-indigo-600">
+          {Math.round(percentage)}%
+        </span>
       </div>
 
       <div className="relative h-2 bg-indigo-100 rounded-none overflow-hidden">
