@@ -50,8 +50,10 @@
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-md:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
   /* Radius */
   --radius-sm: 0;
@@ -68,7 +70,11 @@
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
   background-color: var(--bg-body);
   color: var(--text-main);
   line-height: 1.5;
@@ -189,7 +195,6 @@ button {
   width: 5rem;
 }
 
-
 /* Collapse Toggle Button */
 .sidebar-collapse-toggle {
   position: absolute;
@@ -224,7 +229,6 @@ button {
 .sidebar-collapse-toggle:active {
   transform: scale(0.95);
 }
-
 
 .sidebar-header {
   padding: var(--space-lg) var(--space-xl);
@@ -338,7 +342,7 @@ button {
 }
 
 .nav-item.active::before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 0;
@@ -543,7 +547,6 @@ button {
   }
 }
 
-
 @media (max-width: 640px) {
   .sidebar {
     width: 16rem;
@@ -571,8 +574,6 @@ button {
   }
 }
 
-
-
 /* Stats */
 .stats-grid {
   display: grid;
@@ -588,7 +589,9 @@ button {
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
 }
 
 .card:hover {
@@ -654,7 +657,9 @@ button {
   background: var(--bg-surface);
   color: var(--text-main);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .search-input:focus {
@@ -825,7 +830,9 @@ button {
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   width: 100%;
   max-width: 640px;
   max-height: 90vh;
