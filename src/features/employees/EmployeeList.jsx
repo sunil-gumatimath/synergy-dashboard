@@ -9,271 +9,284 @@ import Toast from "../../components/Toast";
 import EmployeeCard from "../../components/EmployeeCard";
 
 const EmployeeList = () => {
-	const [employees, setEmployees] = useState([]);
-	const [searchTerm, setSearchTerm] = useState("");
-	const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-	const [isLoading, setIsLoading] = useState(true);
-	const [isRefreshing, setIsRefreshing] = useState(false);
-	const [actionLoading, setActionLoading] = useState(false);
+  const [employees, setEmployees] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
-	// Modal states
-	const [showAddModal, setShowAddModal] = useState(false);
-	const [showEditModal, setShowEditModal] = useState(false);
-	const [showDeleteModal, setShowDeleteModal] = useState(false);
-	const [selectedEmployee, setSelectedEmployee] = useState(null);
+  // Modal states
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-	// Toast state
-	const [toast, setToast] = useState(null);
+  // Toast state
+  const [toast, setToast] = useState(null);
 
-	// Debounce search term to reduce re-renders
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			setDebouncedSearchTerm(searchTerm);
-		}, 300); // 300ms debounce
+  // Debounce search term to reduce re-renders
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300); // 300ms debounce
 
-		return () => clearTimeout(timer);
-	}, [searchTerm]);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
-	// Fetch employees on mount
-	useEffect(() => {
-		fetchEmployees();
-	}, []);
+  // Fetch employees on mount
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
 
-	const fetchEmployees = useCallback(async (showRefresh = false) => {
-		if (showRefresh) {
-			setIsRefreshing(true);
-		} else {
-			setIsLoading(true);
-		}
+  const fetchEmployees = useCallback(async (showRefresh = false) => {
+    if (showRefresh) {
+      setIsRefreshing(true);
+    } else {
+      setIsLoading(true);
+    }
 
-		const { data, error } = await employeeService.getAll();
+    const { data, error } = await employeeService.getAll();
 
-		if (error) {
-			setToast({
-				type: 'error',
-				message: 'Failed to load employees. Please try again.'
-			});
-			setEmployees([]);
-		} else {
-			setEmployees(data || []);
-		}
+    if (error) {
+      setToast({
+        type: "error",
+        message: "Failed to load employees. Please try again.",
+      });
+      setEmployees([]);
+    } else {
+      setEmployees(data || []);
+    }
 
-		setIsLoading(false);
-		setIsRefreshing(false);
-	}, []);
+    setIsLoading(false);
+    setIsRefreshing(false);
+  }, []);
 
-	// Search/filter employees with debounced search term
-	const filteredEmployees = useMemo(() => {
-		if (!debouncedSearchTerm) return employees;
+  // Search/filter employees with debounced search term
+  const filteredEmployees = useMemo(() => {
+    if (!debouncedSearchTerm) return employees;
 
-		const term = debouncedSearchTerm.toLowerCase();
-		return employees.filter(
-			(emp) =>
-				emp.name.toLowerCase().includes(term) ||
-				emp.role.toLowerCase().includes(term) ||
-				emp.department.toLowerCase().includes(term) ||
-				emp.email.toLowerCase().includes(term),
-		);
-	}, [debouncedSearchTerm, employees]);
+    const term = debouncedSearchTerm.toLowerCase();
+    return employees.filter(
+      (emp) =>
+        emp.name.toLowerCase().includes(term) ||
+        emp.role.toLowerCase().includes(term) ||
+        emp.department.toLowerCase().includes(term) ||
+        emp.email.toLowerCase().includes(term),
+    );
+  }, [debouncedSearchTerm, employees]);
 
-	// Add employee - memoized to prevent re-creation
-	const handleAddEmployee = useCallback(async (employeeData) => {
-		setActionLoading(true);
+  // Add employee - memoized to prevent re-creation
+  const handleAddEmployee = useCallback(
+    async (employeeData) => {
+      setActionLoading(true);
 
-		const { data, error } = await employeeService.create(employeeData);
+      const { data, error } = await employeeService.create(employeeData);
 
-		if (error) {
-			setToast({
-				type: 'error',
-				message: error.message || 'Failed to add employee. Please try again.'
-			});
-		} else {
-			setToast({
-				type: 'success',
-				message: `${data.name} has been added successfully!`
-			});
-			setShowAddModal(false);
-			fetchEmployees();
-		}
+      if (error) {
+        setToast({
+          type: "error",
+          message: error.message || "Failed to add employee. Please try again.",
+        });
+      } else {
+        setToast({
+          type: "success",
+          message: `${data.name} has been added successfully!`,
+        });
+        setShowAddModal(false);
+        fetchEmployees();
+      }
 
-		setActionLoading(false);
-	}, [fetchEmployees]);
+      setActionLoading(false);
+    },
+    [fetchEmployees],
+  );
 
-	// Edit employee - memoized
-	const handleEditEmployee = useCallback(async (id, updates) => {
-		setActionLoading(true);
+  // Edit employee - memoized
+  const handleEditEmployee = useCallback(
+    async (id, updates) => {
+      setActionLoading(true);
 
-		const { data, error } = await employeeService.update(id, updates);
+      const { data, error } = await employeeService.update(id, updates);
 
-		if (error) {
-			setToast({
-				type: 'error',
-				message: error.message || 'Failed to update employee. Please try again.'
-			});
-		} else {
-			setToast({
-				type: 'success',
-				message: `${data.name} has been updated successfully!`
-			});
-			setShowEditModal(false);
-			setSelectedEmployee(null);
-			fetchEmployees();
-		}
+      if (error) {
+        setToast({
+          type: "error",
+          message:
+            error.message || "Failed to update employee. Please try again.",
+        });
+      } else {
+        setToast({
+          type: "success",
+          message: `${data.name} has been updated successfully!`,
+        });
+        setShowEditModal(false);
+        setSelectedEmployee(null);
+        fetchEmployees();
+      }
 
-		setActionLoading(false);
-	}, [fetchEmployees]);
+      setActionLoading(false);
+    },
+    [fetchEmployees],
+  );
 
-	// Delete employee - memoized
-	const handleDeleteEmployee = useCallback(async () => {
-		if (!selectedEmployee) return;
+  // Delete employee - memoized
+  const handleDeleteEmployee = useCallback(async () => {
+    if (!selectedEmployee) return;
 
-		setActionLoading(true);
+    setActionLoading(true);
 
-		const { success, error } = await employeeService.delete(selectedEmployee.id);
+    const { success, error } = await employeeService.delete(
+      selectedEmployee.id,
+    );
 
-		if (error) {
-			setToast({
-				type: 'error',
-				message: error.message || 'Failed to delete employee. Please try again.'
-			});
-		} else {
-			setToast({
-				type: 'success',
-				message: `${selectedEmployee.name} has been removed from the system.`
-			});
-			setShowDeleteModal(false);
-			setSelectedEmployee(null);
-			fetchEmployees();
-		}
+    if (error) {
+      setToast({
+        type: "error",
+        message:
+          error.message || "Failed to delete employee. Please try again.",
+      });
+    } else {
+      setToast({
+        type: "success",
+        message: `${selectedEmployee.name} has been removed from the system.`,
+      });
+      setShowDeleteModal(false);
+      setSelectedEmployee(null);
+      fetchEmployees();
+    }
 
-		setActionLoading(false);
-	}, [selectedEmployee, fetchEmployees]);
+    setActionLoading(false);
+  }, [selectedEmployee, fetchEmployees]);
 
-	// Open edit modal - memoized to prevent re-creation
-	const openEditModal = useCallback((employee) => {
-		setSelectedEmployee(employee);
-		setShowEditModal(true);
-	}, []);
+  // Open edit modal - memoized to prevent re-creation
+  const openEditModal = useCallback((employee) => {
+    setSelectedEmployee(employee);
+    setShowEditModal(true);
+  }, []);
 
-	// Open delete confirmation - memoized
-	const openDeleteModal = useCallback((employee) => {
-		setSelectedEmployee(employee);
-		setShowDeleteModal(true);
-	}, []);
+  // Open delete confirmation - memoized
+  const openDeleteModal = useCallback((employee) => {
+    setSelectedEmployee(employee);
+    setShowDeleteModal(true);
+  }, []);
 
-	if (isLoading) {
-		return (
-			<div className="employees-container">
-				<div className="flex items-center justify-center h-64">
-					<div className="text-center">
-						<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-						<p className="text-gray-500">Loading employees...</p>
-					</div>
-				</div>
-			</div>
-		);
-	}
+  if (isLoading) {
+    return (
+      <div className="employees-container">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-gray-500">Loading employees...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-	return (
-		<div className="employees-container">
-			<div className="employees-header">
-				<input
-					type="text"
-					placeholder="Search employees by name, role, department, or email..."
-					value={searchTerm}
-					onChange={(e) => setSearchTerm(e.target.value)}
-					className="employees-search"
-				/>
-				<div className="flex gap-2">
-					<button
-						type="button"
-						className="btn btn-ghost"
-						onClick={() => fetchEmployees(true)}
-						disabled={isRefreshing}
-						title="Refresh employee list"
-					>
-						<RefreshCw size={18} className={isRefreshing ? 'animate-spin' : ''} />
-					</button>
-					<button
-						type="button"
-						className="btn btn-primary"
-						onClick={() => setShowAddModal(true)}
-					>
-						<UserPlus size={18} />
-						<span>Add Employee</span>
-					</button>
-				</div>
-			</div>
+  return (
+    <div className="employees-container">
+      <div className="employees-header">
+        <input
+          type="text"
+          placeholder="Search employees by name, role, department, or email..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="employees-search"
+        />
+        <div className="flex gap-2">
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => fetchEmployees(true)}
+            disabled={isRefreshing}
+            title="Refresh employee list"
+          >
+            <RefreshCw
+              size={18}
+              className={isRefreshing ? "animate-spin" : ""}
+            />
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setShowAddModal(true)}
+          >
+            <UserPlus size={18} />
+            <span>Add Employee</span>
+          </button>
+        </div>
+      </div>
 
-			{filteredEmployees.length > 0 ? (
-				<div className="employees-grid">
-					{filteredEmployees.map((employee) => (
-						<EmployeeCard
-							key={employee.id}
-							employee={employee}
-							onEdit={openEditModal}
-							onDelete={openDeleteModal}
-						/>
-					))}
-				</div>
-			) : (
-				<div className="card employees-empty">
-					<Users size={64} className="employees-empty-icon" />
-					<h3 className="employees-empty-title">No employees found</h3>
-					<p className="employees-empty-description">
-						{searchTerm
-							? `No employees match "${searchTerm}". Try a different search term.`
-							: "No employees in the system yet. Add your first employee to get started."}
-					</p>
-				</div>
-			)}
+      {filteredEmployees.length > 0 ? (
+        <div className="employees-grid">
+          {filteredEmployees.map((employee) => (
+            <EmployeeCard
+              key={employee.id}
+              employee={employee}
+              onEdit={openEditModal}
+              onDelete={openDeleteModal}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="card employees-empty">
+          <Users size={64} className="employees-empty-icon" />
+          <h3 className="employees-empty-title">No employees found</h3>
+          <p className="employees-empty-description">
+            {searchTerm
+              ? `No employees match "${searchTerm}". Try a different search term.`
+              : "No employees in the system yet. Add your first employee to get started."}
+          </p>
+        </div>
+      )}
 
-			{/* Add Employee Modal */}
-			<AddEmployeeModal
-				isOpen={showAddModal}
-				onClose={() => setShowAddModal(false)}
-				onSubmit={handleAddEmployee}
-				isLoading={actionLoading}
-			/>
+      {/* Add Employee Modal */}
+      <AddEmployeeModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        onSubmit={handleAddEmployee}
+        isLoading={actionLoading}
+      />
 
-			{/* Edit Employee Modal */}
-			<EditEmployeeModal
-				isOpen={showEditModal}
-				employee={selectedEmployee}
-				onClose={() => {
-					setShowEditModal(false);
-					setSelectedEmployee(null);
-				}}
-				onSubmit={handleEditEmployee}
-				isLoading={actionLoading}
-			/>
+      {/* Edit Employee Modal */}
+      <EditEmployeeModal
+        isOpen={showEditModal}
+        employee={selectedEmployee}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedEmployee(null);
+        }}
+        onSubmit={handleEditEmployee}
+        isLoading={actionLoading}
+      />
 
-			{/* Delete Confirmation Modal */}
-			<ConfirmModal
-				isOpen={showDeleteModal}
-				title="Delete Employee"
-				message={`Are you sure you want to delete ${selectedEmployee?.name}? This action cannot be undone.`}
-				confirmText="Delete"
-				cancelText="Cancel"
-				onConfirm={handleDeleteEmployee}
-				onCancel={() => {
-					setShowDeleteModal(false);
-					setSelectedEmployee(null);
-				}}
-				isLoading={actionLoading}
-				variant="danger"
-			/>
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        title="Delete Employee"
+        message={`Are you sure you want to delete ${selectedEmployee?.name}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteEmployee}
+        onCancel={() => {
+          setShowDeleteModal(false);
+          setSelectedEmployee(null);
+        }}
+        isLoading={actionLoading}
+        variant="danger"
+      />
 
-			{/* Toast Notifications */}
-			{toast && (
-				<Toast
-					type={toast.type}
-					message={toast.message}
-					onClose={() => setToast(null)}
-				/>
-			)}
-		</div>
-	);
+      {/* Toast Notifications */}
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+          onClose={() => setToast(null)}
+        />
+      )}
+    </div>
+  );
 };
 
 export default React.memo(EmployeeList);
