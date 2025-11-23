@@ -5,8 +5,12 @@ import { employees } from "../data/employees";
 const Stats = () => {
   const stats = useMemo(() => {
     const totalEmployees = employees.length;
-    const activeEmployees = employees.filter((e) => e.status === "Active").length;
-    const onLeaveEmployees = employees.filter((e) => e.status === "On Leave").length;
+    const activeEmployees = employees.filter(
+      (e) => e.status === "Active",
+    ).length;
+    const onLeaveEmployees = employees.filter(
+      (e) => e.status === "On Leave",
+    ).length;
     const departments = new Set(employees.map((e) => e.department)).size;
 
     return [
@@ -45,12 +49,13 @@ const Stats = () => {
           <div className="flex items-end justify-between">
             <h3 className="text-2xl font-bold text-main">{stat.value}</h3>
             <span
-              className={`text-xs font-medium px-2 py-0.5 rounded-full ${stat.trend === "up"
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                stat.trend === "up"
                   ? "status-active"
                   : stat.trend === "down"
                     ? "status-leave"
                     : "status-offline"
-                }`}
+              }`}
             >
               {stat.change}
             </span>
