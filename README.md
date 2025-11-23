@@ -49,11 +49,13 @@ bun run build
 
 ```
 src/
-├── components/       # Reusable UI components
-├── features/         # Feature modules (analytics, calendar, employees, settings)
+├── assets/          # Static assets (images, icons)
+├── components/      # Reusable UI components
 ├── data/            # Mock data
+├── features/        # Feature modules (analytics, calendar, employees, settings)
 ├── App.jsx          # Main app component
-└── index.css        # Global styles
+├── main.jsx         # App entry point
+└── index.css        # Global styles & design system
 ```
 
 ## Recent Updates
