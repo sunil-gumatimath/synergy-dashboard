@@ -752,6 +752,12 @@ button {
   margin-top: var(--space-md);
 }
 
+/* Performance Optimization: Content Visibility */
+.employee-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 300px;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {
