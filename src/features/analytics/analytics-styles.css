@@ -2,289 +2,289 @@
 
 /* Layout */
 .analytics-container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
 }
 
 /* Stats Grid */
 .analytics-stats-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-lg);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
 }
 
 @media (min-width: 768px) {
-    .analytics-stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .analytics-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (min-width: 1024px) {
-    .analytics-stats-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
+  .analytics-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 /* Stat Card */
 .analytics-stat-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s ease;
 }
 
 .analytics-stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .analytics-stat-content {
-    flex: 1;
+  flex: 1;
 }
 
 .analytics-stat-label {
-    font-size: 0.875rem;
-    color: var(--text-muted);
-    margin-bottom: var(--space-xs);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-xs);
 }
 
 .analytics-stat-value {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--text-main);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-main);
 }
 
 .analytics-stat-change {
-    font-size: 0.75rem;
-    font-weight: 500;
-    margin-top: var(--space-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: var(--space-sm);
 }
 
 .analytics-stat-change.positive {
-    color: #047857;
+  color: #047857;
 }
 
 .analytics-stat-change.negative {
-    color: #b91c1c;
+  color: #b91c1c;
 }
 
 .analytics-stat-icon {
-    padding: var(--space-md);
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Chart Containers */
 .analytics-charts-row {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-lg);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
 }
 
 @media (min-width: 1024px) {
-    .analytics-charts-row {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .analytics-charts-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .analytics-chart-card {
-    animation: fadeIn 0.4s ease-out;
+  animation: fadeIn 0.4s ease-out;
 }
 
 .analytics-chart-title {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: var(--text-main);
-    margin-bottom: var(--space-lg);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: var(--space-lg);
 }
 
 .analytics-chart-container {
-    height: 320px;
+  height: 320px;
 }
 
 /* Performance Chart Row */
 .analytics-performance-row {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-lg);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
 }
 
 @media (min-width: 1024px) {
-    .analytics-performance-row {
-        grid-template-columns: 2fr 1fr;
-    }
+  .analytics-performance-row {
+    grid-template-columns: 2fr 1fr;
+  }
 }
 
 .analytics-performance-chart {
-    height: 256px;
+  height: 256px;
 }
 
 /* Quick Insights */
 .analytics-insights-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .analytics-insights-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  flex: 1;
 }
 
 .analytics-insight-item {
-    padding: var(--space-md);
-    border: 1px solid;
-    border-radius: var(--radius-md);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-    transition: all 0.2s ease;
+  padding: var(--space-md);
+  border: 1px solid;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  transition: all 0.2s ease;
 }
 
 .analytics-insight-item:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .analytics-insight-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .analytics-insight-label {
-    font-size: 0.875rem;
-    font-weight: 500;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .analytics-insight-badge {
-    font-size: 0.75rem;
-    font-weight: 500;
-    padding: var(--space-xs) var(--space-sm);
-    border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
 }
 
 .analytics-insight-value {
-    font-size: 1rem;
-    font-weight: 700;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 /* Insight Color Variants */
 .analytics-insight-item.primary {
-    background: var(--primary-light);
-    border-color: var(--primary);
+  background: var(--primary-light);
+  border-color: var(--primary);
 }
 
 .analytics-insight-item.primary .analytics-insight-label {
-    color: var(--primary);
+  color: var(--primary);
 }
 
 .analytics-insight-item.primary .analytics-insight-badge {
-    background: var(--primary);
-    color: white;
+  background: var(--primary);
+  color: white;
 }
 
 .analytics-insight-item.primary .analytics-insight-value {
-    color: #312e81;
+  color: #312e81;
 }
 
 .analytics-insight-item.purple {
-    background: #f3e8ff;
-    border-color: #c084fc;
+  background: #f3e8ff;
+  border-color: #c084fc;
 }
 
 .analytics-insight-item.purple .analytics-insight-label {
-    color: #7c3aed;
+  color: #7c3aed;
 }
 
 .analytics-insight-item.purple .analytics-insight-badge {
-    background: #a855f7;
-    color: white;
+  background: #a855f7;
+  color: white;
 }
 
 .analytics-insight-item.purple .analytics-insight-value {
-    color: #581c87;
+  color: #581c87;
 }
 
 .analytics-insight-item.orange {
-    background: #fff7ed;
-    border-color: #fb923c;
+  background: #fff7ed;
+  border-color: #fb923c;
 }
 
 .analytics-insight-item.orange .analytics-insight-label {
-    color: #ea580c;
+  color: #ea580c;
 }
 
 .analytics-insight-item.orange .analytics-insight-badge {
-    background: #f97316;
-    color: white;
+  background: #f97316;
+  color: white;
 }
 
 .analytics-insight-item.orange .analytics-insight-value {
-    color: #7c2d12;
+  color: #7c2d12;
 }
 
 /* Chart Customization */
 .analytics-chart-tooltip {
-    border-radius: var(--radius-md);
-    border: none;
-    box-shadow: var(--shadow-md);
-    padding: var(--space-sm) var(--space-md);
-    background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border: none;
+  box-shadow: var(--shadow-md);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-surface);
 }
 
 /* Animations */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .analytics-stat-card,
 .analytics-chart-card,
 .analytics-insight-item {
-    animation: fadeIn 0.4s ease-out;
+  animation: fadeIn 0.4s ease-out;
 }
 
 /* Stagger animation for stat cards */
 .analytics-stat-card:nth-child(1) {
-    animation-delay: 0s;
+  animation-delay: 0s;
 }
 
 .analytics-stat-card:nth-child(2) {
-    animation-delay: 0.1s;
+  animation-delay: 0.1s;
 }
 
 .analytics-stat-card:nth-child(3) {
-    animation-delay: 0.2s;
+  animation-delay: 0.2s;
 }
 
 .analytics-stat-card:nth-child(4) {
-    animation-delay: 0.3s;
+  animation-delay: 0.3s;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .analytics-stat-value {
-        font-size: 1.25rem;
-    }
+  .analytics-stat-value {
+    font-size: 1.25rem;
+  }
 
-    .analytics-chart-container {
-        height: 280px;
-    }
+  .analytics-chart-container {
+    height: 280px;
+  }
 
-    .analytics-performance-chart {
-        height: 220px;
-    }
+  .analytics-performance-chart {
+    height: 220px;
+  }
 }
