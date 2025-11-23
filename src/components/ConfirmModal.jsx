@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { AlertTriangle, X } from 'lucide-react';
+import React from "react";
+import PropTypes from "prop-types";
+import { AlertTriangle, X } from "lucide-react";
 
 const ConfirmModal = ({
   isOpen,
@@ -8,16 +8,16 @@ const ConfirmModal = ({
   onConfirm,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
-  type = 'danger'
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  type = "danger",
 }) => {
   if (!isOpen) return null;
 
   const typeStyles = {
-    danger: 'bg-red-600 hover:bg-red-700',
-    warning: 'bg-amber-600 hover:bg-amber-700',
-    info: 'bg-indigo-600 hover:bg-indigo-700'
+    danger: "bg-red-600 hover:bg-red-700",
+    warning: "bg-amber-600 hover:bg-amber-700",
+    info: "bg-indigo-600 hover:bg-indigo-700",
   };
 
   return (
@@ -37,12 +37,18 @@ const ConfirmModal = ({
           </button>
 
           <div className="flex items-start gap-4">
-            <div className={`p-3 rounded-none ${type === 'danger' ? 'bg-red-100 text-red-600' : type === 'warning' ? 'bg-amber-100 text-amber-600' : 'bg-indigo-100 text-indigo-600'}`}>
+            <div
+              className={`p-3 rounded-none ${type === "danger" ? "bg-red-100 text-red-600" : type === "warning" ? "bg-amber-100 text-amber-600" : "bg-indigo-100 text-indigo-600"}`}
+            >
               <AlertTriangle size={24} />
             </div>
             <div className="flex-1 pt-1">
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">{title}</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">{message}</p>
+              <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                {title}
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                {message}
+              </p>
             </div>
           </div>
         </div>
@@ -77,7 +83,7 @@ ConfirmModal.propTypes = {
   message: PropTypes.string.isRequired,
   confirmText: PropTypes.string,
   cancelText: PropTypes.string,
-  type: PropTypes.oneOf(['danger', 'warning', 'info']),
+  type: PropTypes.oneOf(["danger", "warning", "info"]),
 };
 
 export default ConfirmModal;
