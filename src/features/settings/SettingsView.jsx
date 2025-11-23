@@ -28,9 +28,9 @@ const SettingsView = () => {
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
-      twoFactorAuth: false
+      twoFactorAuth: false,
     };
-    const saved = localStorage.getItem('userSettings');
+    const saved = localStorage.getItem("userSettings");
     return saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
   });
 
@@ -38,35 +38,37 @@ const SettingsView = () => {
     { id: "profile", label: "Profile", icon: User },
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "system", label: "System", icon: Palette },
-    { id: "security", label: "Security", icon: Shield }
+    { id: "security", label: "Security", icon: Shield },
   ];
 
   // Apply theme changes to document
   useEffect(() => {
     const applyTheme = () => {
       let theme = settings.theme;
-      if (theme === 'auto') {
-        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      if (theme === "auto") {
+        theme = window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
       }
-      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.setAttribute("data-theme", theme);
     };
 
     applyTheme();
 
     // Listen for system theme changes if in auto mode
-    if (settings.theme === 'auto') {
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    if (settings.theme === "auto") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       const handleChange = () => applyTheme();
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
     }
   }, [settings.theme]);
 
   const updateSetting = (field, value) => {
-    setSettings(prev => ({ ...prev, [field]: value }));
+    setSettings((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: "" }));
     }
   };
 
@@ -84,7 +86,11 @@ const SettingsView = () => {
     }
 
     // Security validation (only if any password field is filled)
-    if (settings.newPassword || settings.confirmPassword || settings.currentPassword) {
+    if (
+      settings.newPassword ||
+      settings.confirmPassword ||
+      settings.currentPassword
+    ) {
       if (!settings.currentPassword) {
         newErrors.currentPassword = "Current password is required";
       }
@@ -104,7 +110,10 @@ const SettingsView = () => {
 
   const saveSettings = async () => {
     if (!validateForm()) {
-      setToast({ type: 'error', message: 'Please fix the errors before saving.' });
+      setToast({
+        type: "error",
+        message: "Please fix the errors before saving.",
+      });
       return;
     }
 
@@ -112,7 +121,7 @@ const SettingsView = () => {
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Save to localStorage
       const settingsToSave = { ...settings };
@@ -121,19 +130,22 @@ const SettingsView = () => {
       delete settingsToSave.newPassword;
       delete settingsToSave.confirmPassword;
 
-      localStorage.setItem('userSettings', JSON.stringify(settingsToSave));
+      localStorage.setItem("userSettings", JSON.stringify(settingsToSave));
 
       // Reset password fields
-      setSettings(prev => ({
+      setSettings((prev) => ({
         ...prev,
         currentPassword: "",
         newPassword: "",
-        confirmPassword: ""
+        confirmPassword: "",
       }));
 
-      setToast({ type: 'success', message: 'Settings saved successfully!' });
+      setToast({ type: "success", message: "Settings saved successfully!" });
     } catch {
-      setToast({ type: 'error', message: 'Failed to save settings. Please try again.' });
+      setToast({
+        type: "error",
+        message: "Failed to save settings. Please try again.",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -164,12 +176,14 @@ const SettingsView = () => {
                   value={settings.name}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("name", e.target.value)}
-                  className={`settings-input ${errors.name ? 'error' : ''}`}
+                  className={`settings-input ${errors.name ? "error" : ""}`}
                   placeholder="Enter your full name"
                 />
-                {errors.name && <p className="settings-error-message">
-                  <AlertCircle size={12} /> {errors.name}
-                </p>}
+                {errors.name && (
+                  <p className="settings-error-message">
+                    <AlertCircle size={12} /> {errors.name}
+                  </p>
+                )}
               </div>
 
               <div className="settings-form-group">
@@ -179,12 +193,14 @@ const SettingsView = () => {
                   value={settings.email}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("email", e.target.value)}
-                  className={`settings-input ${errors.email ? 'error' : ''}`}
+                  className={`settings-input ${errors.email ? "error" : ""}`}
                   placeholder="Enter your email"
                 />
-                {errors.email && <p className="settings-error-message">
-                  <AlertCircle size={12} /> {errors.email}
-                </p>}
+                {errors.email && (
+                  <p className="settings-error-message">
+                    <AlertCircle size={12} /> {errors.email}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -206,11 +222,31 @@ const SettingsView = () => {
         return (
           <div className="settings-section">
             {[
-              { key: "emailNotifications", label: "Email notifications", desc: "Receive email updates" },
-              { key: "pushNotifications", label: "Push notifications", desc: "Browser notifications" },
-              { key: "newEmployeeAlerts", label: "New employee alerts", desc: "When employees are added" },
-              { key: "systemUpdates", label: "System updates", desc: "Maintenance notifications" },
-              { key: "weeklyReports", label: "Weekly reports", desc: "Summary reports via email" }
+              {
+                key: "emailNotifications",
+                label: "Email notifications",
+                desc: "Receive email updates",
+              },
+              {
+                key: "pushNotifications",
+                label: "Push notifications",
+                desc: "Browser notifications",
+              },
+              {
+                key: "newEmployeeAlerts",
+                label: "New employee alerts",
+                desc: "When employees are added",
+              },
+              {
+                key: "systemUpdates",
+                label: "System updates",
+                desc: "Maintenance notifications",
+              },
+              {
+                key: "weeklyReports",
+                label: "Weekly reports",
+                desc: "Summary reports via email",
+              },
             ].map(({ key, label, desc }) => (
               <div key={key} className="settings-toggle-wrapper">
                 <div>
@@ -286,7 +322,9 @@ const SettingsView = () => {
                 <select
                   value={settings.dataRetention}
                   disabled={isSaving}
-                  onChange={(e) => updateSetting("dataRetention", e.target.value)}
+                  onChange={(e) =>
+                    updateSetting("dataRetention", e.target.value)
+                  }
                   className="settings-select"
                 >
                   <option value="1year">1 Year</option>
@@ -307,7 +345,9 @@ const SettingsView = () => {
                   type="checkbox"
                   checked={settings.autoBackup}
                   disabled={isSaving}
-                  onChange={(e) => updateSetting("autoBackup", e.target.checked)}
+                  onChange={(e) =>
+                    updateSetting("autoBackup", e.target.checked)
+                  }
                   className="settings-toggle-input"
                   aria-label="Automatic backups"
                 />
@@ -326,13 +366,17 @@ const SettingsView = () => {
                 type="password"
                 value={settings.currentPassword}
                 disabled={isSaving}
-                onChange={(e) => updateSetting("currentPassword", e.target.value)}
-                className={`settings-input ${errors.currentPassword ? 'error' : ''}`}
+                onChange={(e) =>
+                  updateSetting("currentPassword", e.target.value)
+                }
+                className={`settings-input ${errors.currentPassword ? "error" : ""}`}
                 placeholder="Enter current password"
               />
-              {errors.currentPassword && <p className="settings-error-message">
-                <AlertCircle size={12} /> {errors.currentPassword}
-              </p>}
+              {errors.currentPassword && (
+                <p className="settings-error-message">
+                  <AlertCircle size={12} /> {errors.currentPassword}
+                </p>
+              )}
             </div>
 
             <div className="settings-form-group">
@@ -342,12 +386,14 @@ const SettingsView = () => {
                 value={settings.newPassword}
                 disabled={isSaving}
                 onChange={(e) => updateSetting("newPassword", e.target.value)}
-                className={`settings-input ${errors.newPassword ? 'error' : ''}`}
+                className={`settings-input ${errors.newPassword ? "error" : ""}`}
                 placeholder="Enter new password"
               />
-              {errors.newPassword && <p className="settings-error-message">
-                <AlertCircle size={12} /> {errors.newPassword}
-              </p>}
+              {errors.newPassword && (
+                <p className="settings-error-message">
+                  <AlertCircle size={12} /> {errors.newPassword}
+                </p>
+              )}
             </div>
 
             <div className="settings-form-group">
@@ -356,18 +402,24 @@ const SettingsView = () => {
                 type="password"
                 value={settings.confirmPassword}
                 disabled={isSaving}
-                onChange={(e) => updateSetting("confirmPassword", e.target.value)}
-                className={`settings-input ${errors.confirmPassword ? 'error' : ''}`}
+                onChange={(e) =>
+                  updateSetting("confirmPassword", e.target.value)
+                }
+                className={`settings-input ${errors.confirmPassword ? "error" : ""}`}
                 placeholder="Confirm new password"
               />
-              {errors.confirmPassword && <p className="settings-error-message">
-                <AlertCircle size={12} /> {errors.confirmPassword}
-              </p>}
+              {errors.confirmPassword && (
+                <p className="settings-error-message">
+                  <AlertCircle size={12} /> {errors.confirmPassword}
+                </p>
+              )}
             </div>
 
             <div className="settings-toggle-wrapper">
               <div>
-                <p className="font-medium text-gray-900">Two-factor authentication</p>
+                <p className="font-medium text-gray-900">
+                  Two-factor authentication
+                </p>
                 <p className="text-sm text-gray-500">Extra security layer</p>
               </div>
               <label className="settings-toggle-label">
@@ -375,7 +427,9 @@ const SettingsView = () => {
                   type="checkbox"
                   checked={settings.twoFactorAuth}
                   disabled={isSaving}
-                  onChange={(e) => updateSetting("twoFactorAuth", e.target.checked)}
+                  onChange={(e) =>
+                    updateSetting("twoFactorAuth", e.target.checked)
+                  }
                   className="settings-toggle-input"
                   aria-label="Two-factor authentication"
                 />
@@ -401,7 +455,7 @@ const SettingsView = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`settings-tab-button ${activeTab === tab.id ? 'active' : ''}`}
+                className={`settings-tab-button ${activeTab === tab.id ? "active" : ""}`}
               >
                 <Icon size={20} />
                 <span>{tab.label}</span>
@@ -423,7 +477,7 @@ const SettingsView = () => {
             className="settings-save-button"
           >
             <Save size={16} />
-            {isSaving ? 'Saving...' : 'Save Changes'}
+            {isSaving ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </div>
