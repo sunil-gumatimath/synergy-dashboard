@@ -37,11 +37,13 @@ This guide will walk you through setting up Supabase as the backend for the Empl
 3. You'll see two important values:
 
    **Project URL:**
+
    ```
    https://xxxxxxxxxxxxx.supabase.co
    ```
 
    **API Key (anon/public):**
+
    ```
    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
    ```
@@ -98,6 +100,7 @@ With Supabase configured, you now have full CRUD functionality:
 ### Issue: "Failed to load employees"
 
 **Solution:**
+
 - Check that your `.env.local` file exists and has the correct credentials
 - Verify the Supabase project URL doesn't have trailing slashes
 - Ensure your Supabase project is running (check the dashboard)
@@ -105,6 +108,7 @@ With Supabase configured, you now have full CRUD functionality:
 ### Issue: "Row Level Security policy violation"
 
 **Solution:**
+
 - Make sure you ran the entire `supabase-setup.sql` script
 - Check the "Authentication" → "Policies" section in Supabase
 - Verify the policies are enabled for the `employees` table
@@ -112,6 +116,7 @@ With Supabase configured, you now have full CRUD functionality:
 ### Issue: Environment variables not loading
 
 **Solution:**
+
 - Restart your development server after creating/updating `.env.local`
 - Ensure variable names start with `VITE_` (required by Vite)
 - Check for typos in variable names
@@ -126,12 +131,15 @@ With Supabase configured, you now have full CRUD functionality:
 ## 🔐 Security Notes
 
 ### For Development:
+
 The current setup allows anonymous access for easy development. This is fine for local testing.
 
 ### For Production:
+
 Before deploying, you should:
 
 1. Remove the anonymous access policy:
+
    ```sql
    DROP POLICY "Enable all operations for anon users" ON employees;
    ```
