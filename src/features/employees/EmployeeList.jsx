@@ -60,9 +60,11 @@ const EmployeeList = () => {
   }, []);
 
   // Fetch employees on mount
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     fetchEmployees();
   }, [fetchEmployees]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Supabase Realtime subscription for live updates
   useEffect(() => {

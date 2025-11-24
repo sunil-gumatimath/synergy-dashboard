@@ -1,18 +1,10 @@
-/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { authService } from "../services/authService";
 
 const AuthContext = createContext({});
 
-/* eslint-disable-next-line react-refresh/only-export-components */
-const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
+/* eslint-disable react-refresh/only-export-components */
 
 // Provider component for authentication context
 export const AuthProvider = ({ children }) => {
@@ -94,4 +86,11 @@ AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export { useAuth };
+// Custom hook for using authentication context
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

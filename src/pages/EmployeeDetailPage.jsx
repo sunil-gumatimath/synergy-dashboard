@@ -72,11 +72,13 @@ const EmployeeDetailPage = () => {
         setNotesLoading(false);
     };
 
+    /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
     useEffect(() => {
         fetchEmployee();
         fetchDocuments();
         fetchNotes();
     }, [id]);
+    /* eslint-enable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 
     const handleDocumentAdded = (document) => {
         setDocuments((prev) => [document, ...prev]);
