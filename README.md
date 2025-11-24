@@ -40,6 +40,13 @@
 - **Performance Metrics** - Track key employee statistics
 - **Real-time Stats** - Live employee count, department stats, and more
 
+### 📄 **Documents & Notes Management**
+- **Document Upload** - Upload and manage employee documents
+- **Document Library** - Organized document storage per employee
+- **Notes System** - Create, edit, and delete employee notes
+- **File Management** - Secure file upload with validation
+- **Mock Data Integration** - Seed test data for development
+
 ### 📅 **Calendar & Events**
 - Integrated calendar view for team events
 - Meeting management
@@ -163,50 +170,69 @@ bun run dev
 
 ```
 react-browser/
-├── public/                  # Static assets
+├── migrations/             # Database migration scripts
+│   └── 002_employee_documents_notes.sql
+├── public/                 # Static assets
+│   ├── aurora.svg         # Aurora logo
+│   ├── staffly.svg
+│   └── vite.svg
 ├── src/
-│   ├── assets/             # Images, icons, media files
-│   ├── components/         # Reusable UI components
+│   ├── assets/            # Images, icons, media files
+│   ├── components/        # Reusable UI components
 │   │   ├── AddEmployeeModal.jsx
+│   │   ├── AddNoteModal.jsx
 │   │   ├── Button.jsx
 │   │   ├── Card.jsx
 │   │   ├── ConfirmModal.jsx
+│   │   ├── DocumentList.jsx
+│   │   ├── DocumentUploadModal.jsx
 │   │   ├── EditEmployeeModal.jsx
+│   │   ├── EditNoteModal.jsx
 │   │   ├── EmployeeCard.jsx
+│   │   ├── Header.jsx
 │   │   ├── LoadingSpinner.jsx
+│   │   ├── MockDataBanner.jsx
+│   │   ├── NotesList.jsx
 │   │   ├── PasswordStrengthIndicator.jsx
 │   │   ├── ProfileCompletionBar.jsx
 │   │   ├── ProtectedRoute.jsx
 │   │   ├── Sidebar.jsx
 │   │   ├── Stats.jsx
 │   │   └── Toast.jsx
-│   ├── contexts/           # React Context providers
+│   ├── contexts/          # React Context providers
 │   │   └── AuthContext.jsx # Authentication state management
-│   ├── data/               # Mock/sample data
-│   ├── features/           # Feature-specific modules
-│   │   ├── analytics/      # Analytics dashboard
-│   │   ├── calendar/       # Calendar and events
-│   │   ├── employees/      # Employee management
-│   │   └── settings/       # Settings and preferences
-│   ├── lib/                # External library configurations
-│   │   └── supabase.js     # Supabase client setup
-│   ├── pages/              # Page components
-│   │   ├── LoginPage.jsx   # Authentication page
+│   ├── data/              # Mock/sample data
+│   ├── features/          # Feature-specific modules
+│   │   ├── analytics/     # Analytics dashboard
+│   │   ├── calendar/      # Calendar and events
+│   │   ├── employees/     # Employee management
+│   │   └── settings/      # Settings and preferences
+│   ├── lib/               # External library configurations
+│   │   └── supabase.js    # Supabase client setup
+│   ├── pages/             # Page components
+│   │   ├── EmployeeDetailPage.jsx
+│   │   ├── employee-detail-styles.css
+│   │   ├── LoginPage.jsx  # Authentication page
 │   │   └── login-styles.css
-│   ├── services/           # API and service layers
-│   │   ├── authService.js  # Authentication services
-│   │   └── employeeService.js # Employee CRUD operations
-│   ├── App.jsx             # Main application component
-│   ├── main.jsx            # Application entry point
-│   └── index.css           # Global styles & design system
-├── .env.local              # Environment variables (create this)
-├── .gitignore              # Git ignore rules
-├── API_REFERENCE.md        # API documentation
-├── package.json            # Project dependencies
-├── README.md               # This file
-├── SUPABASE_SETUP.md       # Supabase configuration guide
-├── tailwind.config.js      # Tailwind CSS configuration
-└── vite.config.js          # Vite build configuration
+│   ├── services/          # API and service layers
+│   │   ├── authService.js       # Authentication services
+│   │   ├── documentService.js   # Document management
+│   │   ├── employeeService.js   # Employee CRUD operations
+│   │   ├── mockData.js          # Mock data seeding
+│   │   └── noteService.js       # Notes management
+│   ├── App.jsx            # Main application component
+│   ├── main.jsx           # Application entry point
+│   └── index.css          # Global styles & design system
+├── .env.local             # Environment variables (create this)
+├── .gitignore             # Git ignore rules
+├── API_REFERENCE.md       # API documentation
+├── DOCUMENTS_NOTES_PLAN.md # Implementation planning
+├── package.json           # Project dependencies
+├── PROJECT_REVIEW.md      # Comprehensive project review
+├── README.md              # This file
+├── SUPABASE_SETUP.md      # Supabase configuration guide
+├── tailwind.config.js     # Tailwind CSS configuration
+└── vite.config.js         # Vite build configuration
 ```
 
 ---
@@ -215,6 +241,8 @@ react-browser/
 
 - **[Supabase Setup Guide](./SUPABASE_SETUP.md)** - Complete guide to configure Supabase backend
 - **[API Reference](./API_REFERENCE.md)** - Employee service API documentation
+- **[Project Review](./PROJECT_REVIEW.md)** - Comprehensive project review and status
+- **[Documents & Notes Plan](./DOCUMENTS_NOTES_PLAN.md)** - Implementation planning for documents and notes features
 
 ---
 
