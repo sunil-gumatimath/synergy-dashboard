@@ -65,6 +65,16 @@
   animation: fadeIn 0.4s ease-out;
 }
 
+.employee-card-clickable {
+  cursor: pointer;
+}
+
+.employee-card-clickable:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary);
+}
+
 .employee-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
