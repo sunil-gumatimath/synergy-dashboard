@@ -148,7 +148,7 @@ bun run dev
 
 5. **Open your browser**
 
-   Navigate to **[http://localhost:3001](http://localhost:3001)** (or the port shown in your terminal)
+   Navigate to **[http://localhost:3000](http://localhost:3000)** (or the port shown in your terminal)
 
 ### First Time Setup
 
@@ -382,30 +382,9 @@ Aurora uses a modern, professional design language with:
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
----
-
 ## 📄 License
 
 This project is licensed under the **MIT License** - free to use for personal and commercial projects.
-
----
-
-## 👨‍💻 Author
-
-**Sunil Gumatimath**
-
-- GitHub: [@sunil-gumatimath](https://github.com/sunil-gumatimath)
-- Repository: [emp-management-vibecode](https://github.com/sunil-gumatimath/emp-management-vibecode)
 
 ---
 
