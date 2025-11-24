@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { UserPlus, Users, RefreshCw } from "lucide-react";
 import "./employees-styles.css";
 import { employeeService } from "../../services/employeeService";
+import { supabase } from "../../lib/supabase";
 import AddEmployeeModal from "../../components/AddEmployeeModal";
 import EditEmployeeModal from "../../components/EditEmployeeModal";
 import ConfirmModal from "../../components/ConfirmModal";
@@ -38,6 +39,51 @@ const EmployeeList = () => {
   // Fetch employees on mount
   useEffect(() => {
     fetchEmployees();
+  }, []);
+
+  // Supabase Realtime subscription for live updates
+  useEffect(() => {
+    // Create a channel for real-time updates
+    const channel = supabase
+      .channel('employees-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'employees',
+        },
+        (payload) => {
+          console.log('Real-time update received:', payload);
+
+          // Refresh the employee list when any change occurs
+          fetchEmployees(true); // Use refresh mode to show subtle loading
+
+          // Show a toast notification about the change
+          if (payload.eventType === 'INSERT') {
+            setToast({
+              type: 'info',
+              message: 'New employee added by another user',
+            });
+          } else if (payload.eventType === 'UPDATE') {
+            setToast({
+              type: 'info',
+              message: 'Employee data updated',
+            });
+          } else if (payload.eventType === 'DELETE') {
+            setToast({
+              type: 'info',
+              message: 'Employee removed',
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscription on unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const fetchEmployees = useCallback(async (showRefresh = false) => {
