@@ -17,10 +17,10 @@ const CalendarView = React.lazy(
 
 
 function App() {
-  const [activeTab, setActiveTab] = useState("employees");
+  const [activeTab, setActiveTab] = useState("analytics");
   const { user } = useAuth();
 
-  const validTabs = ["employees", "analytics", "calendar", "settings"];
+  const validTabs = ["analytics", "employees", "calendar", "settings"];
 
   // Get user display name from auth metadata or email
   const getUserName = () => {

@@ -19,8 +19,8 @@ const Sidebar = ({ activeTab, onTabChange }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
-    { icon: Users, label: "Employees", id: "employees" },
     { icon: LayoutDashboard, label: "Analytics", id: "analytics" },
+    { icon: Users, label: "Employees", id: "employees" },
     { icon: Calendar, label: "Calendar", id: "calendar" },
     { icon: Settings, label: "Settings", id: "settings" },
   ];
