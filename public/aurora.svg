@@ -1,0 +1,86 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Aurora gradient - northern lights inspired -->
+    <linearGradient id="aurora-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+      <stop offset="33%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="66%" style="stop-color:#ec4899;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Glow effect -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#aurora-gradient)" opacity="0.1"/>
+  
+  <!-- Aurora waves - flowing northern lights effect -->
+  <path d="M 100 300 Q 150 250, 200 280 T 300 260 T 400 290" 
+        stroke="url(#aurora-gradient)" 
+        stroke-width="16" 
+        fill="none" 
+        stroke-linecap="round"
+        opacity="0.6"
+        filter="url(#glow)"/>
+  
+  <path d="M 120 240 Q 170 200, 220 230 T 320 210 T 420 240" 
+        stroke="url(#aurora-gradient)" 
+        stroke-width="14" 
+        fill="none" 
+        stroke-linecap="round"
+        opacity="0.7"
+        filter="url(#glow)"/>
+  
+  <path d="M 80 340 Q 140 290, 190 320 T 290 300 T 390 330" 
+        stroke="url(#aurora-gradient)" 
+        stroke-width="12" 
+        fill="none" 
+        stroke-linecap="round"
+        opacity="0.5"
+        filter="url(#glow)"/>
+  
+  <!-- Letter "A" for Aurora - modern geometric design -->
+  <g transform="translate(256, 256)">
+    <!-- Main A shape -->
+    <path d="M -60 80 L 0 -80 L 60 80" 
+          stroke="url(#aurora-gradient)" 
+          stroke-width="24" 
+          fill="none" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"
+          filter="url(#glow)"/>
+    
+    <!-- Horizontal bar of A -->
+    <line x1="-35" y1="20" x2="35" y2="20" 
+          stroke="url(#aurora-gradient)" 
+          stroke-width="24" 
+          stroke-linecap="round"
+          filter="url(#glow)"/>
+    
+    <!-- Star/spark at top -->
+    <circle cx="0" cy="-90" r="8" fill="url(#aurora-gradient)" opacity="0.9">
+      <animate attributeName="opacity" values="0.9;0.5;0.9" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Decorative stars/sparkles -->
+  <circle cx="100" cy="120" r="4" fill="#06b6d4" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0.3;0.8" dur="3s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="400" cy="150" r="5" fill="#8b5cf6" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="420" cy="340" r="4" fill="#ec4899" opacity="0.8">
+    <animate attributeName="opacity" values="0.8;0.4;0.8" dur="3.5s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="110" cy="380" r="3" fill="#f59e0b" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2.8s" repeatCount="indefinite"/>
+  </circle>
+</svg>
