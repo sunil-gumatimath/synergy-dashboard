@@ -1,10 +1,12 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Stats from "./components/Stats";
 import EmployeeList from "./features/employees/EmployeeList";
 import SettingsView from "./features/settings/SettingsView";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoadingSpinner from "./components/LoadingSpinner";
+import EmployeeDetailPage from "./pages/EmployeeDetailPage";
 import { useAuth } from "./contexts/AuthContext";
 
 const AnalyticsDashboard = React.lazy(
@@ -14,13 +16,30 @@ const CalendarView = React.lazy(
   () => import("./features/calendar/CalendarView"),
 );
 
-
-
 function App() {
-  const [activeTab, setActiveTab] = useState("analytics");
+  const location = useLocation();
   const { user } = useAuth();
 
-  const validTabs = ["analytics", "employees", "calendar", "settings"];
+  // Determine active tab from current route
+  const getActiveTab = () => {
+    const path = location.pathname;
+    if (path.startsWith("/employees")) return "employees";
+    if (path.startsWith("/analytics")) return "analytics";
+    if (path.startsWith("/calendar")) return "calendar";
+    if (path.startsWith("/settings")) return "settings";
+    return "analytics";
+  };
+
+  const activeTab = getActiveTab();
+
+  // Get page title based on route
+  const getPageTitle = () => {
+    const path = location.pathname;
+    if (path.startsWith("/employees/") && path !== "/employees") {
+      return "Employee Details";
+    }
+    return activeTab.charAt(0).toUpperCase() + activeTab.slice(1);
+  };
 
   // Get user display name from auth metadata or email
   const getUserName = () => {
@@ -41,14 +60,12 @@ function App() {
   return (
     <ProtectedRoute>
       <div className="app-container">
-        <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <Sidebar activeTab={activeTab} />
 
         <main className="main-content">
           <header className="app-header">
             <div>
-              <h2 className="page-title">
-                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-              </h2>
+              <h2 className="page-title">{getPageTitle()}</h2>
               <p className="page-subtitle">Welcome back, {getUserName()}</p>
             </div>
 
@@ -70,33 +87,50 @@ function App() {
             </div>
           </header>
 
-          {activeTab === "employees" && (
-            <>
-              <Stats />
-              <EmployeeList />
-            </>
-          )}
+          <Routes>
+            <Route path="/" element={<Navigate to="/analytics" replace />} />
 
-          {activeTab === "analytics" && (
-            <Suspense fallback={<LoadingSpinner size="lg" message="Loading analytics..." />}>
-              <AnalyticsDashboard />
-            </Suspense>
-          )}
+            <Route
+              path="/analytics"
+              element={
+                <Suspense fallback={<LoadingSpinner size="lg" message="Loading analytics..." />}>
+                  <AnalyticsDashboard />
+                </Suspense>
+              }
+            />
 
-          {activeTab === "calendar" && (
-            <Suspense fallback={<LoadingSpinner size="lg" message="Loading calendar..." />}>
-              <CalendarView />
-            </Suspense>
-          )}
+            <Route
+              path="/employees"
+              element={
+                <>
+                  <Stats />
+                  <EmployeeList />
+                </>
+              }
+            />
 
-          {activeTab === "settings" && <SettingsView />}
+            <Route path="/employees/:id" element={<EmployeeDetailPage />} />
 
-          {!validTabs.includes(activeTab) && (
-            <div className="flex items-center justify-center h-64 text-muted">
-              {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} module
-              coming soon...
-            </div>
-          )}
+            <Route
+              path="/calendar"
+              element={
+                <Suspense fallback={<LoadingSpinner size="lg" message="Loading calendar..." />}>
+                  <CalendarView />
+                </Suspense>
+              }
+            />
+
+            <Route path="/settings" element={<SettingsView />} />
+
+            <Route
+              path="*"
+              element={
+                <div className="flex items-center justify-center h-64 text-muted">
+                  Page not found
+                </div>
+              }
+            />
+          </Routes>
         </main>
       </div>
     </ProtectedRoute>
