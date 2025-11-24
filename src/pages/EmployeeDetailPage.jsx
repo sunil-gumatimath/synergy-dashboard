@@ -41,12 +41,6 @@ const EmployeeDetailPage = () => {
     const [documentsLoading, setDocumentsLoading] = useState(true);
     const [notesLoading, setNotesLoading] = useState(true);
 
-    useEffect(() => {
-        fetchEmployee();
-        fetchDocuments();
-        fetchNotes();
-    }, [id]);
-
     const fetchEmployee = async () => {
         setIsLoading(true);
         const { data, error } = await employeeService.getById(parseInt(id));
@@ -77,6 +71,12 @@ const EmployeeDetailPage = () => {
         setNotes(data || []);
         setNotesLoading(false);
     };
+
+    useEffect(() => {
+        fetchEmployee();
+        fetchDocuments();
+        fetchNotes();
+    }, [id]);
 
     const handleDocumentAdded = (document) => {
         setDocuments((prev) => [document, ...prev]);
@@ -132,7 +132,7 @@ const EmployeeDetailPage = () => {
 
         setActionLoading(true);
 
-        const { success, error } = await employeeService.delete(employee.id);
+        const { error } = await employeeService.delete(employee.id);
 
         if (error) {
             setToast({
