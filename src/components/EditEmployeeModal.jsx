@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import { X, AlertCircle, Edit2 } from "lucide-react";
 
@@ -9,15 +9,29 @@ const EditEmployeeModal = ({
   onSubmit,
   isLoading = false,
 }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    role: "",
-    department: "",
-    status: "Active",
-    joinDate: "",
-  });
+  // Initialize form data based on employee prop
+  const initialFormData = useMemo(() => {
+    if (employee) {
+      return {
+        name: employee.name || "",
+        email: employee.email || "",
+        role: employee.role || "",
+        department: employee.department || "",
+        status: employee.status || "Active",
+        joinDate: employee.join_date || employee.joinDate || "",
+      };
+    }
+    return {
+      name: "",
+      email: "",
+      role: "",
+      department: "",
+      status: "Active",
+      joinDate: "",
+    };
+  }, [employee]);
 
+  const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
 
   const departments = [
@@ -32,20 +46,6 @@ const EditEmployeeModal = ({
   ];
 
   const statuses = ["Active", "On Leave", "Offline"];
-
-  // Populate form when employee changes
-  useEffect(() => {
-    if (employee) {
-      setFormData({
-        name: employee.name || "",
-        email: employee.email || "",
-        role: employee.role || "",
-        department: employee.department || "",
-        status: employee.status || "Active",
-        joinDate: employee.join_date || employee.joinDate || "",
-      });
-    }
-  }, [employee]);
 
   const validateForm = () => {
     const newErrors = {};
