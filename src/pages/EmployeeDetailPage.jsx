@@ -175,9 +175,9 @@ const EmployeeDetailPage = () => {
         const remainingMonths = months % 12;
 
         if (years > 0) {
-            return `${years} year${years !== 1 ? "s" : ""} ${remainingMonths} month${remainingMonths !== 1 ? "s" : ""}`;
+            return `${years} year${years !== 1 ? "s" : ""}, ${remainingMonths} month${remainingMonths !== 1 ? "s" : ""}`;
         }
-        return `${months} month${months !== 1 ? "s" : ""}`;
+        return months === 0 ? "Less than 1 month" : `${months} month${months !== 1 ? "s" : ""}`;
     };
 
     // Mock employment history (can be extended with real data from database)
