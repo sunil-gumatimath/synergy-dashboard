@@ -14,6 +14,11 @@ import {
     Award,
     FileText,
     StickyNote,
+    Copy,
+    Check,
+    TrendingDown,
+    ChevronRight,
+    Star,
 } from "lucide-react";
 import { employeeService } from "../services/employeeService";
 import noteService from "../services/noteService";
@@ -40,6 +45,7 @@ const EmployeeDetailPage = () => {
     const [notes, setNotes] = useState([]);
     const [documentsLoading, setDocumentsLoading] = useState(true);
     const [notesLoading, setNotesLoading] = useState(true);
+    const [copiedField, setCopiedField] = useState(null);
 
     const fetchEmployee = async () => {
         setIsLoading(true);
@@ -180,6 +186,17 @@ const EmployeeDetailPage = () => {
         return months === 0 ? "Less than 1 month" : `${months} month${months !== 1 ? "s" : ""}`;
     };
 
+    // Copy to clipboard helper
+    const copyToClipboard = async (text, field) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            setCopiedField(field);
+            setTimeout(() => setCopiedField(null), 2000);
+        } catch (err) {
+            console.error("Failed to copy:", err);
+        }
+    };
+
     // Mock employment history (can be extended with real data from database)
     const employmentHistory = [
         {
@@ -200,6 +217,8 @@ const EmployeeDetailPage = () => {
             value: "24",
             icon: <Award className="stat-icon" />,
             color: "primary",
+            trend: "+12%",
+            trendDirection: "up",
         },
         {
             id: 2,
@@ -207,6 +226,8 @@ const EmployeeDetailPage = () => {
             value: getEmploymentDuration(employee?.join_date),
             icon: <Clock className="stat-icon" />,
             color: "success",
+            trend: "",
+            trendDirection: null,
         },
         {
             id: 3,
@@ -214,6 +235,8 @@ const EmployeeDetailPage = () => {
             value: "94%",
             icon: <TrendingUp className="stat-icon" />,
             color: "warning",
+            trend: "+5%",
+            trendDirection: "up",
         },
     ];
 
@@ -243,26 +266,42 @@ const EmployeeDetailPage = () => {
 
     return (
         <div className="employee-detail-container">
-            {/* Back Button */}
-            <button className="btn btn-ghost back-btn" onClick={() => navigate("/employees")}>
-                <ArrowLeft size={18} />
-                Back to Employees
-            </button>
+            {/* Breadcrumb Navigation */}
+            <div className="breadcrumb">
+                <button className="breadcrumb-link" onClick={() => navigate("/employees")}>
+                    Employees
+                </button>
+                <ChevronRight size={16} className="breadcrumb-separator" />
+                <span className="breadcrumb-current">{employee.name}</span>
+            </div>
 
-            {/* Header Section */}
-            <div className="card employee-detail-header">
+            {/* Enhanced Header Section with Gradient */}
+            <div className="card employee-detail-header enhanced">
+                <div className="header-gradient-overlay"></div>
                 <div className="employee-detail-profile">
-                    <img
-                        src={employee.avatar}
-                        alt={employee.name}
-                        className="employee-detail-avatar"
-                    />
+                    <div className="avatar-wrapper">
+                        <img
+                            src={employee.avatar}
+                            alt={employee.name}
+                            className="employee-detail-avatar"
+                        />
+                        <div className={`avatar-status-ring ${getStatusClass(employee.status)}`}></div>
+                    </div>
                     <div className="employee-detail-info">
                         <h1 className="employee-detail-name">{employee.name}</h1>
-                        <p className="employee-detail-role">{employee.role}</p>
-                        <span className={`employee-status-badge ${getStatusClass(employee.status)}`}>
-                            {employee.status}
-                        </span>
+                        <p className="employee-detail-role">
+                            <Briefcase size={18} />
+                            {employee.role}
+                        </p>
+                        <div className="employee-badges">
+                            <span className={`employee-status-badge ${getStatusClass(employee.status)}`}>
+                                {employee.status}
+                            </span>
+                            <span className="employee-badge performance">
+                                <Star size={14} />
+                                Top Performer
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <div className="employee-detail-actions">
@@ -289,28 +328,39 @@ const EmployeeDetailPage = () => {
                 <div className="employee-detail-grid">
                     <div className="detail-item">
                         <Mail className="detail-icon" />
-                        <div>
+                        <div className="detail-content">
                             <p className="detail-label">Email</p>
                             <p className="detail-value">{employee.email}</p>
                         </div>
+                        <button
+                            className="copy-btn"
+                            onClick={() => copyToClipboard(employee.email, "email")}
+                            title="Copy email"
+                        >
+                            {copiedField === "email" ? (
+                                <Check size={18} className="copy-icon success" />
+                            ) : (
+                                <Copy size={18} className="copy-icon" />
+                            )}
+                        </button>
                     </div>
                     <div className="detail-item">
                         <Building2 className="detail-icon" />
-                        <div>
+                        <div className="detail-content">
                             <p className="detail-label">Department</p>
                             <p className="detail-value">{employee.department}</p>
                         </div>
                     </div>
                     <div className="detail-item">
                         <Briefcase className="detail-icon" />
-                        <div>
+                        <div className="detail-content">
                             <p className="detail-label">Role</p>
                             <p className="detail-value">{employee.role}</p>
                         </div>
                     </div>
                     <div className="detail-item">
                         <Calendar className="detail-icon" />
-                        <div>
+                        <div className="detail-content">
                             <p className="detail-label">Join Date</p>
                             <p className="detail-value">
                                 {employee.join_date
@@ -332,10 +382,22 @@ const EmployeeDetailPage = () => {
                 <div className="stats-grid">
                     {stats.map((stat) => (
                         <div key={stat.id} className={`stat-card stat-${stat.color}`}>
-                            {stat.icon}
-                            <div>
+                            <div className="stat-icon-wrapper">
+                                {stat.icon}
+                            </div>
+                            <div className="stat-content">
                                 <p className="stat-value">{stat.value}</p>
                                 <p className="stat-label">{stat.label}</p>
+                                {stat.trend && (
+                                    <div className={`stat-trend ${stat.trendDirection}`}>
+                                        {stat.trendDirection === "up" ? (
+                                            <TrendingUp size={14} />
+                                        ) : (
+                                            <TrendingDown size={14} />
+                                        )}
+                                        <span>{stat.trend}</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}

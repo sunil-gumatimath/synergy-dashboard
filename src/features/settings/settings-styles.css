@@ -137,7 +137,6 @@
   width: 2.25rem;
   height: 1.25rem;
   background-color: var(--border);
-  border-radius: var(--radius-full);
   transition: background-color 0.2s ease;
 }
 
@@ -149,7 +148,6 @@
   width: 1rem;
   height: 1rem;
   background-color: white;
-  border-radius: var(--radius-full);
   transition: transform 0.2s ease;
   box-shadow: var(--shadow-sm);
 }
@@ -226,7 +224,6 @@
   background-color: var(--primary);
   color: white;
   border: none;
-  border-radius: var(--radius-md);
   font-weight: 500;
   font-size: 0.875rem;
   cursor: pointer;

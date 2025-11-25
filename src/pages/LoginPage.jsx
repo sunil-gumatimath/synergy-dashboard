@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { AlertCircle, Eye, EyeOff, Briefcase, ArrowRight } from "lucide-react";
+import {
+  AlertCircle,
+  Eye,
+  EyeOff,
+  Briefcase,
+  ArrowRight,
+  Check,
+  Github,
+  Chrome
+} from "lucide-react";
 import "../index.css";
 import "./login-styles.css";
 
@@ -50,6 +59,16 @@ const LoginPage = () => {
     return true;
   };
 
+  const calculatePasswordStrength = (password) => {
+    if (!password) return 0;
+    let strength = 0;
+    if (password.length > 6) strength += 25;
+    if (password.match(/[A-Z]/)) strength += 25;
+    if (password.match(/[0-9]/)) strength += 25;
+    if (password.match(/[^A-Za-z0-9]/)) strength += 25;
+    return strength;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
@@ -97,41 +116,42 @@ const LoginPage = () => {
     setFormData({ email: "", password: "", confirmPassword: "", name: "" });
   };
 
+  const passwordStrength = calculatePasswordStrength(formData.password);
+
   return (
-    <div className="login-page min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="login-page">
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -left-[10%] w-[70%] h-[70%] bg-purple-500 rounded-full mix-blend-screen filter blur-[120px] opacity-30 animate-blob"></div>
-        <div className="absolute top-[20%] -right-[10%] w-[60%] h-[60%] bg-blue-500 rounded-full mix-blend-screen filter blur-[120px] opacity-30 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-[20%] left-[20%] w-[50%] h-[50%] bg-pink-500 rounded-full mix-blend-screen filter blur-[120px] opacity-30 animate-blob animation-delay-4000"></div>
+      <div className="background-shapes">
+        <div className="shape shape-1"></div>
+        <div className="shape shape-2"></div>
+        <div className="shape shape-3"></div>
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 w-full max-w-md">
+      <div className="login-container">
         {/* Logo and Title */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 backdrop-blur-xl rounded-3xl mb-6 shadow-2xl border border-white/20 ring-1 ring-white/10">
-            <Briefcase className="text-white" size={36} />
+        <div className="login-header">
+          <div className="logo-wrapper">
+            <Briefcase className="logo-icon" size={32} />
           </div>
-          <h1 className="text-5xl font-bold text-white mb-2 tracking-tight drop-shadow-lg">
+          <h1 className="app-title">
             Aurora
           </h1>
-          <p className="text-indigo-200 text-lg font-medium tracking-wide">
+          <p className="app-subtitle">
             Employee Management System
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="login-form-card">
-          {/* Glass Shine Effect */}
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none"></div>
+        <div className="login-card">
+          <div className="card-shine"></div>
 
-          <div className="relative z-10">
-            <div className="mb-8 text-center">
-              <h2 className="text-3xl font-bold text-white mb-2">
+          <div className="card-content">
+            <div className="form-header">
+              <h2 className="form-title">
                 {isLogin ? "Welcome Back" : "Get Started"}
               </h2>
-              <p className="text-gray-300">
+              <p className="form-subtitle">
                 {isLogin
                   ? "Sign in to access your dashboard"
                   : "Create your account to continue"}
@@ -140,131 +160,169 @@ const LoginPage = () => {
 
             {/* Error Message */}
             {error && (
-              <div className="login-error">
-                <AlertCircle size={20} className="login-error-icon" />
-                <p className="login-error-text">{error}</p>
+              <div className="error-alert">
+                <AlertCircle size={18} className="error-icon" />
+                <p>{error}</p>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="login-form">
               {/* Name (Sign Up only) */}
               {!isLogin && (
-                <div>
-                  <label htmlFor="name" className="login-label">
-                    Full Name
-                  </label>
+                <div className="form-group">
                   <input
                     id="name"
                     name="name"
                     type="text"
                     value={formData.name}
                     onChange={handleChange}
-                    className="login-input"
-                    placeholder="Enter your full name"
+                    className="form-input"
+                    placeholder=" "
                     disabled={loading}
                     autoComplete="name"
                   />
+                  <label htmlFor="name" className="floating-label">
+                    Full Name
+                  </label>
                 </div>
               )}
 
               {/* Email */}
-              <div>
-                <label htmlFor="email" className="login-label">
-                  Email Address
-                </label>
+              <div className="form-group">
                 <input
                   id="email"
                   name="email"
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="login-input"
-                  placeholder="Enter your email"
+                  className="form-input"
+                  placeholder=" "
                   disabled={loading}
                   autoComplete="email"
                 />
+                <label htmlFor="email" className="floating-label">
+                  Email Address
+                </label>
               </div>
 
               {/* Password */}
-              <div>
-                <label htmlFor="password" className="login-label">
-                  Password
-                </label>
-                <div className="password-input-wrapper">
+              <div className="form-group">
+                <div className="password-wrapper">
                   <input
                     id="password"
                     name="password"
                     type={showPassword ? "text" : "password"}
                     value={formData.password}
                     onChange={handleChange}
-                    className="login-input"
-                    placeholder="Enter your password"
+                    className="form-input"
+                    placeholder=" "
                     disabled={loading}
                     autoComplete={isLogin ? "current-password" : "new-password"}
                   />
+                  <label htmlFor="password" className="floating-label">
+                    Password
+                  </label>
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="password-toggle-btn"
+                    className="password-toggle"
                     tabIndex={-1}
                   >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
+
+                {!isLogin && formData.password && (
+                  <div className="password-strength-meter">
+                    <div
+                      className="strength-bar"
+                      style={{
+                        width: `${passwordStrength}%`,
+                        backgroundColor:
+                          passwordStrength <= 25 ? '#ef4444' :
+                            passwordStrength <= 50 ? '#f59e0b' :
+                              passwordStrength <= 75 ? '#3b82f6' : '#10b981'
+                      }}
+                    ></div>
+                  </div>
+                )}
               </div>
 
               {/* Confirm Password (Sign Up only) */}
               {!isLogin && (
-                <div>
-                  <label htmlFor="confirmPassword" className="login-label">
-                    Confirm Password
-                  </label>
+                <div className="form-group">
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
                     type="password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="login-input"
-                    placeholder="Confirm your password"
+                    className="form-input"
+                    placeholder=" "
                     disabled={loading}
                     autoComplete="new-password"
                   />
+                  <label htmlFor="confirmPassword" className="floating-label">
+                    Confirm Password
+                  </label>
+                </div>
+              )}
+
+              {/* Remember Me & Forgot Password */}
+              {isLogin && (
+                <div className="form-actions">
+                  <label className="checkbox-label">
+                    <input type="checkbox" className="checkbox-input" />
+                    <span className="checkbox-text">Remember me</span>
+                  </label>
+                  <a href="#" className="forgot-password-link">Forgot Password?</a>
                 </div>
               )}
 
               {/* Submit Button */}
               <button
                 type="submit"
-                className="login-submit-btn"
+                className="submit-btn"
                 disabled={loading}
               >
                 {loading ? (
-                  <>
-                    <div className="login-spinner"></div>
-                    <span>
-                      {isLogin ? "Signing in..." : "Creating account..."}
-                    </span>
-                  </>
+                  <div className="loading-dots">
+                    <span></span><span></span><span></span>
+                  </div>
                 ) : (
                   <>
                     <span>{isLogin ? "Sign In" : "Create Account"}</span>
-                    <ArrowRight size={20} />
+                    <ArrowRight size={18} />
                   </>
                 )}
               </button>
+
+              {/* Social Login */}
+              <div className="social-login">
+                <div className="divider">
+                  <span>Or continue with</span>
+                </div>
+                <div className="social-buttons">
+                  <button type="button" className="social-btn">
+                    <Chrome size={18} />
+                  </button>
+                  <button type="button" className="social-btn">
+                    <Github size={18} />
+                  </button>
+                </div>
+              </div>
             </form>
 
             {/* Toggle Mode */}
-            <div className="mt-8 pt-6 border-t border-white/10 text-center">
-              <p className="text-sm text-gray-300">
+            <div className="auth-toggle">
+              <p>
                 {isLogin
                   ? "Don't have an account?"
                   : "Already have an account?"}{" "}
                 <button
                   type="button"
                   onClick={toggleMode}
-                  className="login-toggle-link"
+                  className="toggle-link"
                   disabled={loading}
                 >
                   {isLogin ? "Sign Up" : "Sign In"}
@@ -275,7 +333,7 @@ const LoginPage = () => {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-sm text-white/40 mt-8 font-medium">
+        <p className="auth-footer">
           © 2025 Aurora. Secure employee management.
         </p>
       </div>
