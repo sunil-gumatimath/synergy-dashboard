@@ -1,10 +1,27 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 import { Filter, X, ChevronDown } from "lucide-react";
 import "./filter-panel-styles.css";
 
 const FilterPanel = ({ employees, filters, onFilterChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const panelRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (panelRef.current && !panelRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   // Extract unique values for each filter
   const filterOptions = useMemo(() => {
@@ -33,7 +50,7 @@ const FilterPanel = ({ employees, filters, onFilterChange }) => {
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
   return (
-    <div className="filter-panel-container">
+    <div className="filter-panel-container" ref={panelRef}>
       <button
         className={`filter-toggle-btn ${isOpen ? "active" : ""}`}
         onClick={() => setIsOpen(!isOpen)}
