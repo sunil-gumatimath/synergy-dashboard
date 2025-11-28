@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import PropTypes from "prop-types";
 import { Plus, Edit, Trash, Calendar, User } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import AddNoteModal from "./AddNoteModal";
-import EditNoteModal from "./EditNoteModal";
-import ConfirmModal from "./ConfirmModal";
+const AddNoteModal = lazy(() => import("./AddNoteModal"));
+const EditNoteModal = lazy(() => import("./EditNoteModal"));
+const ConfirmModal = lazy(() => import("./ConfirmModal"));
 
 const NotesList = ({
   employeeId,
@@ -161,47 +161,53 @@ const NotesList = ({
       )}
 
       {/* Add Note Modal */}
-      <AddNoteModal
-        isOpen={showAddModal}
-        employeeId={employeeId}
-        onClose={() => setShowAddModal(false)}
-        onNoteAdded={(note) => {
-          onNoteAdded(note);
-          setShowAddModal(false);
-        }}
-      />
-
-      {/* Edit Note Modal */}
-      {selectedNote && (
-        <EditNoteModal
-          isOpen={showEditModal}
-          note={selectedNote}
-          onClose={() => {
-            setShowEditModal(false);
-            setSelectedNote(null);
-          }}
-          onNoteUpdated={(updatedNote) => {
-            onNoteUpdated(updatedNote);
-            setShowEditModal(false);
-            setSelectedNote(null);
+      <Suspense fallback={null}>
+        <AddNoteModal
+          isOpen={showAddModal}
+          employeeId={employeeId}
+          onClose={() => setShowAddModal(false)}
+          onNoteAdded={(note) => {
+            onNoteAdded(note);
+            setShowAddModal(false);
           }}
         />
-      )}
+      </Suspense>
+
+      {/* Edit Note Modal */}
+      <Suspense fallback={null}>
+        {selectedNote && (
+          <EditNoteModal
+            isOpen={showEditModal}
+            note={selectedNote}
+            onClose={() => {
+              setShowEditModal(false);
+              setSelectedNote(null);
+            }}
+            onNoteUpdated={(updatedNote) => {
+              onNoteUpdated(updatedNote);
+              setShowEditModal(false);
+              setSelectedNote(null);
+            }}
+          />
+        )}
+      </Suspense>
 
       {/* Delete Confirmation Modal */}
-      <ConfirmModal
-        isOpen={showDeleteModal}
-        title="Delete Note"
-        message={`Are you sure you want to delete "${selectedNote?.title}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        onConfirm={confirmDelete}
-        onCancel={() => {
-          setShowDeleteModal(false);
-          setSelectedNote(null);
-        }}
-        variant="danger"
-      />
+      <Suspense fallback={null}>
+        <ConfirmModal
+          isOpen={showDeleteModal}
+          title="Delete Note"
+          message={`Are you sure you want to delete "${selectedNote?.title}"? This action cannot be undone.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          onConfirm={confirmDelete}
+          onCancel={() => {
+            setShowDeleteModal(false);
+            setSelectedNote(null);
+          }}
+          variant="danger"
+        />
+      </Suspense>
     </div>
   );
 };

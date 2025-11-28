@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -16,7 +16,16 @@ import {
   AreaChart,
   Area,
 } from "recharts";
-import { TrendingUp, Users, DollarSign, Activity } from "lucide-react";
+import {
+  Users,
+  TrendingUp,
+  Award,
+  DollarSign,
+  Briefcase,
+  UserCheck,
+} from "lucide-react";
+import { employeeService } from "../../services/employeeService";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import "./analytics-styles.css";
 
 const StatCard = ({ title, value, change, icon: Icon, color }) => (
@@ -24,12 +33,14 @@ const StatCard = ({ title, value, change, icon: Icon, color }) => (
     <div className="analytics-stat-content">
       <p className="analytics-stat-label">{title}</p>
       <h3 className="analytics-stat-value">{value}</h3>
-      <p
-        className={`analytics-stat-change ${change >= 0 ? "positive" : "negative"}`}
-      >
-        {change >= 0 ? "+" : ""}
-        {change}% from last month
-      </p>
+      {change !== undefined && (
+        <p
+          className={`analytics-stat-change ${change >= 0 ? "positive" : "negative"}`}
+        >
+          {change >= 0 ? "+" : ""}
+          {change}% from last month
+        </p>
+      )}
     </div>
     <div
       className="analytics-stat-icon"
@@ -41,31 +52,80 @@ const StatCard = ({ title, value, change, icon: Icon, color }) => (
 );
 
 const AnalyticsDashboard = () => {
-  // Mock Data
-  const employeeGrowthData = [
-    { month: "Jan", employees: 45 },
-    { month: "Feb", employees: 52 },
-    { month: "Mar", employees: 48 },
-    { month: "Apr", employees: 61 },
-    { month: "May", employees: 67 },
-    { month: "Jun", employees: 75 },
-  ];
+  const [employees, setEmployees] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const departmentData = [
-    { name: "Engineering", value: 35, color: "#4f46e5" },
-    { name: "Design", value: 25, color: "#ec4899" },
-    { name: "Marketing", value: 20, color: "#8b5cf6" },
-    { name: "Sales", value: 15, color: "#10b981" },
-    { name: "HR", value: 5, color: "#f59e0b" },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      const { data } = await employeeService.getAll();
+      if (data) {
+        setEmployees(data);
+      }
+      setIsLoading(false);
+    };
 
-  const performanceData = [
-    { name: "Mon", performance: 85 },
-    { name: "Tue", performance: 88 },
-    { name: "Wed", performance: 92 },
-    { name: "Thu", performance: 89 },
-    { name: "Fri", performance: 94 },
-  ];
+    fetchData();
+  }, []);
+
+  // Calculate Statistics
+  const stats = useMemo(() => {
+    const totalEmployees = employees.length;
+
+    // Department Distribution
+    const deptCounts = employees.reduce((acc, emp) => {
+      acc[emp.department] = (acc[emp.department] || 0) + 1;
+      return acc;
+    }, {});
+
+    const departmentData = Object.entries(deptCounts).map(([name, value], index) => ({
+      name,
+      value,
+      color: [
+        "#4f46e5", // Indigo
+        "#ec4899", // Pink
+        "#8b5cf6", // Violet
+        "#10b981", // Emerald
+        "#f59e0b", // Amber
+        "#3b82f6", // Blue
+        "#ef4444", // Red
+      ][index % 7]
+    }));
+
+    // Employee Growth (Mocked for now as we don't have historical data API, 
+    // but we can simulate based on join dates if available, or keep mock for trend)
+    // For this implementation, let's calculate growth based on join_date if possible, 
+    // or fallback to a static trend for visual consistency if dates aren't reliable.
+    // Let's try to group by month of join_date for the current year.
+    const currentYear = new Date().getFullYear();
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const growthData = months.map((month, index) => {
+      // Count employees joined up to this month in current year
+      // This is a cumulative count approximation
+      const count = employees.filter(emp => {
+        const joinDate = new Date(emp.join_date);
+        return joinDate.getFullYear() < currentYear ||
+          (joinDate.getFullYear() === currentYear && joinDate.getMonth() <= index);
+      }).length;
+
+      return { month, employees: count };
+    }).slice(0, new Date().getMonth() + 1); // Only show up to current month
+
+    return {
+      totalEmployees,
+      departmentData,
+      growthData: growthData.length > 0 ? growthData : [{ month: 'Jan', employees: 0 }]
+    };
+  }, [employees]);
+
+  if (isLoading) {
+    return (
+      <div className="analytics-container">
+        <LoadingSpinner size="lg" message="Loading analytics..." />
+      </div>
+    );
+  }
 
   return (
     <div className="analytics-container">
@@ -73,24 +133,22 @@ const AnalyticsDashboard = () => {
       <div className="analytics-stats-grid">
         <StatCard
           title="Total Employees"
-          value="75"
+          value={stats.totalEmployees}
           change={12}
           icon={Users}
           color="#4f46e5"
         />
         <StatCard
           title="Avg. Performance"
-          value="92%"
-          change={5}
-          icon={Activity}
-          color="#10b981"
+          value="N/A"
+          icon={Award}
+          color="warning"
         />
         <StatCard
           title="Total Payroll"
-          value="$142k"
-          change={8}
+          value="N/A"
           icon={DollarSign}
-          color="#f59e0b"
+          color="success"
         />
         <StatCard
           title="Hiring Pipeline"
@@ -108,7 +166,7 @@ const AnalyticsDashboard = () => {
           <h3 className="analytics-chart-title">Employee Growth</h3>
           <div className="analytics-chart-container">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={employeeGrowthData}>
+              <AreaChart data={stats.growthData}>
                 <defs>
                   <linearGradient
                     id="colorEmployees"
@@ -164,7 +222,7 @@ const AnalyticsDashboard = () => {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={departmentData}
+                  data={stats.departmentData}
                   cx="50%"
                   cy="50%"
                   innerRadius={80}
@@ -172,7 +230,7 @@ const AnalyticsDashboard = () => {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {departmentData.map((entry, index) => (
+                  {stats.departmentData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={entry.color}
@@ -188,76 +246,7 @@ const AnalyticsDashboard = () => {
         </div>
       </div>
 
-      {/* Charts Row 2 */}
-      <div className="analytics-performance-row">
-        {/* Performance Trend */}
-        <div className="card analytics-chart-card">
-          <h3 className="analytics-chart-title">Weekly Performance</h3>
-          <div className="analytics-performance-chart">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={performanceData} barSize={40}>
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#e5e7eb"
-                />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "#6b7280" }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "#6b7280" }}
-                />
-                <Tooltip
-                  cursor={{ fill: "transparent" }}
-                  contentStyle={{
-                    borderRadius: "0",
-                    border: "none",
-                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                  }}
-                />
-                <Bar
-                  dataKey="performance"
-                  fill="#10b981"
-                  radius={[0, 0, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
 
-        {/* Quick Insights */}
-        <div className="card analytics-insights-card">
-          <h3 className="analytics-chart-title">Quick Insights</h3>
-          <div className="analytics-insights-list">
-            <div className="analytics-insight-item primary">
-              <div className="analytics-insight-header">
-                <p className="analytics-insight-label">Top Performer</p>
-                <span className="analytics-insight-badge">Engineering</span>
-              </div>
-              <p className="analytics-insight-value">Ananya Gupta</p>
-            </div>
-            <div className="analytics-insight-item purple">
-              <div className="analytics-insight-header">
-                <p className="analytics-insight-label">Most Active Dept</p>
-                <span className="analytics-insight-badge">98% Done</span>
-              </div>
-              <p className="analytics-insight-value">Design Team</p>
-            </div>
-            <div className="analytics-insight-item orange">
-              <div className="analytics-insight-header">
-                <p className="analytics-insight-label">Upcoming Reviews</p>
-                <span className="analytics-insight-badge">This Week</span>
-              </div>
-              <p className="analytics-insight-value">12 Reviews</p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

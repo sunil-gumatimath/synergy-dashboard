@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   format,
   addMonths,
@@ -12,48 +12,61 @@ import {
   isToday,
   addDays,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, MapPin, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Plus, Award } from "lucide-react";
+import { employeeService } from "../../services/employeeService";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import "./calendar-styles.css";
 
 const CalendarView = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [events, setEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock Events
-  const events = [
-    {
-      id: 1,
-      title: "Team Standup",
-      date: new Date(),
-      time: "10:00 AM",
-      type: "meeting",
-      colorClass: "event-meeting",
-    },
-    {
-      id: 2,
-      title: "Project Review",
-      date: new Date(),
-      time: "2:00 PM",
-      type: "work",
-      colorClass: "event-work",
-    },
-    {
-      id: 3,
-      title: "Client Call",
-      date: addDays(new Date(), 2),
-      time: "11:30 AM",
-      type: "client",
-      colorClass: "event-client",
-    },
-    {
-      id: 4,
-      title: "Design Workshop",
-      date: addDays(new Date(), 5),
-      time: "1:00 PM",
-      type: "workshop",
-      colorClass: "event-workshop",
-    },
-  ];
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setIsLoading(true);
+      const { data: employees } = await employeeService.getAll();
+
+      if (employees) {
+        const currentYear = new Date().getFullYear();
+
+        const anniversaryEvents = employees.map(emp => {
+          if (!emp.join_date) return null;
+
+          const joinDate = new Date(emp.join_date);
+          const anniversaryDate = new Date(currentYear, joinDate.getMonth(), joinDate.getDate());
+          const years = currentYear - joinDate.getFullYear();
+
+          if (years <= 0) return null; // Hasn't completed a year yet
+
+          return {
+            id: `anniversary-${emp.id}`,
+            title: `${emp.name}'s ${years}${getOrdinal(years)} Work Anniversary`,
+            date: anniversaryDate,
+            time: "All Day",
+            type: "anniversary",
+            colorClass: "event-client", // Using purple/client color for celebrations
+            location: "Office Celebration",
+            isAnniversary: true
+          };
+        }).filter(Boolean);
+
+        setEvents(anniversaryEvents);
+      } else {
+        setEvents([]); // No mock events, so set to empty if no employees
+      }
+      setIsLoading(false);
+    };
+
+    fetchEvents();
+  }, [currentMonth]); // Changed dependency to currentMonth for potential re-fetch logic, assuming 'currentDate' was a typo.
+
+  const getOrdinal = (n) => {
+    const s = ["th", "st", "nd", "rd"];
+    const v = n % 100;
+    return s[(v - 20) % 10] || s[v] || s[0];
+  };
 
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
@@ -212,8 +225,8 @@ const CalendarView = () => {
                   <div>
                     <h4>{event.title}</h4>
                     <div className="calendar-event-location">
-                      <MapPin size={12} />
-                      <span>Conference Room A</span>
+                      {event.isAnniversary ? <Award size={12} /> : <MapPin size={12} />}
+                      <span>{event.location || "Conference Room A"}</span>
                     </div>
                   </div>
                 </div>
@@ -229,6 +242,14 @@ const CalendarView = () => {
       </div>
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="calendar-container">
+        <LoadingSpinner size="lg" message="Loading calendar events..." />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

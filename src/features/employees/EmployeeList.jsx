@@ -6,7 +6,7 @@ import React, {
   Suspense,
   lazy,
 } from "react";
-import { UserPlus, Users, RefreshCw } from "lucide-react";
+import { UserPlus, Users, RefreshCw, Download } from "lucide-react";
 import "./employees-styles.css";
 import { employeeService } from "../../services/employeeService";
 import { supabase } from "../../lib/supabase";
@@ -420,6 +420,48 @@ const EmployeeList = () => {
         />
         <div className="flex gap-2">
           {/* CSV Actions */}
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => {
+              const headers = [
+                "ID",
+                "Name",
+                "Email",
+                "Role",
+                "Department",
+                "Status",
+                "Join Date",
+              ];
+              const csvContent = [
+                headers.join(","),
+                ...filteredAndSortedEmployees.map((emp) =>
+                  [
+                    emp.id,
+                    `"${emp.name}"`,
+                    emp.email,
+                    emp.role,
+                    emp.department,
+                    emp.status,
+                    emp.join_date,
+                  ].join(","),
+                ),
+              ].join("\n");
+
+              const blob = new Blob([csvContent], { type: "text/csv" });
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `employees_export_${new Date().toISOString().split("T")[0]}.csv`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              window.URL.revokeObjectURL(url);
+            }}
+            title="Export to CSV"
+          >
+            <Download size={18} />
+          </button>
 
           <button
             type="button"

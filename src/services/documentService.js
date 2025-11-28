@@ -1,29 +1,6 @@
 import { supabase } from "../lib/supabase";
-import {
-  getMockDocumentsByEmployeeId,
-  addMockDocument,
-  deleteMockDocument,
-} from "./mockData";
-
-/**
- * Employee Documents Service
- * Handles CRUD operations for employee documents
- * Auto-falls back to mock data if Storage/database isn't set up
- */
-
 const STORAGE_BUCKET = "employee-documents";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-
-// Helper to detect if we should use mock data
-const shouldUseMock = (error) => {
-  return (
-    error?.message?.includes("relation") ||
-    error?.message?.includes("does not exist") ||
-    error?.message?.includes("employee_documents") ||
-    error?.message?.includes("bucket") ||
-    error?.message?.includes("not found")
-  );
-};
 
 export const documentService = {
   /**
@@ -43,12 +20,8 @@ export const documentService = {
 
       return { data, error: null };
     } catch (error) {
-      // Use mock data if database table doesn't exist
-      if (shouldUseMock(error)) {
-        const mockData = getMockDocumentsByEmployeeId(employeeId);
-        return { data: mockData, error: null };
-      }
-      return { data: null, error };
+      console.error("Error fetching documents:", error);
+      return { data: [], error };
     }
   },
 
@@ -113,21 +86,7 @@ export const documentService = {
 
       return { data, error: null };
     } catch (error) {
-      // Use mock data if storage/database isn't set up
-      if (shouldUseMock(error)) {
-        const mockData = addMockDocument({
-          employee_id: employeeId,
-          name: file.name,
-          type: metadata.type || "other",
-          file_url:
-            "https://illustrations.popsy.co/amber/uploaded-document.svg",
-          file_size: file.size,
-          mime_type: file.type,
-          uploaded_by: "demo@company.com",
-          notes: metadata.notes || null,
-        });
-        return { data: mockData, error: null };
-      }
+      console.error("Error uploading document:", error);
       return { data: null, error };
     }
   },
@@ -163,10 +122,7 @@ export const documentService = {
 
       return { success: true, error: null };
     } catch (error) {
-      if (shouldUseMock(error)) {
-        deleteMockDocument(id);
-        return { success: true, error: null };
-      }
+      console.error("Error deleting document:", error);
       return { success: false, error };
     }
   },

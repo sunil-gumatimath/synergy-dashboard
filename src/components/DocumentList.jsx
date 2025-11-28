@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import PropTypes from "prop-types";
 import { Upload, Download, Trash, Calendar } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import DocumentUploadModal from "./DocumentUploadModal";
-import ConfirmModal from "./ConfirmModal";
+const DocumentUploadModal = lazy(() => import("./DocumentUploadModal"));
+const ConfirmModal = lazy(() => import("./ConfirmModal"));
 import documentService from "../services/documentService";
 
 const DocumentList = ({
@@ -170,30 +170,34 @@ const DocumentList = ({
       )}
 
       {/* Upload Document Modal */}
-      <DocumentUploadModal
-        isOpen={showUploadModal}
-        employeeId={employeeId}
-        onClose={() => setShowUploadModal(false)}
-        onDocumentUploaded={(document) => {
-          onDocumentAdded(document);
-          setShowUploadModal(false);
-        }}
-      />
+      <Suspense fallback={null}>
+        <DocumentUploadModal
+          isOpen={showUploadModal}
+          employeeId={employeeId}
+          onClose={() => setShowUploadModal(false)}
+          onDocumentUploaded={(document) => {
+            onDocumentAdded(document);
+            setShowUploadModal(false);
+          }}
+        />
+      </Suspense>
 
       {/* Delete Confirmation Modal */}
-      <ConfirmModal
-        isOpen={showDeleteModal}
-        title="Delete Document"
-        message={`Are you sure you want to delete "${selectedDocument?.name}"? This action cannot be undone.`}
-        confirmText="Delete"
-        cancelText="Cancel"
-        onConfirm={confirmDelete}
-        onCancel={() => {
-          setShowDeleteModal(false);
-          setSelectedDocument(null);
-        }}
-        variant="danger"
-      />
+      <Suspense fallback={null}>
+        <ConfirmModal
+          isOpen={showDeleteModal}
+          title="Delete Document"
+          message={`Are you sure you want to delete "${selectedDocument?.name}"? This action cannot be undone.`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          onConfirm={confirmDelete}
+          onCancel={() => {
+            setShowDeleteModal(false);
+            setSelectedDocument(null);
+          }}
+          variant="danger"
+        />
+      </Suspense>
     </div>
   );
 };

@@ -35,7 +35,6 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import Toast from "../components/Toast";
 import DocumentList from "../components/DocumentList";
 import NotesList from "../components/NotesList";
-import MockDataBanner from "../components/MockDataBanner";
 import "./employee-detail-styles.css";
 
 // Lazy load modals - they're only needed on user interaction
@@ -215,15 +214,15 @@ const EmployeeDetailPage = () => {
     }
   };
 
-  // Mock additional contact info (these can be added to database schema)
+  // Contact info (using available data or placeholders)
   const contactInfo = {
-    phone: "+91 98765 43210",
-    location: "Mumbai, India",
+    phone: employee?.phone || "N/A",
+    location: employee?.location || "N/A",
     employeeId: `EMP${String(employee?.id || 0).padStart(4, "0")}`,
-    manager: "Rahul Sharma",
+    manager: employee?.manager || "N/A",
   };
 
-  // Mock employment history with multiple positions
+  // Employment history (using available data)
   const employmentHistory = [
     {
       id: 1,
@@ -232,42 +231,12 @@ const EmployeeDetailPage = () => {
       startDate: employee?.join_date || new Date().toISOString().split("T")[0],
       endDate: null,
       isCurrent: true,
-      description:
-        "Leading the team and driving key initiatives for the department.",
-    },
-    {
-      id: 2,
-      title: "Associate " + (employee?.role || "Position"),
-      department: employee?.department || "Department",
-      startDate: "2021-03-15",
-      endDate: employee?.join_date || new Date().toISOString().split("T")[0],
-      isCurrent: false,
-      description:
-        "Contributed to multiple successful projects and demonstrated strong technical skills.",
+      description: "Current Role",
     },
   ];
 
-  // Mock skills & competencies
-  const skills = [
-    { id: 1, name: "JavaScript", level: 95, category: "technical" },
-    { id: 2, name: "React", level: 90, category: "technical" },
-    { id: 3, name: "Node.js", level: 85, category: "technical" },
-    { id: 4, name: "Leadership", level: 88, category: "soft" },
-    { id: 5, name: "Communication", level: 92, category: "soft" },
-    { id: 6, name: "Problem Solving", level: 90, category: "soft" },
-  ];
-
-  // Mock stats (can be calculated from real data)
+  // Stats (using available data)
   const stats = [
-    {
-      id: 1,
-      label: "Projects Completed",
-      value: "24",
-      icon: <Award className="stat-icon" />,
-      color: "primary",
-      trend: "+12%",
-      trendDirection: "up",
-    },
     {
       id: 2,
       label: "Time with Company",
@@ -276,24 +245,6 @@ const EmployeeDetailPage = () => {
       color: "success",
       trend: "",
       trendDirection: null,
-    },
-    {
-      id: 3,
-      label: "Performance Score",
-      value: "94%",
-      icon: <TrendingUp className="stat-icon" />,
-      color: "warning",
-      trend: "+5%",
-      trendDirection: "up",
-    },
-    {
-      id: 4,
-      label: "Team Rating",
-      value: "4.8/5",
-      icon: <Star className="stat-icon" />,
-      color: "warning",
-      trend: "+0.3",
-      trendDirection: "up",
     },
   ];
 
@@ -325,7 +276,7 @@ Performance Statistics:
 ${stats.map((s) => `${s.label}: ${s.value} ${s.trend || ""}`).join("\n")}
 
 Skills & Competencies:
-${skills.map((s) => `${s.name}: ${s.level}%`).join("\n")}
+N/A
 
 Employment History:
 ${employmentHistory.map((h) => `${h.title} - ${h.department} (${h.startDate} to ${h.endDate || "Present"})`).join("\n")}
@@ -452,13 +403,13 @@ Exported on: ${new Date().toLocaleString()}
                     <p className="detail-value">
                       {employee.join_date
                         ? new Date(employee.join_date).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            },
-                          )
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          },
+                        )
                         : "N/A"}
                     </p>
                   </div>
@@ -492,67 +443,16 @@ Exported on: ${new Date().toLocaleString()}
               </div>
             </div>
 
-            {/* Skills & Competencies */}
-            <div className="card employee-detail-section">
+            {/* Skills & Competencies - Hidden until data is available */}
+            {/* <div className="card employee-detail-section">
               <h2 className="section-title">
                 <Target size={20} />
                 Skills & Competencies
               </h2>
-              <div className="skills-container">
-                <div className="skills-category">
-                  <h3 className="skills-category-title">
-                    <Zap size={18} />
-                    Technical Skills
-                  </h3>
-                  <div className="skills-list">
-                    {skills
-                      .filter((s) => s.category === "technical")
-                      .map((skill) => (
-                        <div key={skill.id} className="skill-item">
-                          <div className="skill-header">
-                            <span className="skill-name">{skill.name}</span>
-                            <span className="skill-percentage">
-                              {skill.level}%
-                            </span>
-                          </div>
-                          <div className="skill-bar">
-                            <div
-                              className="skill-progress"
-                              style={{ width: `${skill.level}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-                <div className="skills-category">
-                  <h3 className="skills-category-title">
-                    <BookOpen size={18} />
-                    Soft Skills
-                  </h3>
-                  <div className="skills-list">
-                    {skills
-                      .filter((s) => s.category === "soft")
-                      .map((skill) => (
-                        <div key={skill.id} className="skill-item">
-                          <div className="skill-header">
-                            <span className="skill-name">{skill.name}</span>
-                            <span className="skill-percentage">
-                              {skill.level}%
-                            </span>
-                          </div>
-                          <div className="skill-bar">
-                            <div
-                              className="skill-progress soft"
-                              style={{ width: `${skill.level}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
+              <div className="p-4 text-muted text-center">
+                Skills data not available yet.
               </div>
-            </div>
+            </div> */}
           </>
         );
 
@@ -580,12 +480,12 @@ Exported on: ${new Date().toLocaleString()}
                       -{" "}
                       {position.endDate
                         ? new Date(position.endDate).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "short",
-                            },
-                          )
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "short",
+                          },
+                        )
                         : "Present"}
                     </p>
                     {position.description && (
@@ -606,7 +506,6 @@ Exported on: ${new Date().toLocaleString()}
       case "documents":
         return (
           <>
-            <MockDataBanner />
             <div className="employee-detail-grid-2">
               <DocumentList
                 employeeId={employee.id}

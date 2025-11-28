@@ -91,4 +91,79 @@ ON CONFLICT (email) DO NOTHING;
 -- SELECT department, COUNT(*) as count 
 -- FROM employees 
 -- GROUP BY department 
--- ORDER BY count DESC;
+
+-- ========================================
+-- Documents Table
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS employee_documents (
+  id BIGSERIAL PRIMARY KEY,
+  employee_id BIGINT REFERENCES employees(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  type TEXT NOT NULL,
+  file_url TEXT NOT NULL,
+  file_size BIGINT,
+  mime_type TEXT,
+  uploaded_by TEXT,
+  notes TEXT,
+  uploaded_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_documents_employee_id ON employee_documents(employee_id);
+
+-- Enable RLS for documents
+ALTER TABLE employee_documents ENABLE ROW LEVEL SECURITY;
+
+-- Policies for documents
+CREATE POLICY "Enable all operations for authenticated users"
+  ON employee_documents FOR ALL TO authenticated
+  USING (true) WITH CHECK (true);
+
+CREATE POLICY "Enable all operations for anon users"
+  ON employee_documents FOR ALL TO anon
+  USING (true) WITH CHECK (true);
+
+-- ========================================
+-- Notes Table
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS employee_notes (
+  id BIGSERIAL PRIMARY KEY,
+  employee_id BIGINT REFERENCES employees(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  category TEXT,
+  created_by TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_notes_employee_id ON employee_notes(employee_id);
+
+-- Trigger for notes updated_at
+DROP TRIGGER IF EXISTS update_notes_updated_at ON employee_notes;
+CREATE TRIGGER update_notes_updated_at
+  BEFORE UPDATE ON employee_notes
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+-- Enable RLS for notes
+ALTER TABLE employee_notes ENABLE ROW LEVEL SECURITY;
+
+-- Policies for notes
+CREATE POLICY "Enable all operations for authenticated users"
+  ON employee_notes FOR ALL TO authenticated
+  USING (true) WITH CHECK (true);
+
+CREATE POLICY "Enable all operations for anon users"
+  ON employee_notes FOR ALL TO anon
+  USING (true) WITH CHECK (true);
+
+-- ========================================
+-- Storage Bucket Setup Instructions
+-- ========================================
+-- 1. Go to Storage in Supabase Dashboard
+-- 2. Create a new bucket named 'employee-documents'
+-- 3. Set it to Public
+-- 4. Add Policy: "Give users access to all files" (SELECT, INSERT, UPDATE, DELETE) for all users (anon and authenticated)
+

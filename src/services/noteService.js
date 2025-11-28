@@ -1,25 +1,5 @@
 import { supabase } from "../lib/supabase";
-import {
-  getMockNotesByEmployeeId,
-  addMockNote,
-  updateMockNote,
-  deleteMockNote,
-} from "./mockData";
 
-/**
- * Employee Notes Service
- * Handles CRUD operations for employee notes
- * Auto-falls back to mock data if database tables don't exist
- */
-
-// Helper to detect if we should use mock data
-const shouldUseMock = (error) => {
-  return (
-    error?.message?.includes("relation") ||
-    error?.message?.includes("does not exist") ||
-    error?.message?.includes("employee_notes")
-  );
-};
 
 export const noteService = {
   /**
@@ -39,12 +19,8 @@ export const noteService = {
 
       return { data, error: null };
     } catch (error) {
-      // Use mock data if database table doesn't exist
-      if (shouldUseMock(error)) {
-        const mockData = getMockNotesByEmployeeId(employeeId);
-        return { data: mockData, error: null };
-      }
-      return { data: null, error };
+      console.error("Error fetching notes:", error);
+      return { data: [], error };
     }
   },
 
@@ -74,14 +50,7 @@ export const noteService = {
 
       return { data, error: null };
     } catch (error) {
-      // Use mock data if database table doesn't exist
-      if (shouldUseMock(error)) {
-        const mockData = addMockNote({
-          ...noteData,
-          created_by: "demo@company.com",
-        });
-        return { data: mockData, error: null };
-      }
+      console.error("Error creating note:", error);
       return { data: null, error };
     }
   },
@@ -105,11 +74,7 @@ export const noteService = {
 
       return { data, error: null };
     } catch (error) {
-      // Use mock data if database table doesn't exist
-      if (shouldUseMock(error)) {
-        const mockData = updateMockNote(id, updates);
-        return { data: mockData, error: null };
-      }
+      console.error("Error updating note:", error);
       return { data: null, error };
     }
   },
@@ -130,11 +95,7 @@ export const noteService = {
 
       return { success: true, error: null };
     } catch (error) {
-      // Use mock data if database table doesn't exist
-      if (shouldUseMock(error)) {
-        deleteMockNote(id);
-        return { success: true, error: null };
-      }
+      console.error("Error deleting note:", error);
       return { success: false, error };
     }
   },
