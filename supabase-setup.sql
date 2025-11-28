@@ -1,9 +1,10 @@
 -- ========================================
 -- Aurora Employee Management System
--- Supabase Database Setup Script
+-- Complete Supabase Database Setup Script
 -- ========================================
 
--- Create employees table
+-- 1. EMPLOYEES TABLE
+-- ========================================
 CREATE TABLE IF NOT EXISTS employees (
   id BIGSERIAL PRIMARY KEY,
   name TEXT NOT NULL,
@@ -20,13 +21,13 @@ CREATE TABLE IF NOT EXISTS employees (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Create index for faster searches
+-- Indexes
 CREATE INDEX IF NOT EXISTS idx_employees_name ON employees(name);
 CREATE INDEX IF NOT EXISTS idx_employees_email ON employees(email);
 CREATE INDEX IF NOT EXISTS idx_employees_department ON employees(department);
 CREATE INDEX IF NOT EXISTS idx_employees_status ON employees(status);
 
--- Create function to update updated_at timestamp
+-- Updated_at Function (Shared)
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -35,37 +36,120 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Create trigger to automatically update updated_at
+-- Trigger
 DROP TRIGGER IF EXISTS update_employees_updated_at ON employees;
 CREATE TRIGGER update_employees_updated_at
   BEFORE UPDATE ON employees
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 
--- Enable Row Level Security (RLS)
+-- RLS
 ALTER TABLE employees ENABLE ROW LEVEL SECURITY;
 
--- Create policy to allow all operations (adjust based on your auth needs)
--- For now, we'll allow all authenticated users to perform CRUD operations
-CREATE POLICY "Enable all operations for authenticated users"
-  ON employees
-  FOR ALL
-  TO authenticated
-  USING (true)
-  WITH CHECK (true);
+CREATE POLICY "Enable all operations for authenticated users" ON employees
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
--- For development: allow anonymous access (remove in production)
-CREATE POLICY "Enable all operations for anon users"
-  ON employees
-  FOR ALL
-  TO anon
-  USING (true)
-  WITH CHECK (true);
+CREATE POLICY "Enable all operations for anon users" ON employees
+  FOR ALL TO anon USING (true) WITH CHECK (true);
 
+
+-- 2. DOCUMENTS TABLE
 -- ========================================
--- Insert Sample Data (Optional)
--- ========================================
+CREATE TABLE IF NOT EXISTS employee_documents (
+  id BIGSERIAL PRIMARY KEY,
+  employee_id BIGINT REFERENCES employees(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  type TEXT NOT NULL,
+  file_url TEXT NOT NULL,
+  file_size BIGINT,
+  mime_type TEXT,
+  uploaded_by TEXT,
+  notes TEXT,
+  uploaded_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
 
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_documents_employee_id ON employee_documents(employee_id);
+
+-- RLS
+ALTER TABLE employee_documents ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable all operations for authenticated users" ON employee_documents
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+CREATE POLICY "Enable all operations for anon users" ON employee_documents
+  FOR ALL TO anon USING (true) WITH CHECK (true);
+
+
+-- 3. NOTES TABLE
+-- ========================================
+CREATE TABLE IF NOT EXISTS employee_notes (
+  id BIGSERIAL PRIMARY KEY,
+  employee_id BIGINT REFERENCES employees(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  category TEXT,
+  created_by TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_notes_employee_id ON employee_notes(employee_id);
+
+-- Trigger
+DROP TRIGGER IF EXISTS update_notes_updated_at ON employee_notes;
+CREATE TRIGGER update_notes_updated_at
+  BEFORE UPDATE ON employee_notes
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+-- RLS
+ALTER TABLE employee_notes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable all operations for authenticated users" ON employee_notes
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+CREATE POLICY "Enable all operations for anon users" ON employee_notes
+  FOR ALL TO anon USING (true) WITH CHECK (true);
+
+
+-- 4. CALENDAR EVENTS TABLE
+-- ========================================
+CREATE TABLE IF NOT EXISTS calendar_events (
+  id BIGSERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  date DATE NOT NULL,
+  time TEXT,
+  type TEXT NOT NULL DEFAULT 'event',
+  location TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_calendar_events_date ON calendar_events(date);
+
+-- Trigger
+DROP TRIGGER IF EXISTS update_calendar_events_updated_at ON calendar_events;
+CREATE TRIGGER update_calendar_events_updated_at
+  BEFORE UPDATE ON calendar_events
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+-- RLS
+ALTER TABLE calendar_events ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable all operations for authenticated users" ON calendar_events
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+CREATE POLICY "Enable all operations for anon users" ON calendar_events
+  FOR ALL TO anon USING (true) WITH CHECK (true);
+
+
+-- 5. SAMPLE DATA (Optional)
+-- ========================================
 INSERT INTO employees (name, email, role, department, status, avatar, join_date, salary, performance_score) VALUES
   ('Aarav Patel', 'aarav.p@company.com', 'Senior Developer', 'Engineering', 'Active', 'https://api.dicebear.com/9.x/micah/svg?seed=Aarav', '2022-03-15', 120000, 92),
   ('Diya Sharma', 'diya.s@company.com', 'Product Designer', 'Design', 'Active', 'https://api.dicebear.com/9.x/micah/svg?seed=Diya', '2023-01-10', 95000, 88),
@@ -94,93 +178,9 @@ INSERT INTO employees (name, email, role, department, status, avatar, join_date,
   ('Karan Johar', 'karan.j@company.com', 'Product Analyst', 'Product', 'Active', 'https://api.dicebear.com/9.x/micah/svg?seed=Karan', '2022-04-10', 94000, 85)
 ON CONFLICT (email) DO NOTHING;
 
--- ========================================
--- Verification Queries
--- ========================================
-
--- Check if table was created successfully
--- SELECT * FROM employees ORDER BY created_at DESC;
-
--- Count total employees
--- SELECT COUNT(*) as total_employees FROM employees;
-
--- Check employees by department
--- SELECT department, COUNT(*) as count 
--- FROM employees 
--- GROUP BY department 
-
--- ========================================
--- Documents Table
--- ========================================
-
-CREATE TABLE IF NOT EXISTS employee_documents (
-  id BIGSERIAL PRIMARY KEY,
-  employee_id BIGINT REFERENCES employees(id) ON DELETE CASCADE,
-  name TEXT NOT NULL,
-  type TEXT NOT NULL,
-  file_url TEXT NOT NULL,
-  file_size BIGINT,
-  mime_type TEXT,
-  uploaded_by TEXT,
-  notes TEXT,
-  uploaded_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS idx_documents_employee_id ON employee_documents(employee_id);
-
--- Enable RLS for documents
-ALTER TABLE employee_documents ENABLE ROW LEVEL SECURITY;
-
--- Policies for documents
-CREATE POLICY "Enable all operations for authenticated users"
-  ON employee_documents FOR ALL TO authenticated
-  USING (true) WITH CHECK (true);
-
-CREATE POLICY "Enable all operations for anon users"
-  ON employee_documents FOR ALL TO anon
-  USING (true) WITH CHECK (true);
-
--- ========================================
--- Notes Table
--- ========================================
-
-CREATE TABLE IF NOT EXISTS employee_notes (
-  id BIGSERIAL PRIMARY KEY,
-  employee_id BIGINT REFERENCES employees(id) ON DELETE CASCADE,
-  title TEXT NOT NULL,
-  content TEXT NOT NULL,
-  category TEXT,
-  created_by TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS idx_notes_employee_id ON employee_notes(employee_id);
-
--- Trigger for notes updated_at
-DROP TRIGGER IF EXISTS update_notes_updated_at ON employee_notes;
-CREATE TRIGGER update_notes_updated_at
-  BEFORE UPDATE ON employee_notes
-  FOR EACH ROW
-  EXECUTE FUNCTION update_updated_at_column();
-
--- Enable RLS for notes
-ALTER TABLE employee_notes ENABLE ROW LEVEL SECURITY;
-
--- Policies for notes
-CREATE POLICY "Enable all operations for authenticated users"
-  ON employee_notes FOR ALL TO authenticated
-  USING (true) WITH CHECK (true);
-
-CREATE POLICY "Enable all operations for anon users"
-  ON employee_notes FOR ALL TO anon
-  USING (true) WITH CHECK (true);
-
--- ========================================
--- Storage Bucket Setup Instructions
+-- 6. STORAGE BUCKET INSTRUCTIONS
 -- ========================================
 -- 1. Go to Storage in Supabase Dashboard
 -- 2. Create a new bucket named 'employee-documents'
 -- 3. Set it to Public
 -- 4. Add Policy: "Give users access to all files" (SELECT, INSERT, UPDATE, DELETE) for all users (anon and authenticated)
-
