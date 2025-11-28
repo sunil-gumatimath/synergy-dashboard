@@ -112,10 +112,43 @@ const AnalyticsDashboard = () => {
       return { month, employees: count };
     }).slice(0, new Date().getMonth() + 1); // Only show up to current month
 
+    // Calculate Average Performance
+    const avgPerformance =
+      totalEmployees > 0
+        ? Math.round(
+          employees.reduce(
+            (acc, emp) => acc + (emp.performance_score || 0),
+            0,
+          ) / totalEmployees,
+        )
+        : 0;
+
+    // Calculate Total Payroll
+    const totalPayroll = employees.reduce(
+      (acc, emp) => acc + (emp.salary || 0),
+      0,
+    );
+
+    // Calculate Performance by Department
+    const performanceByDept = Object.keys(deptCounts).map((dept) => {
+      const deptEmployees = employees.filter((e) => e.department === dept);
+      const avg =
+        deptEmployees.reduce((acc, e) => acc + (e.performance_score || 0), 0) /
+        deptEmployees.length;
+      return {
+        name: dept,
+        performance: Math.round(avg),
+      };
+    });
+
     return {
       totalEmployees,
       departmentData,
-      growthData: growthData.length > 0 ? growthData : [{ month: 'Jan', employees: 0 }]
+      growthData:
+        growthData.length > 0 ? growthData : [{ month: "Jan", employees: 0 }],
+      avgPerformance,
+      totalPayroll,
+      performanceByDept,
     };
   }, [employees]);
 
@@ -140,13 +173,13 @@ const AnalyticsDashboard = () => {
         />
         <StatCard
           title="Avg. Performance"
-          value="N/A"
+          value={`${stats.avgPerformance}%`}
           icon={Award}
           color="warning"
         />
         <StatCard
           title="Total Payroll"
-          value="N/A"
+          value={`$${(stats.totalPayroll / 1000000).toFixed(1)}M`}
           icon={DollarSign}
           color="success"
         />
@@ -242,6 +275,92 @@ const AnalyticsDashboard = () => {
                 <Legend verticalAlign="bottom" height={36} iconType="circle" />
               </PieChart>
             </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts Row 2 */}
+      <div className="analytics-performance-row">
+        {/* Performance by Department */}
+        <div className="card analytics-chart-card">
+          <h3 className="analytics-chart-title">Avg. Performance by Dept</h3>
+          <div className="analytics-performance-chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.performanceByDept} barSize={40}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="#e5e7eb"
+                />
+                <XAxis
+                  dataKey="name"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#6b7280" }}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#6b7280" }}
+                  domain={[0, 100]}
+                />
+                <Tooltip
+                  cursor={{ fill: "transparent" }}
+                  contentStyle={{
+                    borderRadius: "0",
+                    border: "none",
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+                <Bar
+                  dataKey="performance"
+                  fill="#10b981"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Quick Insights (Dynamic) */}
+        <div className="card analytics-insights-card">
+          <h3 className="analytics-chart-title">Quick Insights</h3>
+          <div className="analytics-insights-list">
+            <div className="analytics-insight-item primary">
+              <div className="analytics-insight-header">
+                <p className="analytics-insight-label">Top Department</p>
+                <span className="analytics-insight-badge">Performance</span>
+              </div>
+              <p className="analytics-insight-value">
+                {stats.performanceByDept.sort(
+                  (a, b) => b.performance - a.performance,
+                )[0]?.name || "N/A"}
+              </p>
+            </div>
+            <div className="analytics-insight-item purple">
+              <div className="analytics-insight-header">
+                <p className="analytics-insight-label">Largest Dept</p>
+                <span className="analytics-insight-badge">Headcount</span>
+              </div>
+              <p className="analytics-insight-value">
+                {stats.departmentData.sort((a, b) => b.value - a.value)[0]
+                  ?.name || "N/A"}
+              </p>
+            </div>
+            <div className="analytics-insight-item orange">
+              <div className="analytics-insight-header">
+                <p className="analytics-insight-label">Avg Salary</p>
+                <span className="analytics-insight-badge">Company Wide</span>
+              </div>
+              <p className="analytics-insight-value">
+                $
+                {stats.totalEmployees > 0
+                  ? Math.round(
+                    stats.totalPayroll / stats.totalEmployees,
+                  ).toLocaleString()
+                  : 0}
+              </p>
+            </div>
           </div>
         </div>
       </div>

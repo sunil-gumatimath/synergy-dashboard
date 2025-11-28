@@ -162,6 +162,7 @@ const EmployeeDetailPage = () => {
         message:
           error.message || "Failed to delete employee. Please try again.",
       });
+      setActionLoading(false);
     } else {
       setToast({
         type: "success",
@@ -171,8 +172,6 @@ const EmployeeDetailPage = () => {
         navigate("/employees");
       }, 1500);
     }
-
-    setActionLoading(false);
   };
 
   const getStatusClass = (status) => {
@@ -687,7 +686,7 @@ Exported on: ${new Date().toLocaleString()}
           onConfirm={handleDeleteEmployee}
           onCancel={() => setShowDeleteModal(false)}
           isLoading={actionLoading}
-          variant="danger"
+          type="danger"
         />
       </Suspense>
 
