@@ -18,10 +18,28 @@
 }
 
 /* Search Input */
-.employees-search {
+/* Search Input Wrapper */
+.employees-search-wrapper {
   flex: 1;
   min-width: 250px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.employees-search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-muted);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.employees-search-input {
+  width: 100%;
   padding: var(--space-md) var(--space-lg);
+  padding-left: 2.75rem;
+  padding-right: 2.5rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: var(--bg-surface);
@@ -30,14 +48,34 @@
   transition: all 0.2s ease;
 }
 
-.employees-search:focus {
+.employees-search-input:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--primary-light);
 }
 
-.employees-search::placeholder {
+.employees-search-input::placeholder {
   color: var(--text-light);
+}
+
+.employees-search-clear {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.employees-search-clear:hover {
+  background: var(--bg-body);
+  color: var(--text-main);
 }
 
 /* Filter and Sort Controls */
@@ -206,18 +244,18 @@
 }
 
 .employee-status-badge.active {
-  background: #d1fae5;
-  color: #065f46;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
 }
 
 .employee-status-badge.leave {
-  background: #fef3c7;
-  color: #92400e;
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning-color);
 }
 
 .employee-status-badge.offline {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--bg-body);
+  color: var(--text-muted);
 }
 
 /* Meta Information */

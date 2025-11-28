@@ -6,7 +6,7 @@ import React, {
   Suspense,
   lazy,
 } from "react";
-import { UserPlus, Users, RefreshCw, Download } from "lucide-react";
+import { UserPlus, Users, RefreshCw, Download, Search, X } from "lucide-react";
 import "./employees-styles.css";
 import { employeeService } from "../../services/employeeService";
 import { supabase } from "../../lib/supabase";
@@ -411,13 +411,25 @@ const EmployeeList = () => {
       />
 
       <div className="employees-header">
-        <input
-          type="text"
-          placeholder="Search employees by name, role, department, or email..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="employees-search"
-        />
+        <div className="employees-search-wrapper">
+          <Search className="employees-search-icon" size={20} />
+          <input
+            type="text"
+            placeholder="Search employees by name, role, department..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="employees-search-input"
+          />
+          {searchTerm && (
+            <button
+              className="employees-search-clear"
+              onClick={() => setSearchTerm("")}
+              title="Clear search"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
         <div className="flex gap-2">
           {/* CSV Actions */}
           <button

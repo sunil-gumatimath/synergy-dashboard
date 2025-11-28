@@ -34,10 +34,13 @@
 
   --success-bg: #ecfdf5;
   --success-text: #047857;
+  --success-color: #10b981;
   --warning-bg: #fffbeb;
   --warning-text: #b45309;
+  --warning-color: #f59e0b;
   --danger-bg: #fef2f2;
   --danger-text: #b91c1c;
+  --danger-color: #ef4444;
   --neutral-bg: #f3f4f6;
   --neutral-text: #4b5563;
 

@@ -76,11 +76,9 @@
   left: 0;
   right: 0;
   height: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(99, 102, 241, 0.05) 0%,
-    rgba(168, 85, 247, 0.05) 100%
-  );
+  background: linear-gradient(135deg,
+      rgba(99, 102, 241, 0.05) 0%,
+      rgba(168, 85, 247, 0.05) 100%);
   z-index: 0;
 }
 
@@ -180,7 +178,7 @@
 }
 
 .employee-status-badge.offline {
-  background: var(--bg-tertiary);
+  background: var(--bg-body);
   color: var(--text-muted);
 }
 
@@ -505,6 +503,44 @@
   color: var(--text-muted);
   margin: 0;
   margin-bottom: 2rem;
+}
+
+/* Tabs Navigation */
+.tabs-container {
+  margin-bottom: 2rem;
+}
+
+.tabs-nav {
+  display: flex;
+  gap: 2rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: -1px;
+}
+
+.tab-btn:hover {
+  color: var(--text-main);
+  border-bottom-color: var(--border);
+}
+
+.tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
 }
 
 /* Responsive Design */
