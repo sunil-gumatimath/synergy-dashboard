@@ -146,16 +146,16 @@ const SettingsView = () => {
 
             <div className="settings-grid">
               <div className="settings-form-group">
-                <label className="settings-label">Full Name</label>
                 <input
                   type="text"
                   value={settings.name}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("name", e.target.value)}
                   className={`settings-input ${errors.name ? "error" : ""}`}
-                  placeholder="Enter your full name"
+                  placeholder=" "
                   aria-invalid={errors.name ? "true" : "false"}
                 />
+                <label className="settings-label">Full Name</label>
                 {errors.name && (
                   <p className="settings-error-message">
                     <AlertCircle size={12} /> {errors.name}
@@ -164,16 +164,16 @@ const SettingsView = () => {
               </div>
 
               <div className="settings-form-group">
-                <label className="settings-label">Email</label>
                 <input
                   type="email"
                   value={settings.email}
                   disabled={isSaving}
                   onChange={(e) => updateSetting("email", e.target.value)}
                   className={`settings-input ${errors.email ? "error" : ""}`}
-                  placeholder="Enter your email"
+                  placeholder=" "
                   aria-invalid={errors.email ? "true" : "false"}
                 />
+                <label className="settings-label">Email</label>
                 {errors.email && (
                   <p className="settings-error-message">
                     <AlertCircle size={12} /> {errors.email}
@@ -183,15 +183,15 @@ const SettingsView = () => {
             </div>
 
             <div className="settings-form-group">
-              <label className="settings-label">Bio</label>
               <textarea
                 value={settings.bio}
                 disabled={isSaving}
                 onChange={(e) => updateSetting("bio", e.target.value)}
                 rows={3}
                 className="settings-textarea"
-                placeholder="Tell us about yourself"
+                placeholder=" "
               />
+              <label className="settings-label">Bio</label>
             </div>
           </div>
         );
@@ -255,7 +255,6 @@ const SettingsView = () => {
           <div className="settings-section">
             <div className="settings-grid">
               <div className="settings-form-group">
-                <label className="settings-label">Language</label>
                 <select
                   value={settings.language}
                   disabled={isSaving}
@@ -267,10 +266,10 @@ const SettingsView = () => {
                   <option value="fr">French</option>
                   <option value="de">German</option>
                 </select>
+                <label className="settings-label">Language</label>
               </div>
 
               <div className="settings-form-group">
-                <label className="settings-label">Timezone</label>
                 <select
                   value={settings.timezone}
                   disabled={isSaving}
@@ -282,10 +281,10 @@ const SettingsView = () => {
                   <option value="Europe/London">Europe/London</option>
                   <option value="Asia/Tokyo">Asia/Tokyo</option>
                 </select>
+                <label className="settings-label">Timezone</label>
               </div>
 
               <div className="settings-form-group">
-                <label className="settings-label">Data Retention</label>
                 <select
                   value={settings.dataRetention}
                   disabled={isSaving}
@@ -299,6 +298,7 @@ const SettingsView = () => {
                   <option value="3years">3 Years</option>
                   <option value="forever">Forever</option>
                 </select>
+                <label className="settings-label">Data Retention</label>
               </div>
             </div>
 
@@ -331,7 +331,6 @@ const SettingsView = () => {
         return (
           <div className="settings-section">
             <div className="settings-form-group">
-              <label className="settings-label">Current Password</label>
               <input
                 type="password"
                 value={settings.currentPassword}
@@ -340,9 +339,10 @@ const SettingsView = () => {
                   updateSetting("currentPassword", e.target.value)
                 }
                 className={`settings-input ${errors.currentPassword ? "error" : ""}`}
-                placeholder="Enter current password"
+                placeholder=" "
                 aria-invalid={errors.currentPassword ? "true" : "false"}
               />
+              <label className="settings-label">Current Password</label>
               {errors.currentPassword && (
                 <p className="settings-error-message">
                   <AlertCircle size={12} /> {errors.currentPassword}
@@ -351,16 +351,16 @@ const SettingsView = () => {
             </div>
 
             <div className="settings-form-group">
-              <label className="settings-label">New Password</label>
               <input
                 type="password"
                 value={settings.newPassword}
                 disabled={isSaving}
                 onChange={(e) => updateSetting("newPassword", e.target.value)}
                 className={`settings-input ${errors.newPassword ? "error" : ""}`}
-                placeholder="Enter new password"
+                placeholder=" "
                 aria-invalid={errors.newPassword ? "true" : "false"}
               />
+              <label className="settings-label">New Password</label>
               {errors.newPassword && (
                 <p className="settings-error-message">
                   <AlertCircle size={12} /> {errors.newPassword}
@@ -369,7 +369,6 @@ const SettingsView = () => {
             </div>
 
             <div className="settings-form-group">
-              <label className="settings-label">Confirm Password</label>
               <input
                 type="password"
                 value={settings.confirmPassword}
@@ -378,9 +377,10 @@ const SettingsView = () => {
                   updateSetting("confirmPassword", e.target.value)
                 }
                 className={`settings-input ${errors.confirmPassword ? "error" : ""}`}
-                placeholder="Confirm new password"
+                placeholder=" "
                 aria-invalid={errors.confirmPassword ? "true" : "false"}
               />
+              <label className="settings-label">Confirm Password</label>
               {errors.confirmPassword && (
                 <p className="settings-error-message">
                   <AlertCircle size={12} /> {errors.confirmPassword}
