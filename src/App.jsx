@@ -59,7 +59,11 @@ function App() {
             <Route
               path="/analytics"
               element={
-                <Suspense fallback={<LoadingSpinner size="lg" message="Loading analytics..." />}>
+                <Suspense
+                  fallback={
+                    <LoadingSpinner size="lg" message="Loading analytics..." />
+                  }
+                >
                   <AnalyticsDashboard />
                 </Suspense>
               }
@@ -80,7 +84,11 @@ function App() {
             <Route
               path="/calendar"
               element={
-                <Suspense fallback={<LoadingSpinner size="lg" message="Loading calendar..." />}>
+                <Suspense
+                  fallback={
+                    <LoadingSpinner size="lg" message="Loading calendar..." />
+                  }
+                >
                   <CalendarView />
                 </Suspense>
               }

@@ -8,7 +8,7 @@ import {
   ArrowRight,
   Check,
   Github,
-  Chrome
+  Chrome,
 } from "lucide-react";
 import "../index.css";
 import "./login-styles.css";
@@ -134,12 +134,8 @@ const LoginPage = () => {
           <div className="logo-wrapper">
             <Briefcase className="logo-icon" size={32} />
           </div>
-          <h1 className="app-title">
-            Aurora
-          </h1>
-          <p className="app-subtitle">
-            Employee Management System
-          </p>
+          <h1 className="app-title">Aurora</h1>
+          <p className="app-subtitle">Employee Management System</p>
         </div>
 
         {/* Form Card */}
@@ -239,9 +235,13 @@ const LoginPage = () => {
                       style={{
                         width: `${passwordStrength}%`,
                         backgroundColor:
-                          passwordStrength <= 25 ? '#ef4444' :
-                            passwordStrength <= 50 ? '#f59e0b' :
-                              passwordStrength <= 75 ? '#3b82f6' : '#10b981'
+                          passwordStrength <= 25
+                            ? "#ef4444"
+                            : passwordStrength <= 50
+                              ? "#f59e0b"
+                              : passwordStrength <= 75
+                                ? "#3b82f6"
+                                : "#10b981",
                       }}
                     ></div>
                   </div>
@@ -275,19 +275,19 @@ const LoginPage = () => {
                     <input type="checkbox" className="checkbox-input" />
                     <span className="checkbox-text">Remember me</span>
                   </label>
-                  <a href="#" className="forgot-password-link">Forgot Password?</a>
+                  <a href="#" className="forgot-password-link">
+                    Forgot Password?
+                  </a>
                 </div>
               )}
 
               {/* Submit Button */}
-              <button
-                type="submit"
-                className="submit-btn"
-                disabled={loading}
-              >
+              <button type="submit" className="submit-btn" disabled={loading}>
                 {loading ? (
                   <div className="loading-dots">
-                    <span></span><span></span><span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
                   </div>
                 ) : (
                   <>

@@ -5,6 +5,7 @@ A modern, comprehensive employee management dashboard built with React, Vite, an
 ## ✨ Features
 
 ### 👥 **Employee Management**
+
 - Complete CRUD operations (Create, Read, Update, Delete)
 - Advanced employee profiles with detailed information
 - **Enhanced Employee Details** including:
@@ -15,35 +16,42 @@ A modern, comprehensive employee management dashboard built with React, Vite, an
   - 📥 PDF export functionality
 
 ### 📊 **Analytics Dashboard**
+
 - Interactive charts showing employee growth trends
 - Department distribution analytics
 - Performance metrics visualization
 - Real-time statistics and insights
 
 ### 📄 **Documents & Notes System**
+
 - Secure file upload and management per employee
 - Categorized note-taking system
 - Document organization and retrieval
 
 ### 🔐 **Authentication**
+
 - Secure login/signup with Supabase
 - Protected routes and session management
 
 ### 📅 **Calendar View**
+
 - Employee scheduling and calendar management
 
 ### ⚙️ **Settings**
+
 - Application configuration and preferences
 
 ## 🚀 Quick Start
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/sunil-gumatimath/emp-management-vibecode.git
 cd react-browser
 ```
 
 2. Install dependencies:
+
 ```bash
 bun install  # or npm install
 ```
@@ -53,12 +61,14 @@ bun install  # or npm install
    - Run the SQL scripts from `supabase-setup.sql` and `migrations/` in your Supabase SQL editor
 
 4. Configure environment variables in `.env.local`:
+
 ```env
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
 5. Start development server:
+
 ```bash
 bun run dev  # or npm run dev
 ```

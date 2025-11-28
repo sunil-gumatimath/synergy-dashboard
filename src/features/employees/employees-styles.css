@@ -40,8 +40,6 @@
   color: var(--text-light);
 }
 
-
-
 /* Filter and Sort Controls */
 .employees-controls {
   display: grid;

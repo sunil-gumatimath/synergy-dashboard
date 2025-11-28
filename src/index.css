@@ -74,7 +74,6 @@
   --text-4xl: 2.25rem;
 }
 
-
 /* Utility Classes */
 /* Typography */
 .text-xs {
@@ -1253,7 +1252,6 @@ textarea:focus-visible {
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {
-
   .card,
   .btn,
   .form-input,
@@ -1265,7 +1263,6 @@ textarea:focus-visible {
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {

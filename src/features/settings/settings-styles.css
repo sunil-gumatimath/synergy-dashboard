@@ -152,20 +152,20 @@
   box-shadow: var(--shadow-sm);
 }
 
-.settings-toggle-input:checked+.settings-toggle-slider {
+.settings-toggle-input:checked + .settings-toggle-slider {
   background-color: var(--primary);
 }
 
-.settings-toggle-input:checked+.settings-toggle-slider::after {
+.settings-toggle-input:checked + .settings-toggle-slider::after {
   transform: translateX(1rem);
 }
 
-.settings-toggle-input:focus+.settings-toggle-slider {
+.settings-toggle-input:focus + .settings-toggle-slider {
   outline: 2px solid var(--primary-light);
   outline-offset: 2px;
 }
 
-.settings-toggle-input:disabled+.settings-toggle-slider {
+.settings-toggle-input:disabled + .settings-toggle-slider {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -214,7 +214,6 @@
   margin-top: var(--space-xl);
   padding-top: var(--space-lg);
 }
-
 
 .settings-save-button {
   display: inline-flex;

@@ -17,7 +17,12 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Analytics", id: "analytics", path: "/analytics" },
+    {
+      icon: LayoutDashboard,
+      label: "Analytics",
+      id: "analytics",
+      path: "/analytics",
+    },
     { icon: Users, label: "Employees", id: "employees", path: "/employees" },
     { icon: Calendar, label: "Calendar", id: "calendar", path: "/calendar" },
     { icon: Settings, label: "Settings", id: "settings", path: "/settings" },

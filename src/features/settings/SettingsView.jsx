@@ -40,8 +40,6 @@ const SettingsView = () => {
     { id: "security", label: "Security", icon: Shield },
   ];
 
-
-
   const updateSetting = (field, value) => {
     setSettings((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
@@ -256,7 +254,6 @@ const SettingsView = () => {
         return (
           <div className="settings-section">
             <div className="settings-grid">
-
               <div className="settings-form-group">
                 <label className="settings-label">Language</label>
                 <select
@@ -393,7 +390,10 @@ const SettingsView = () => {
 
             <div className="settings-toggle-wrapper">
               <div>
-                <label className="font-medium text-main" htmlFor="twoFactorAuth">
+                <label
+                  className="font-medium text-main"
+                  htmlFor="twoFactorAuth"
+                >
                   Two-factor authentication
                 </label>
                 <p className="text-sm text-muted">Extra security layer</p>

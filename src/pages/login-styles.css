@@ -57,7 +57,6 @@
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translate(0, 0) scale(1);
@@ -116,13 +115,18 @@
 }
 
 .logo-wrapper::after {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
   transform: rotate(45deg);
   animation: shine 3s infinite;
 }
@@ -174,7 +178,12 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent
+  );
 }
 
 .card-content {
@@ -226,8 +235,8 @@
   box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
 }
 
-.form-input:not(:placeholder-shown)+.floating-label,
-.form-input:focus+.floating-label {
+.form-input:not(:placeholder-shown) + .floating-label,
+.form-input:focus + .floating-label {
   transform: translateY(-1.6rem) scale(0.85);
   color: #a78bfa;
   background: #1e1b4b;
@@ -370,7 +379,7 @@
 
 .divider::before,
 .divider::after {
-  content: '';
+  content: "";
   flex: 1;
   height: 1px;
   background: rgba(255, 255, 255, 0.1);
@@ -478,7 +487,6 @@
 }
 
 @keyframes bounce {
-
   0%,
   80%,
   100% {

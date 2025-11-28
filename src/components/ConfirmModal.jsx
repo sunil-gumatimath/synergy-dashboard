@@ -34,15 +34,11 @@ const ConfirmModal = ({
       />
       <div className="relative bg-white rounded-none shadow-2xl max-w-sm w-full animate-scale-in border border-slate-100">
         <div className="p-8 flex flex-col items-center text-center">
-          <div
-            className={`p-4 rounded-none mb-6 ${iconStyles[type]}`}
-          >
+          <div className={`p-4 rounded-none mb-6 ${iconStyles[type]}`}>
             <AlertTriangle size={32} strokeWidth={1.5} />
           </div>
 
-          <h3 className="text-xl font-bold text-slate-900 mb-3">
-            {title}
-          </h3>
+          <h3 className="text-xl font-bold text-slate-900 mb-3">{title}</h3>
 
           <p className="text-sm text-slate-500 leading-relaxed mb-8">
             {message}

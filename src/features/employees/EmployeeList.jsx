@@ -1,4 +1,11 @@
-import React, { useState, useMemo, useEffect, useCallback, Suspense, lazy } from "react";
+import React, {
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+  Suspense,
+  lazy,
+} from "react";
 import { UserPlus, Users, RefreshCw } from "lucide-react";
 import "./employees-styles.css";
 import { employeeService } from "../../services/employeeService";
@@ -10,12 +17,14 @@ import FilterPanel from "../../components/FilterPanel";
 import SortControls from "../../components/SortControls";
 import BulkActionToolbar from "../../components/BulkActionToolbar";
 
-
 // Lazy load modals for better performance
-const AddEmployeeModal = lazy(() => import("../../components/AddEmployeeModal"));
-const EditEmployeeModal = lazy(() => import("../../components/EditEmployeeModal"));
+const AddEmployeeModal = lazy(
+  () => import("../../components/AddEmployeeModal"),
+);
+const EditEmployeeModal = lazy(
+  () => import("../../components/EditEmployeeModal"),
+);
 const ConfirmModal = lazy(() => import("../../components/ConfirmModal"));
-
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
@@ -30,7 +39,6 @@ const EmployeeList = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-
 
   // Toast state
   const [toast, setToast] = useState(null);
@@ -82,44 +90,44 @@ const EmployeeList = () => {
 
   // Fetch employees on mount
   useEffect(() => {
+    // eslint-disable-next-line
     fetchEmployees();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchEmployees]);
 
   // Supabase Realtime subscription for live updates
   useEffect(() => {
     // Create a channel for real-time updates
     const channel = supabase
-      .channel('employees-realtime')
+      .channel("employees-realtime")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*', // Listen to all events (INSERT, UPDATE, DELETE)
-          schema: 'public',
-          table: 'employees',
+          event: "*", // Listen to all events (INSERT, UPDATE, DELETE)
+          schema: "public",
+          table: "employees",
         },
         (payload) => {
           // Refresh the employee list when any change occurs
           fetchEmployees(true); // Use refresh mode to show subtle loading
 
           // Show a toast notification about the change
-          if (payload.eventType === 'INSERT') {
+          if (payload.eventType === "INSERT") {
             setToast({
-              type: 'info',
-              message: 'New employee added by another user',
+              type: "info",
+              message: "New employee added by another user",
             });
-          } else if (payload.eventType === 'UPDATE') {
+          } else if (payload.eventType === "UPDATE") {
             setToast({
-              type: 'info',
-              message: 'Employee data updated',
+              type: "info",
+              message: "Employee data updated",
             });
-          } else if (payload.eventType === 'DELETE') {
+          } else if (payload.eventType === "DELETE") {
             setToast({
-              type: 'info',
-              message: 'Employee removed',
+              type: "info",
+              message: "Employee removed",
             });
           }
-        }
+        },
       )
       .subscribe();
 
@@ -313,11 +321,11 @@ const EmployeeList = () => {
     setActionLoading(true);
 
     const selectedEmployees = employees.filter((emp) =>
-      selectedEmployeeIds.has(emp.id)
+      selectedEmployeeIds.has(emp.id),
     );
 
     const deletePromises = selectedEmployees.map((emp) =>
-      employeeService.delete(emp.id)
+      employeeService.delete(emp.id),
     );
 
     try {
@@ -340,34 +348,37 @@ const EmployeeList = () => {
   }, [selectedEmployeeIds, employees, fetchEmployees]);
 
   // Bulk status update
-  const handleBulkStatusChange = useCallback(async (newStatus) => {
-    setActionLoading(true);
+  const handleBulkStatusChange = useCallback(
+    async (newStatus) => {
+      setActionLoading(true);
 
-    const selectedEmployees = employees.filter((emp) =>
-      selectedEmployeeIds.has(emp.id)
-    );
+      const selectedEmployees = employees.filter((emp) =>
+        selectedEmployeeIds.has(emp.id),
+      );
 
-    const updatePromises = selectedEmployees.map((emp) =>
-      employeeService.update(emp.id, { status: newStatus })
-    );
+      const updatePromises = selectedEmployees.map((emp) =>
+        employeeService.update(emp.id, { status: newStatus }),
+      );
 
-    try {
-      await Promise.all(updatePromises);
-      setToast({
-        type: "success",
-        message: `Successfully updated ${selectedEmployeeIds.size} employee(s) to ${newStatus}`,
-      });
-      setSelectedEmployeeIds(new Set());
-      fetchEmployees();
-    } catch {
-      setToast({
-        type: "error",
-        message: "Failed to update some employees",
-      });
-    }
+      try {
+        await Promise.all(updatePromises);
+        setToast({
+          type: "success",
+          message: `Successfully updated ${selectedEmployeeIds.size} employee(s) to ${newStatus}`,
+        });
+        setSelectedEmployeeIds(new Set());
+        fetchEmployees();
+      } catch {
+        setToast({
+          type: "error",
+          message: "Failed to update some employees",
+        });
+      }
 
-    setActionLoading(false);
-  }, [selectedEmployeeIds, employees, fetchEmployees]);
+      setActionLoading(false);
+    },
+    [selectedEmployeeIds, employees, fetchEmployees],
+  );
 
   // Handle filter changes
   const handleFilterChange = useCallback((newFilters) => {
@@ -380,8 +391,6 @@ const EmployeeList = () => {
     setSortBy(field);
     setSortOrder(order);
   }, []);
-
-
 
   if (isLoading) {
     return (
@@ -411,7 +420,6 @@ const EmployeeList = () => {
         />
         <div className="flex gap-2">
           {/* CSV Actions */}
-
 
           <button
             type="button"
@@ -552,8 +560,6 @@ const EmployeeList = () => {
           variant="danger"
         />
       </Suspense>
-
-
 
       {/* Toast Notifications */}
       {toast && (
