@@ -40,28 +40,7 @@
   color: var(--text-light);
 }
 
-/* CSV Actions */
-.csv-actions {
-  display: flex;
-  gap: 0.5rem;
-}
 
-.btn-text {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .btn-text {
-    display: inline;
-  }
-}
-
-/* Mobile: hide text, show only icons */
-@media (max-width: 767px) {
-  .csv-actions .btn {
-    padding: 0.625rem;
-  }
-}
 
 /* Filter and Sort Controls */
 .employees-controls {

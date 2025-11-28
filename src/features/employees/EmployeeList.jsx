@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback, Suspense, lazy } from "react";
-import { UserPlus, Users, RefreshCw, Download, Upload, FileText } from "lucide-react";
+import { UserPlus, Users, RefreshCw } from "lucide-react";
 import "./employees-styles.css";
 import { employeeService } from "../../services/employeeService";
 import { supabase } from "../../lib/supabase";
@@ -9,18 +9,13 @@ import LoadingSpinner from "../../components/LoadingSpinner";
 import FilterPanel from "../../components/FilterPanel";
 import SortControls from "../../components/SortControls";
 import BulkActionToolbar from "../../components/BulkActionToolbar";
-import {
-  transformEmployeesForExport,
-  arrayToCSV,
-  downloadCSV,
-  getEmployeeCSVTemplate
-} from "../../utils/csvUtils";
+
 
 // Lazy load modals for better performance
 const AddEmployeeModal = lazy(() => import("../../components/AddEmployeeModal"));
 const EditEmployeeModal = lazy(() => import("../../components/EditEmployeeModal"));
 const ConfirmModal = lazy(() => import("../../components/ConfirmModal"));
-const CSVImportModal = lazy(() => import("../../components/CSVImportModal"));
+
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState([]);
@@ -35,7 +30,7 @@ const EmployeeList = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [showCSVImportModal, setShowCSVImportModal] = useState(false);
+
 
   // Toast state
   const [toast, setToast] = useState(null);
@@ -386,75 +381,7 @@ const EmployeeList = () => {
     setSortOrder(order);
   }, []);
 
-  // Export filtered employees to CSV
-  const handleExportCSV = useCallback(() => {
-    const employeesToExport = transformEmployeesForExport(filteredAndSortedEmployees);
-    const headers = ['name', 'email', 'role', 'department', 'status', 'join_date'];
-    const csvContent = arrayToCSV(employeesToExport, headers);
 
-    const timestamp = new Date().toISOString().split('T')[0];
-    const filename = `employees_export_${timestamp}.csv`;
-
-    downloadCSV(csvContent, filename);
-
-    setToast({
-      type: 'success',
-      message: `Exported ${employeesToExport.length} employees to CSV`,
-    });
-  }, [filteredAndSortedEmployees]);
-
-  // Download CSV template
-  const handleDownloadTemplate = useCallback(() => {
-    const template = getEmployeeCSVTemplate();
-    downloadCSV(template, 'employee_import_template.csv');
-
-    setToast({
-      type: 'info',
-      message: 'CSV template downloaded',
-    });
-  }, []);
-
-  // Import employees from CSV
-  const handleCSVImport = useCallback(async (csvData) => {
-    setActionLoading(true);
-
-    let successCount = 0;
-    let errorCount = 0;
-
-    for (const row of csvData) {
-      const employeeData = {
-        name: row.name,
-        email: row.email,
-        role: row.role,
-        department: row.department,
-        status: row.status || 'Active',
-        joinDate: row.join_date || new Date().toISOString().split('T')[0],
-      };
-
-      const { error } = await employeeService.create(employeeData);
-
-      if (error) {
-        errorCount++;
-      } else {
-        successCount++;
-      }
-    }
-
-    if (successCount > 0) {
-      setToast({
-        type: 'success',
-        message: `Successfully imported ${successCount} employee(s)${errorCount > 0 ? `. ${errorCount} failed.` : ''}`,
-      });
-      fetchEmployees();
-    } else {
-      setToast({
-        type: 'error',
-        message: 'Failed to import employees',
-      });
-    }
-
-    setActionLoading(false);
-  }, [fetchEmployees]);
 
   if (isLoading) {
     return (
@@ -484,36 +411,7 @@ const EmployeeList = () => {
         />
         <div className="flex gap-2">
           {/* CSV Actions */}
-          <div className="csv-actions">
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={handleExportCSV}
-              title="Export to CSV"
-              disabled={filteredAndSortedEmployees.length === 0}
-            >
-              <Download size={18} />
-              <span className="btn-text">Export</span>
-            </button>
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={handleDownloadTemplate}
-              title="Download CSV Template"
-            >
-              <FileText size={18} />
-              <span className="btn-text">Template</span>
-            </button>
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => setShowCSVImportModal(true)}
-              title="Import from CSV"
-            >
-              <Upload size={18} />
-              <span className="btn-text">Import</span>
-            </button>
-          </div>
+
 
           <button
             type="button"
@@ -655,14 +553,7 @@ const EmployeeList = () => {
         />
       </Suspense>
 
-      {/* CSV Import Modal */}
-      <Suspense fallback={null}>
-        <CSVImportModal
-          isOpen={showCSVImportModal}
-          onClose={() => setShowCSVImportModal(false)}
-          onImport={handleCSVImport}
-        />
-      </Suspense>
+
 
       {/* Toast Notifications */}
       {toast && (
