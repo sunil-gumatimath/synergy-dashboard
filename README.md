@@ -32,6 +32,7 @@ A modern, comprehensive employee management dashboard built with React, Vite, an
 
 - Secure login/signup with Supabase
 - Protected routes and session management
+- Glassmorphism login UI with animated background
 
 ### 📅 **Calendar View**
 
@@ -40,6 +41,10 @@ A modern, comprehensive employee management dashboard built with React, Vite, an
 ### ⚙️ **Settings**
 
 - Application configuration and preferences
+- **Profile Management**: Update personal details with modern floating label inputs
+- **Notifications**: Toggle email and push notification preferences
+- **System**: Customize language, timezone, and data retention settings
+- **Security**: Password management and 2FA toggle
 
 ## 🚀 Quick Start
 
@@ -73,7 +78,7 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 bun run dev  # or npm run dev
 ```
 
-6. Open in browser at `http://localhost:5123`
+6. Open in browser at `http://localhost:5173` (or the port shown in your terminal)
 
 7. **Sample Login Credentials:**
    - Email: admin@gmail.com
@@ -98,7 +103,9 @@ bun run dev  # or npm run dev
 ## 🎨 Design Features
 
 - **Mobile-first responsive design** optimized for all devices
-- **Sharp modern UI** with glassmorphism effects
+- **"Sharp" Modern Theme**: 0px border-radius design language for a clean, professional look
+- **Glassmorphism**: Premium glass effects on Login and modal elements
+- **Interactive UI**: Floating label inputs, smooth transitions, and hover effects
 - **Performance optimized** with lazy loading and code splitting
 - **Touch-friendly interfaces** with proper accessibility
 
