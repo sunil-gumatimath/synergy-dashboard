@@ -19,6 +19,8 @@ const NotesList = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
 
+  const [actionLoading, setActionLoading] = useState(false);
+
   const getCategoryColor = (category) => {
     const colors = {
       performance: "bg-blue-500/10 text-blue-500 border-blue-500/20",
@@ -55,9 +57,15 @@ const NotesList = ({
 
   const confirmDelete = async () => {
     if (selectedNote) {
-      await onNoteDeleted(selectedNote.id);
-      setShowDeleteModal(false);
-      setSelectedNote(null);
+      setActionLoading(true);
+      try {
+        await onNoteDeleted(selectedNote.id);
+        setShowDeleteModal(false);
+        setSelectedNote(null);
+      } catch (error) {
+        console.error("Failed to delete note:", error);
+      }
+      setActionLoading(false);
     }
   };
 
@@ -205,7 +213,8 @@ const NotesList = ({
             setShowDeleteModal(false);
             setSelectedNote(null);
           }}
-          variant="danger"
+          isLoading={actionLoading}
+          type="danger"
         />
       </Suspense>
     </div>

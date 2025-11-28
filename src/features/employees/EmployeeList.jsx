@@ -213,7 +213,7 @@ const EmployeeList = () => {
           message: `${data.name} has been added successfully!`,
         });
         setShowAddModal(false);
-        fetchEmployees();
+        fetchEmployees(true);
       }
 
       setActionLoading(false);
@@ -241,7 +241,7 @@ const EmployeeList = () => {
         });
         setShowEditModal(false);
         setSelectedEmployee(null);
-        fetchEmployees();
+        fetchEmployees(true);
       }
 
       setActionLoading(false);
@@ -270,7 +270,7 @@ const EmployeeList = () => {
       });
       setShowDeleteModal(false);
       setSelectedEmployee(null);
-      fetchEmployees();
+      fetchEmployees(true);
     }
 
     setActionLoading(false);
@@ -584,7 +584,7 @@ const EmployeeList = () => {
             setSelectedEmployee(null);
           }}
           isLoading={actionLoading}
-          variant="danger"
+          type="danger"
         />
       </Suspense>
 
@@ -599,7 +599,7 @@ const EmployeeList = () => {
           onConfirm={confirmBulkDelete}
           onCancel={() => setShowBulkDeleteModal(false)}
           isLoading={actionLoading}
-          variant="danger"
+          type="danger"
         />
       </Suspense>
 

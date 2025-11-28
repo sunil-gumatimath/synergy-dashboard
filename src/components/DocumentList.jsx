@@ -17,6 +17,7 @@ const DocumentList = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [downloadingId, setDownloadingId] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const getDocumentIcon = (mimeType) => {
     const icon = documentService.getFileIcon(mimeType);
@@ -54,9 +55,15 @@ const DocumentList = ({
 
   const confirmDelete = async () => {
     if (selectedDocument) {
-      await onDocumentDeleted(selectedDocument.id);
-      setShowDeleteModal(false);
-      setSelectedDocument(null);
+      setActionLoading(true);
+      try {
+        await onDocumentDeleted(selectedDocument.id);
+        setShowDeleteModal(false);
+        setSelectedDocument(null);
+      } catch (error) {
+        console.error("Failed to delete document:", error);
+      }
+      setActionLoading(false);
     }
   };
 
@@ -195,7 +202,8 @@ const DocumentList = ({
             setShowDeleteModal(false);
             setSelectedDocument(null);
           }}
-          variant="danger"
+          isLoading={actionLoading}
+          type="danger"
         />
       </Suspense>
     </div>
