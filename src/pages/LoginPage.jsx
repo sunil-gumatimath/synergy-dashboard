@@ -157,7 +157,6 @@ const LoginPage = () => {
             <Briefcase className="logo-icon" size={32} />
           </div>
           <h1 className="app-title">Aurora</h1>
-          <p className="app-subtitle">Employee Management System</p>
         </div>
 
         {/* Form Card */}

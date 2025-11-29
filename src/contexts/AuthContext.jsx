@@ -13,6 +13,36 @@ export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchAndSetUser = React.useCallback(async (authUser) => {
+    if (!authUser) return;
+    try {
+      const { data: employee, error } = await supabase
+        .from('employees')
+        .select('*')
+        .eq('email', authUser.email)
+        .maybeSingle();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error("Error fetching employee profile:", error);
+      }
+
+      // Merge auth user with employee data
+      // Fallback for admin if not in employees table
+      const role = employee?.role || (authUser.email === 'admin@gmail.com' ? 'Admin' : 'Employee');
+
+      setUser({
+        ...authUser,
+        ...employee,
+        role: role,
+        id: authUser.id, // Keep auth ID as primary ID, or use employee.id as employeeId
+        employeeId: employee?.id
+      });
+    } catch (err) {
+      console.error("Error in fetchAndSetUser:", err);
+      setUser(authUser);
+    }
+  }, []);
+
   useEffect(() => {
     // Check active session on mount
     const initializeAuth = async () => {
@@ -35,11 +65,6 @@ export const AuthProvider = ({ children }) => {
 
           if (expiresAt < now) {
             console.log('Session expired, attempting to refresh...');
-            // Try to refresh the session
-            // Note: The provided edit uses `supabase.auth.refreshSession()`.
-            // If `supabase` is not globally available or imported,
-            // you might need to adjust this to `authService.refreshSession()`
-            // if authService provides such a method, or import `supabase`.
             const { data: { session: newSession }, error: refreshError } =
               await supabase.auth.refreshSession();
 
@@ -51,11 +76,11 @@ export const AuthProvider = ({ children }) => {
             } else {
               console.log('Session refreshed successfully');
               setSession(newSession);
-              setUser(newSession.user);
+              await fetchAndSetUser(newSession.user);
             }
           } else {
             setSession(currentSession);
-            setUser(currentSession.user);
+            await fetchAndSetUser(currentSession.user);
           }
         } else {
           setSession(null);
@@ -74,10 +99,15 @@ export const AuthProvider = ({ children }) => {
 
     // Listen for auth changes (including automatic token refresh)
     const { subscription } = authService.onAuthStateChange(
-      (event, newSession) => {
+      async (event, newSession) => {
         console.log('Auth event:', event);
         setSession(newSession);
-        setUser(newSession?.user ?? null);
+
+        if (newSession?.user) {
+          await fetchAndSetUser(newSession.user);
+        } else {
+          setUser(null);
+        }
 
         // Handle token refresh
         if (event === 'TOKEN_REFRESHED') {
@@ -95,7 +125,7 @@ export const AuthProvider = ({ children }) => {
     return () => {
       subscription?.unsubscribe();
     };
-  }, []);
+  }, [fetchAndSetUser]);
 
   const signUp = async (email, password, metadata) => {
     const { user: newUser, error } = await authService.signUp(
@@ -104,7 +134,8 @@ export const AuthProvider = ({ children }) => {
       metadata,
     );
     if (!error && newUser) {
-      setUser(newUser);
+      // For new signups, they might not be in employees table yet
+      setUser({ ...newUser, role: 'Employee' });
     }
     return { user: newUser, error };
   };
@@ -116,8 +147,8 @@ export const AuthProvider = ({ children }) => {
       error,
     } = await authService.signIn(email, password);
     if (!error) {
-      setUser(signedInUser);
       setSession(newSession);
+      await fetchAndSetUser(signedInUser);
     }
     return { user: signedInUser, error };
   };

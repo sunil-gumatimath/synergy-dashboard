@@ -21,7 +21,7 @@ export const employeeService = {
       return { data, error: null };
     } catch (error) {
       console.error("Error fetching employees:", error);
-      return { data: null, error };
+      return { data: [], error };
     }
   },
 

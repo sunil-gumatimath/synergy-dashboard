@@ -68,27 +68,38 @@ function App() {
             <Route
               path="/analytics"
               element={
-                <Suspense
-                  fallback={
-                    <LoadingSpinner size="lg" message="Loading analytics..." />
-                  }
-                >
-                  <AnalyticsDashboard />
-                </Suspense>
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <Suspense
+                    fallback={
+                      <LoadingSpinner size="lg" message="Loading analytics..." />
+                    }
+                  >
+                    <AnalyticsDashboard />
+                  </Suspense>
+                </ProtectedRoute>
               }
             />
 
             <Route
               path="/employees"
               element={
-                <>
-                  <Stats />
-                  <EmployeeList />
-                </>
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <>
+                    <Stats />
+                    <EmployeeList />
+                  </>
+                </ProtectedRoute>
               }
             />
 
-            <Route path="/employees/:id" element={<EmployeeDetailPage />} />
+            <Route
+              path="/employees/:id"
+              element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <EmployeeDetailPage />
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="/calendar"

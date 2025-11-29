@@ -6,7 +6,7 @@ import { useAuth } from "../contexts/AuthContext";
  * ProtectedRoute - Wrapper component that requires authentication
  * Shows children only if user is authenticated, otherwise shows login page
  */
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
 
   // Show loading spinner while checking auth status
@@ -39,11 +39,37 @@ const ProtectedRoute = ({ children }) => {
   }
 
   // User is authenticated, show protected content
-  return children;
+  if (user) {
+    // Check for role-based access
+    // If allowedRoles is provided and user's role is not in the list
+    if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+      // Redirect to home or show unauthorized message
+      // For now, we'll just return null or a message, or redirect to a safe route
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-red-600 mb-2">Access Denied</h1>
+            <p className="text-gray-600">You do not have permission to view this page.</p>
+            <button
+              onClick={() => window.history.back()}
+              className="mt-4 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return children;
+  }
+
+  return null;
 };
 
 ProtectedRoute.propTypes = {
   children: PropTypes.node.isRequired,
+  allowedRoles: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default ProtectedRoute;

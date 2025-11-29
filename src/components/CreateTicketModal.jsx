@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Save, AlertCircle } from "lucide-react";
 import LoadingSpinner from "./LoadingSpinner";
 
-const CreateTicketModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
+const CreateTicketModal = ({ isOpen, onClose, onSubmit, isLoading, ticketToEdit = null }) => {
     const [formData, setFormData] = useState({
         title: "",
         category: "IT Support",
@@ -11,6 +11,27 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
     });
 
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        if (isOpen) {
+            if (ticketToEdit) {
+                setFormData({
+                    title: ticketToEdit.title || "",
+                    category: ticketToEdit.category || "IT Support",
+                    priority: ticketToEdit.priority || "medium",
+                    description: ticketToEdit.description || "",
+                });
+            } else {
+                setFormData({
+                    title: "",
+                    category: "IT Support",
+                    priority: "medium",
+                    description: "",
+                });
+            }
+            setErrors({});
+        }
+    }, [isOpen, ticketToEdit]);
 
     if (!isOpen) return null;
 
@@ -38,8 +59,8 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
             onSubmit({
                 ...formData,
                 type: 'ticket',
-                status: 'todo', // Default status for new tickets
-                due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // Default 1 week due date
+                status: ticketToEdit ? ticketToEdit.status : 'todo', // Default status for new tickets
+                due_date: ticketToEdit ? ticketToEdit.due_date : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // Default 1 week due date
             });
         }
     };
@@ -48,7 +69,7 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
         <div className="modal-overlay">
             <div className="modal-content max-w-lg w-full">
                 <div className="modal-header">
-                    <h2 className="modal-title">Raise a New Ticket</h2>
+                    <h2 className="modal-title">{ticketToEdit ? "Edit Ticket" : "Raise a New Ticket"}</h2>
                     <button onClick={onClose} className="modal-close-btn">
                         <X size={20} />
                     </button>
@@ -158,12 +179,12 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
                             {isLoading ? (
                                 <>
                                     <LoadingSpinner size="sm" color="white" />
-                                    <span>Submitting...</span>
+                                    <span>{ticketToEdit ? "Saving..." : "Submitting..."}</span>
                                 </>
                             ) : (
                                 <>
                                     <Save size={18} />
-                                    <span>Submit Ticket</span>
+                                    <span>{ticketToEdit ? "Save Changes" : "Submit Ticket"}</span>
                                 </>
                             )}
                         </button>

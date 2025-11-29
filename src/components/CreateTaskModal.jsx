@@ -3,7 +3,7 @@ import { X, Save, Calendar, User, AlertCircle } from "lucide-react";
 import LoadingSpinner from "./LoadingSpinner";
 import { employeeService } from "../services/employeeService";
 
-const CreateTaskModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
+const CreateTaskModal = ({ isOpen, onClose, onSubmit, isLoading, taskToEdit = null, initialStatus = 'todo' }) => {
     const [formData, setFormData] = useState({
         title: "",
         description: "",
@@ -19,17 +19,27 @@ const CreateTaskModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
     useEffect(() => {
         if (isOpen) {
             fetchEmployees();
-            // Reset form on open
-            setFormData({
-                title: "",
-                description: "",
-                priority: "medium",
-                due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Default 1 week
-                assignee_id: "",
-            });
+            if (taskToEdit) {
+                setFormData({
+                    title: taskToEdit.title || "",
+                    description: taskToEdit.description || "",
+                    priority: taskToEdit.priority || "medium",
+                    due_date: taskToEdit.due_date ? new Date(taskToEdit.due_date).toISOString().split('T')[0] : "",
+                    assignee_id: taskToEdit.assignee?.id || taskToEdit.assignee_id || "",
+                });
+            } else {
+                // Reset form on open
+                setFormData({
+                    title: "",
+                    description: "",
+                    priority: "medium",
+                    due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Default 1 week
+                    assignee_id: "",
+                });
+            }
             setErrors({});
         }
-    }, [isOpen]);
+    }, [isOpen, taskToEdit]);
 
     const fetchEmployees = async () => {
         setLoadingEmployees(true);
@@ -69,11 +79,7 @@ const CreateTaskModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
             onSubmit({
                 ...formData,
                 type: 'task',
-                status: 'todo',
-                assignee: selectedEmployee ? {
-                    name: selectedEmployee.name,
-                    avatar: selectedEmployee.avatar
-                } : null
+                status: taskToEdit ? taskToEdit.status : initialStatus
             });
         }
     };
@@ -82,7 +88,7 @@ const CreateTaskModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
         <div className="modal-overlay">
             <div className="modal-content max-w-lg w-full">
                 <div className="modal-header">
-                    <h2 className="modal-title">Create New Task</h2>
+                    <h2 className="modal-title">{taskToEdit ? "Edit Task" : "Create New Task"}</h2>
                     <button onClick={onClose} className="modal-close-btn">
                         <X size={20} />
                     </button>
@@ -139,7 +145,7 @@ const CreateTaskModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
                                     name="due_date"
                                     value={formData.due_date}
                                     onChange={handleChange}
-                                    className={`form-input pl-10 ${errors.due_date ? "border-red-500" : ""}`}
+                                    className={`form-input !pl-10 ${errors.due_date ? "border-red-500" : ""}`}
                                 />
                                 <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                             </div>
@@ -160,7 +166,7 @@ const CreateTaskModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
                                 name="assignee_id"
                                 value={formData.assignee_id}
                                 onChange={handleChange}
-                                className={`form-select pl-10 ${errors.assignee_id ? "border-red-500" : ""}`}
+                                className={`form-select !pl-10 ${errors.assignee_id ? "border-red-500" : ""}`}
                                 disabled={loadingEmployees}
                             >
                                 <option value="">Select Employee</option>
@@ -214,12 +220,12 @@ const CreateTaskModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
                             {isLoading ? (
                                 <>
                                     <LoadingSpinner size="sm" color="white" />
-                                    <span>Creating...</span>
+                                    <span>{taskToEdit ? "Saving..." : "Creating..."}</span>
                                 </>
                             ) : (
                                 <>
                                     <Save size={18} />
-                                    <span>Create Task</span>
+                                    <span>{taskToEdit ? "Save Changes" : "Create Task"}</span>
                                 </>
                             )}
                         </button>

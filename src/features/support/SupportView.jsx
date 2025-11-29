@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Search, Filter, MessageSquare, Clock, CheckCircle, AlertCircle, LifeBuoy, X } from "lucide-react";
+import { Plus, Search, Filter, MessageSquare, Clock, CheckCircle, AlertCircle, LifeBuoy, X, Trash2 } from "lucide-react";
 import { taskService } from "../../services/taskService";
 import CreateTicketModal from "../../components/CreateTicketModal";
+import ConfirmModal from "../../components/ConfirmModal";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import Toast from "../../components/Toast";
 import { useAuth } from "../../contexts/AuthContext";
@@ -15,6 +16,11 @@ const SupportView = () => {
     const [filter, setFilter] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
 
+    // Edit/Delete State
+    const [editingTicket, setEditingTicket] = useState(null);
+    const [deletingTicket, setDeletingTicket] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
     useEffect(() => {
         fetchTickets();
     }, []);
@@ -23,7 +29,7 @@ const SupportView = () => {
         setIsLoading(true);
         // In a real app, we'd filter by type='ticket' and creator_id=user.id
         const { data } = await taskService.getAll();
-        // Filter for demo purposes since we're using mock data mixed with tasks
+        // Filter for ticket type
         const ticketData = data ? data.filter(t => t.type === 'ticket' || t.title.includes('Support') || t.title.includes('Request')) : [];
         setTickets(ticketData);
         setIsLoading(false);
@@ -33,10 +39,6 @@ const SupportView = () => {
         // Add user info to the ticket
         const newTicket = {
             ...ticketData,
-            assignee: {
-                name: "IT Support", // Auto-assigned for demo
-                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=IT"
-            },
             creator_id: user?.id
         };
 
@@ -49,6 +51,47 @@ const SupportView = () => {
             setShowCreateModal(false);
             fetchTickets();
         }
+    };
+
+    const handleUpdateTicket = async (ticketData) => {
+        if (!editingTicket) return;
+
+        const { error } = await taskService.update(editingTicket.id, ticketData);
+
+        if (error) {
+            setToast({ type: "error", message: "Failed to update ticket" });
+        } else {
+            setToast({ type: "success", message: "Ticket updated successfully" });
+            setShowCreateModal(false);
+            setEditingTicket(null);
+            fetchTickets();
+        }
+    };
+
+    const handleDeleteTicket = async () => {
+        if (!deletingTicket) return;
+
+        const { error } = await taskService.delete(deletingTicket.id);
+
+        if (error) {
+            setToast({ type: "error", message: "Failed to delete ticket" });
+        } else {
+            setToast({ type: "success", message: "Ticket deleted successfully" });
+            setShowDeleteModal(false);
+            setDeletingTicket(null);
+            fetchTickets();
+        }
+    };
+
+    const openEditModal = (ticket) => {
+        setEditingTicket(ticket);
+        setShowCreateModal(true);
+    };
+
+    const openDeleteModal = (e, ticket) => {
+        e.stopPropagation(); // Prevent row click
+        setDeletingTicket(ticket);
+        setShowDeleteModal(true);
     };
 
     const getStatusColor = (status) => {
@@ -77,13 +120,18 @@ const SupportView = () => {
                     </h1>
                     <p className="text-muted text-sm">Raise tickets and track your requests</p>
                 </div>
-                <button
-                    className="btn btn-primary"
-                    onClick={() => setShowCreateModal(true)}
-                >
-                    <Plus size={18} />
-                    Raise Ticket
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => {
+                            setEditingTicket(null);
+                            setShowCreateModal(true);
+                        }}
+                    >
+                        <Plus size={18} />
+                        Raise Ticket
+                    </button>
+                </div>
             </div>
 
             {/* Stats Overview */}
@@ -111,7 +159,7 @@ const SupportView = () => {
                         <MessageSquare size={20} />
                     </div>
                     <div>
-                        <p className="text-2xl font-bold">24h</p>
+                        <p className="text-2xl font-bold">N/A</p>
                         <p className="text-sm text-muted">Avg. Response Time</p>
                     </div>
                 </div>
@@ -123,13 +171,12 @@ const SupportView = () => {
                     <h2 className="font-semibold">My Tickets</h2>
                     <div className="flex gap-2">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" size={16} />
                             <input
                                 type="text"
                                 placeholder="Search tickets..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-11 pr-10 py-2 border border-[var(--border)] rounded-[var(--radius-md)] text-sm w-48 focus:outline-none focus:border-[var(--primary)]" style={{ paddingLeft: '2.5rem' }}
+                                className="px-4 py-1 border border-[var(--border)] rounded-[var(--radius-md)] text-sm w-52 h-8 focus:outline-none focus:border-[var(--primary)]"
                             />
                             {searchTerm && (
                                 <button
@@ -141,7 +188,7 @@ const SupportView = () => {
                                 </button>
                             )}
                         </div>
-                        <button className="btn btn-ghost btn-sm">
+                        <button className="btn btn-ghost">
                             <Filter size={16} />
                             Filter
                         </button>
@@ -161,6 +208,7 @@ const SupportView = () => {
                                     <th className="p-4">Status</th>
                                     <th className="p-4">Last Updated</th>
                                     <th className="p-4">Priority</th>
+                                    <th className="p-4 w-10"></th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[var(--border)]">
@@ -175,7 +223,11 @@ const SupportView = () => {
                                         ticket.id.toString().includes(term)
                                     );
                                 }).map((ticket) => (
-                                    <tr key={ticket.id} className="hover:bg-[var(--bg-body)] transition-colors cursor-pointer">
+                                    <tr
+                                        key={ticket.id}
+                                        className="hover:bg-[var(--bg-body)] transition-colors cursor-pointer group"
+                                        onClick={() => openEditModal(ticket)}
+                                    >
                                         <td className="p-4 font-mono text-xs text-muted">#{ticket.id}</td>
                                         <td className="p-4 font-medium">{ticket.title}</td>
                                         <td className="p-4 text-sm text-muted">{ticket.category || 'General'}</td>
@@ -195,6 +247,15 @@ const SupportView = () => {
                                                 {ticket.priority}
                                             </span>
                                         </td>
+                                        <td className="p-4">
+                                            <button
+                                                className="text-muted hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                                                onClick={(e) => openDeleteModal(e, ticket)}
+                                                title="Delete Ticket"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -212,9 +273,23 @@ const SupportView = () => {
 
             <CreateTicketModal
                 isOpen={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                onSubmit={handleCreateTicket}
+                onClose={() => {
+                    setShowCreateModal(false);
+                    setEditingTicket(null);
+                }}
+                onSubmit={editingTicket ? handleUpdateTicket : handleCreateTicket}
                 isLoading={false}
+                ticketToEdit={editingTicket}
+            />
+
+            <ConfirmModal
+                isOpen={showDeleteModal}
+                onClose={() => setShowDeleteModal(false)}
+                onConfirm={handleDeleteTicket}
+                title="Delete Ticket"
+                message={`Are you sure you want to delete ticket #${deletingTicket?.id} "${deletingTicket?.title}"? This action cannot be undone.`}
+                confirmText="Delete"
+                type="danger"
             />
 
             {toast && (

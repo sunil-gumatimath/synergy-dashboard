@@ -1,48 +1,105 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { User, Bell, Shield, Palette, Save, AlertCircle, Settings as SettingsIcon } from "lucide-react";
 import Toast from "../../components/Toast";
 import "./settings-styles.css";
+import { useAuth } from "../../contexts/AuthContext";
+import { supabase } from "../../lib/supabase";
+import { authService } from "../../services/authService";
 
 const SettingsView = () => {
+  const { user, fetchAndSetUser } = useAuth(); // Assuming fetchAndSetUser is exposed or we reload user
   const [activeTab, setActiveTab] = useState("profile");
   const [toast, setToast] = useState(null);
   const [errors, setErrors] = useState({});
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load settings from localStorage or use defaults
-  const [settings, setSettings] = useState(() => {
-    const defaults = {
-      name: "Sunil Kumar",
-      email: "sunil.kumar@aurora.app",
-      bio: "Admin of Aurora employee management system",
-      emailNotifications: true,
-      pushNotifications: false,
-      newEmployeeAlerts: true,
-      systemUpdates: true,
-      weeklyReports: false,
-      language: "en",
-      timezone: "Asia/Kolkata",
-      autoBackup: true,
-      dataRetention: "3years",
-      currentPassword: "",
-      newPassword: "",
-      confirmPassword: "",
-      twoFactorAuth: false,
-    };
-    const saved = localStorage.getItem("userSettings");
-    return saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
+  // State for form fields
+  const [settings, setSettings] = useState({
+    // Profile
+    name: "",
+    email: "",
+    bio: "",
+    // Notifications
+    emailNotifications: true,
+    pushNotifications: false,
+    newEmployeeAlerts: true,
+    systemUpdates: true,
+    weeklyReports: false,
+    // System
+    language: "en",
+    timezone: "Asia/Kolkata",
+    autoBackup: true,
+    dataRetention: "3years",
+    // Security
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+    twoFactorAuth: false,
   });
+
+  // Load initial data
+  useEffect(() => {
+    const loadSettings = async () => {
+      if (!user) return;
+
+      setIsLoading(true);
+      try {
+        // 1. Load Profile Data from 'employees' (or user metadata)
+        // user object from context already has merged employee data
+
+        // 2. Load User Settings from 'user_settings' table
+        const { data: userSettings, error } = await supabase
+          .from('user_settings')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (error) console.error("Error loading settings:", error);
+
+        setSettings(prev => ({
+          ...prev,
+          // Profile defaults from user object
+          name: user.name || user.user_metadata?.full_name || "",
+          email: user.email || "",
+          bio: user.bio || "", // Assuming bio might be added to employees table later, or just local state for now
+
+          // Merge loaded settings if they exist
+          ...(userSettings ? {
+            emailNotifications: userSettings.email_notifications,
+            pushNotifications: userSettings.push_notifications,
+            newEmployeeAlerts: userSettings.new_employee_alerts,
+            systemUpdates: userSettings.system_updates,
+            weeklyReports: userSettings.weekly_reports,
+            language: userSettings.language,
+            timezone: userSettings.timezone,
+            autoBackup: userSettings.auto_backup,
+            dataRetention: userSettings.data_retention,
+            twoFactorAuth: userSettings.two_factor_auth,
+          } : {})
+        }));
+
+      } catch (err) {
+        console.error("Failed to load settings:", err);
+        setToast({ type: "error", message: "Failed to load settings." });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSettings();
+  }, [user]);
 
   const tabs = [
     { id: "profile", label: "Profile", icon: User },
     { id: "notifications", label: "Notifications", icon: Bell },
-    { id: "system", label: "System", icon: Palette },
+    // Only show System tab to Admins
+    ...(user?.role === 'Admin' ? [{ id: "system", label: "System", icon: Palette }] : []),
     { id: "security", label: "Security", icon: Shield },
   ];
 
   const updateSetting = (field, value) => {
     setSettings((prev) => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
     }
@@ -55,25 +112,13 @@ const SettingsView = () => {
     if (!settings.name.trim()) {
       newErrors.name = "Name is required";
     }
-    if (!settings.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(settings.email)) {
-      newErrors.email = "Please enter a valid email";
-    }
 
-    // Security validation (only if any password field is filled)
-    if (
-      settings.newPassword ||
-      settings.confirmPassword ||
-      settings.currentPassword
-    ) {
-      if (!settings.currentPassword) {
-        newErrors.currentPassword = "Current password is required";
-      }
+    // Security validation
+    if (settings.newPassword || settings.confirmPassword) {
       if (!settings.newPassword) {
         newErrors.newPassword = "New password is required";
-      } else if (settings.newPassword.length < 8) {
-        newErrors.newPassword = "Password must be at least 8 characters";
+      } else if (settings.newPassword.length < 6) {
+        newErrors.newPassword = "Password must be at least 6 characters";
       }
       if (settings.newPassword !== settings.confirmPassword) {
         newErrors.confirmPassword = "Passwords do not match";
@@ -86,41 +131,76 @@ const SettingsView = () => {
 
   const saveSettings = async () => {
     if (!validateForm()) {
-      setToast({
-        type: "error",
-        message: "Please fix the errors before saving.",
-      });
+      setToast({ type: "error", message: "Please fix the errors before saving." });
       return;
     }
 
     setIsSaving(true);
+    setToast(null);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // 1. Update Profile (Employees Table)
+      // Only if name changed
+      if (settings.name !== user.name) {
+        // Update employees table
+        if (user.employeeId) {
+          const { error: profileError } = await supabase
+            .from('employees')
+            .update({ name: settings.name })
+            .eq('id', user.employeeId);
 
-      // Save to localStorage
-      const settingsToSave = { ...settings };
-      // Don't save password fields for security
-      delete settingsToSave.currentPassword;
-      delete settingsToSave.newPassword;
-      delete settingsToSave.confirmPassword;
+          if (profileError) throw profileError;
+        }
 
-      localStorage.setItem("userSettings", JSON.stringify(settingsToSave));
+        // Also update auth metadata
+        await supabase.auth.updateUser({
+          data: { full_name: settings.name }
+        });
+      }
 
-      // Reset password fields
-      setSettings((prev) => ({
-        ...prev,
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      }));
+      // 2. Update User Settings (user_settings Table)
+      const settingsPayload = {
+        user_id: user.id,
+        email_notifications: settings.emailNotifications,
+        push_notifications: settings.pushNotifications,
+        new_employee_alerts: settings.newEmployeeAlerts,
+        system_updates: settings.systemUpdates,
+        weekly_reports: settings.weeklyReports,
+        language: settings.language,
+        timezone: settings.timezone,
+        auto_backup: settings.autoBackup,
+        data_retention: settings.dataRetention,
+        two_factor_auth: settings.twoFactorAuth,
+        updated_at: new Date().toISOString(),
+      };
 
-      setToast({ type: "success", message: "Settings saved successfully!" });
-    } catch {
+      const { error: settingsError } = await supabase
+        .from('user_settings')
+        .upsert(settingsPayload);
+
+      if (settingsError) throw settingsError;
+
+      // 3. Update Password if provided
+      if (settings.newPassword) {
+        const { error: passwordError } = await authService.updatePassword(settings.newPassword);
+        if (passwordError) throw passwordError;
+
+        setSettings(prev => ({
+          ...prev,
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: ""
+        }));
+        setToast({ type: "success", message: "Settings and password updated successfully!" });
+      } else {
+        setToast({ type: "success", message: "Settings saved successfully!" });
+      }
+
+    } catch (err) {
+      console.error("Save error:", err);
       setToast({
         type: "error",
-        message: "Failed to save settings. Please try again.",
+        message: err.message || "Failed to save settings. Please try again.",
       });
     } finally {
       setIsSaving(false);
@@ -128,19 +208,24 @@ const SettingsView = () => {
   };
 
   const renderTabContent = () => {
+    if (isLoading) {
+      return <div className="p-8 text-center text-muted">Loading settings...</div>;
+    }
+
     switch (activeTab) {
       case "profile":
         return (
           <div className="settings-section">
             <div className="settings-profile-header">
               <img
-                src="https://api.dicebear.com/9.x/micah/svg?seed=Felix"
+                src={user?.avatar || `https://api.dicebear.com/9.x/micah/svg?seed=${settings.name}`}
                 alt="Profile"
                 className="settings-profile-avatar"
               />
               <div className="settings-profile-info">
                 <h3>{settings.name}</h3>
-                <p>Administrator</p>
+                <p>{user?.role || "User"}</p>
+                <p className="text-sm text-muted">{user?.email}</p>
               </div>
             </div>
 
@@ -153,7 +238,6 @@ const SettingsView = () => {
                   onChange={(e) => updateSetting("name", e.target.value)}
                   className={`settings-input ${errors.name ? "error" : ""}`}
                   placeholder=" "
-                  aria-invalid={errors.name ? "true" : "false"}
                 />
                 <label className="settings-label">Full Name</label>
                 {errors.name && (
@@ -167,31 +251,16 @@ const SettingsView = () => {
                 <input
                   type="email"
                   value={settings.email}
-                  disabled={isSaving}
-                  onChange={(e) => updateSetting("email", e.target.value)}
-                  className={`settings-input ${errors.email ? "error" : ""}`}
+                  disabled={true} // Email cannot be changed here
+                  className="settings-input opacity-70 cursor-not-allowed"
                   placeholder=" "
-                  aria-invalid={errors.email ? "true" : "false"}
                 />
                 <label className="settings-label">Email</label>
-                {errors.email && (
-                  <p className="settings-error-message">
-                    <AlertCircle size={12} /> {errors.email}
-                  </p>
-                )}
               </div>
             </div>
 
-            <div className="settings-form-group">
-              <textarea
-                value={settings.bio}
-                disabled={isSaving}
-                onChange={(e) => updateSetting("bio", e.target.value)}
-                rows={3}
-                className="settings-textarea"
-                placeholder=" "
-              />
-              <label className="settings-label">Bio</label>
+            <div className="mt-4 p-4 bg-blue-50 text-blue-700 rounded-lg text-sm">
+              To change your email address or avatar, please contact your system administrator.
             </div>
           </div>
         );
@@ -200,37 +269,15 @@ const SettingsView = () => {
         return (
           <div className="settings-section">
             {[
-              {
-                key: "emailNotifications",
-                label: "Email notifications",
-                desc: "Receive email updates",
-              },
-              {
-                key: "pushNotifications",
-                label: "Push notifications",
-                desc: "Browser notifications",
-              },
-              {
-                key: "newEmployeeAlerts",
-                label: "New employee alerts",
-                desc: "When employees are added",
-              },
-              {
-                key: "systemUpdates",
-                label: "System updates",
-                desc: "Maintenance notifications",
-              },
-              {
-                key: "weeklyReports",
-                label: "Weekly reports",
-                desc: "Summary reports via email",
-              },
+              { key: "emailNotifications", label: "Email notifications", desc: "Receive email updates" },
+              { key: "pushNotifications", label: "Push notifications", desc: "Browser notifications" },
+              { key: "newEmployeeAlerts", label: "New employee alerts", desc: "When employees are added" },
+              { key: "systemUpdates", label: "System updates", desc: "Maintenance notifications" },
+              { key: "weeklyReports", label: "Weekly reports", desc: "Summary reports via email" },
             ].map(({ key, label, desc }) => (
               <div key={key} className="settings-toggle-wrapper">
                 <div>
-                  <label className="font-medium text-main" htmlFor={key}>
-                    {label}
-                  </label>
+                  <label className="font-medium text-main" htmlFor={key}>{label}</label>
                   <p className="text-sm text-muted">{desc}</p>
                 </div>
                 <label className="settings-toggle-label" htmlFor={key}>
@@ -241,7 +288,6 @@ const SettingsView = () => {
                     disabled={isSaving}
                     onChange={(e) => updateSetting(key, e.target.checked)}
                     className="settings-toggle-input"
-                    aria-label={label}
                   />
                   <div className="settings-toggle-slider"></div>
                 </label>
@@ -251,6 +297,7 @@ const SettingsView = () => {
         );
 
       case "system":
+        if (user?.role !== 'Admin') return null;
         return (
           <div className="settings-section">
             <div className="settings-grid">
@@ -288,9 +335,7 @@ const SettingsView = () => {
                 <select
                   value={settings.dataRetention}
                   disabled={isSaving}
-                  onChange={(e) =>
-                    updateSetting("dataRetention", e.target.value)
-                  }
+                  onChange={(e) => updateSetting("dataRetention", e.target.value)}
                   className="settings-select"
                 >
                   <option value="1year">1 Year</option>
@@ -304,9 +349,7 @@ const SettingsView = () => {
 
             <div className="settings-toggle-wrapper">
               <div>
-                <label className="font-medium text-main" htmlFor="autoBackup">
-                  Automatic backups
-                </label>
+                <label className="font-medium text-main" htmlFor="autoBackup">Automatic backups</label>
                 <p className="text-sm text-muted">Daily data backup</p>
               </div>
               <label className="settings-toggle-label" htmlFor="autoBackup">
@@ -315,11 +358,8 @@ const SettingsView = () => {
                   type="checkbox"
                   checked={settings.autoBackup}
                   disabled={isSaving}
-                  onChange={(e) =>
-                    updateSetting("autoBackup", e.target.checked)
-                  }
+                  onChange={(e) => updateSetting("autoBackup", e.target.checked)}
                   className="settings-toggle-input"
-                  aria-label="Automatic backups"
                 />
                 <div className="settings-toggle-slider"></div>
               </label>
@@ -333,32 +373,11 @@ const SettingsView = () => {
             <div className="settings-form-group">
               <input
                 type="password"
-                value={settings.currentPassword}
-                disabled={isSaving}
-                onChange={(e) =>
-                  updateSetting("currentPassword", e.target.value)
-                }
-                className={`settings-input ${errors.currentPassword ? "error" : ""}`}
-                placeholder=" "
-                aria-invalid={errors.currentPassword ? "true" : "false"}
-              />
-              <label className="settings-label">Current Password</label>
-              {errors.currentPassword && (
-                <p className="settings-error-message">
-                  <AlertCircle size={12} /> {errors.currentPassword}
-                </p>
-              )}
-            </div>
-
-            <div className="settings-form-group">
-              <input
-                type="password"
                 value={settings.newPassword}
                 disabled={isSaving}
                 onChange={(e) => updateSetting("newPassword", e.target.value)}
                 className={`settings-input ${errors.newPassword ? "error" : ""}`}
                 placeholder=" "
-                aria-invalid={errors.newPassword ? "true" : "false"}
               />
               <label className="settings-label">New Password</label>
               {errors.newPassword && (
@@ -373,12 +392,9 @@ const SettingsView = () => {
                 type="password"
                 value={settings.confirmPassword}
                 disabled={isSaving}
-                onChange={(e) =>
-                  updateSetting("confirmPassword", e.target.value)
-                }
+                onChange={(e) => updateSetting("confirmPassword", e.target.value)}
                 className={`settings-input ${errors.confirmPassword ? "error" : ""}`}
                 placeholder=" "
-                aria-invalid={errors.confirmPassword ? "true" : "false"}
               />
               <label className="settings-label">Confirm Password</label>
               {errors.confirmPassword && (
@@ -390,25 +406,16 @@ const SettingsView = () => {
 
             <div className="settings-toggle-wrapper">
               <div>
-                <label
-                  className="font-medium text-main"
-                  htmlFor="twoFactorAuth"
-                >
-                  Two-factor authentication
-                </label>
-                <p className="text-sm text-muted">Extra security layer</p>
+                <label className="font-medium text-main" htmlFor="twoFactorAuth">Two-factor authentication</label>
+                <p className="text-sm text-muted">Extra security layer (Coming Soon)</p>
               </div>
               <label className="settings-toggle-label" htmlFor="twoFactorAuth">
                 <input
                   id="twoFactorAuth"
                   type="checkbox"
                   checked={settings.twoFactorAuth}
-                  disabled={isSaving}
-                  onChange={(e) =>
-                    updateSetting("twoFactorAuth", e.target.checked)
-                  }
-                  className="settings-toggle-input"
-                  aria-label="Two-factor authentication"
+                  disabled={true} // Disabled for now
+                  className="settings-toggle-input opacity-50 cursor-not-allowed"
                 />
                 <div className="settings-toggle-slider"></div>
               </label>
@@ -461,7 +468,7 @@ const SettingsView = () => {
         <div className="settings-save-section">
           <button
             onClick={saveSettings}
-            disabled={isSaving}
+            disabled={isSaving || isLoading}
             className="settings-save-button"
           >
             <Save size={16} />

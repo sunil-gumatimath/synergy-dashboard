@@ -26,6 +26,7 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import { employeeService } from "../../services/employeeService";
+import { taskService } from "../../services/taskService";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import "./analytics-styles.css";
 
@@ -54,16 +55,25 @@ const StatCard = ({ title, value, change, icon: Icon, color }) => (
 
 const AnalyticsDashboard = () => {
   const [employees, setEmployees] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const { data } = await employeeService.getAll();
-      if (data) {
-        setEmployees(data);
+      try {
+        const [empRes, taskRes] = await Promise.all([
+          employeeService.getAll(),
+          taskService.getAll()
+        ]);
+
+        if (empRes.data) setEmployees(empRes.data);
+        if (taskRes.data) setTasks(taskRes.data);
+      } catch (error) {
+        console.error("Error fetching analytics data:", error);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     fetchData();
@@ -72,6 +82,7 @@ const AnalyticsDashboard = () => {
   // Calculate Statistics
   const stats = useMemo(() => {
     const totalEmployees = employees.length;
+    const activeTasks = tasks.filter(t => t.status !== 'done').length;
 
     // Department Distribution
     const deptCounts = employees.reduce((acc, emp) => {
@@ -93,17 +104,11 @@ const AnalyticsDashboard = () => {
       ][index % 7]
     }));
 
-    // Employee Growth (Mocked for now as we don't have historical data API, 
-    // but we can simulate based on join dates if available, or keep mock for trend)
-    // For this implementation, let's calculate growth based on join_date if possible, 
-    // or fallback to a static trend for visual consistency if dates aren't reliable.
-    // Let's try to group by month of join_date for the current year.
+    // Employee Growth
     const currentYear = new Date().getFullYear();
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     const growthData = months.map((month, index) => {
-      // Count employees joined up to this month in current year
-      // This is a cumulative count approximation
       const count = employees.filter(emp => {
         const joinDate = new Date(emp.join_date);
         return joinDate.getFullYear() < currentYear ||
@@ -111,7 +116,7 @@ const AnalyticsDashboard = () => {
       }).length;
 
       return { month, employees: count };
-    }).slice(0, new Date().getMonth() + 1); // Only show up to current month
+    }).slice(0, new Date().getMonth() + 1);
 
     // Calculate Average Performance
     const avgPerformance =
@@ -144,6 +149,7 @@ const AnalyticsDashboard = () => {
 
     return {
       totalEmployees,
+      activeTasks,
       departmentData,
       growthData:
         growthData.length > 0 ? growthData : [{ month: "Jan", employees: 0 }],
@@ -151,7 +157,7 @@ const AnalyticsDashboard = () => {
       totalPayroll,
       performanceByDept,
     };
-  }, [employees]);
+  }, [employees, tasks]);
 
   if (isLoading) {
     return (
@@ -196,9 +202,8 @@ const AnalyticsDashboard = () => {
           color="success"
         />
         <StatCard
-          title="Hiring Pipeline"
-          value="12"
-          change={-2}
+          title="Active Tasks"
+          value={stats.activeTasks}
           icon={TrendingUp}
           color="#ec4899"
         />
@@ -378,7 +383,7 @@ const AnalyticsDashboard = () => {
       </div>
 
 
-    </div>
+    </div >
   );
 };
 
