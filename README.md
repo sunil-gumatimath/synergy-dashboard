@@ -1,6 +1,7 @@
 # Aurora - Employee Management System
 
 A modern, comprehensive employee management dashboard built with React, Vite, and Supabase.
+**Fully integrated with Supabase backend - No mock data.**
 
 ## ✨ Features
 
@@ -38,13 +39,24 @@ A modern, comprehensive employee management dashboard built with React, Vite, an
 
 - Employee scheduling and calendar management
 
+### 📋 **Task Management**
+- Kanban-style task board (Todo, In Progress, Review, Done)
+- Drag-and-drop interface for status updates
+- Priority filtering and search
+- Real-time task creation and assignment
+
+### 🎫 **Help Desk & Support**
+- Internal ticket raising system
+- Status tracking for support requests
+- Priority-based ticket management
+
 ### ⚙️ **Settings**
 
-- Application configuration and preferences
-- **Profile Management**: Update personal details with modern floating label inputs
-- **Notifications**: Toggle email and push notification preferences
-- **System**: Customize language, timezone, and data retention settings
-- **Security**: Password management and 2FA toggle
+- **Profile Management**: Update personal details and avatar
+- **Notifications**: Configure email and push alerts
+- **System**: Admin-only controls for language, timezone, and data retention
+- **Security**: Secure password change functionality
+- **Database Backed**: All settings persist to `user_settings` table in Supabase
 
 ## 🚀 Quick Start
 
@@ -114,6 +126,9 @@ bun run dev  # or npm run dev
 - `employees` - Core employee information
 - `employee_documents` - File attachments per employee
 - `employee_notes` - Categorized notes and comments
+- `tasks` - Task management and tracking
+- `calendar_events` - Company events and schedules
+- `user_settings` - User-specific preferences and configurations
 
 ## 📄 License
 
