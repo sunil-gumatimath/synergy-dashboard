@@ -510,6 +510,12 @@ button {
   gap: 0.75rem;
   padding-left: var(--space-md);
   border-left: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+}
+
+.user-profile:hover {
+  opacity: 0.8;
 }
 
 .user-avatar {
@@ -703,17 +709,6 @@ button {
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
-.sidebar-footer {
-  padding: var(--space-lg) var(--space-xl);
-  border-top: 1px solid var(--border);
-  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.5));
-  transition: all 0.3s ease;
-}
-
-.sidebar.collapsed .sidebar-footer {
-  padding: var(--space-lg) var(--space-sm);
-}
-
 .user-profile-sidebar {
   display: flex;
   align-items: center;
@@ -721,16 +716,28 @@ button {
   padding: var(--space-md);
   border-radius: var(--radius-md);
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .sidebar.collapsed .user-profile-sidebar {
   flex-direction: column;
   gap: var(--space-sm);
   padding: var(--space-sm);
+  justify-content: center;
 }
 
 .user-profile-sidebar:hover {
   background: var(--bg-body);
+}
+
+.sidebar-footer {
+  padding: var(--space-lg) var(--space-xl);
+  border-top: 1px solid var(--border);
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.5));
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .user-avatar-sidebar {

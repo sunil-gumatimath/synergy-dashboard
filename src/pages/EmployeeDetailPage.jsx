@@ -29,6 +29,10 @@ import {
   Zap,
   DollarSign,
   CheckCircle,
+  Landmark,
+  GraduationCap,
+  CreditCard,
+  School,
 } from "lucide-react";
 import { employeeService } from "../services/employeeService";
 import noteService from "../services/noteService";
@@ -57,36 +61,55 @@ const EmployeeDetailPage = () => {
   const [documentsLoading, setDocumentsLoading] = useState(true);
   const [notesLoading, setNotesLoading] = useState(true);
   const [copiedField, setCopiedField] = useState(null);
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("profile");
   const contentRef = useRef(null);
 
   const fetchEmployee = async () => {
-    setIsLoading(true);
-    const { data, error } = await employeeService.getById(parseInt(id));
-
-    if (error) {
-      setToast({
-        type: "error",
-        message: "Failed to load employee details. Please try again.",
-      });
-      setEmployee(null);
-    } else {
-      setEmployee(data);
+    if (!id) {
+      setIsLoading(false);
+      return;
     }
 
-    setIsLoading(false);
+    setIsLoading(true);
+
+    try {
+      // Try to convert to number if it looks like one, otherwise keep as string (UUID)
+      const queryId = !isNaN(id) && !id.includes('-') ? parseInt(id) : id;
+
+      const { data, error } = await employeeService.getById(queryId);
+
+      if (error) {
+        console.error("Error fetching employee:", error);
+        setToast({
+          type: "error",
+          message: "Failed to load employee details. Please try again.",
+        });
+        setEmployee(null);
+      } else {
+        setEmployee(data);
+      }
+    } catch (err) {
+      console.error("Error in fetchEmployee:", err);
+      setToast({
+        type: "error",
+        message: "An unexpected error occurred while loading details.",
+      });
+      setEmployee(null);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchDocuments = async () => {
     setDocumentsLoading(true);
-    const { data } = await documentService.getByEmployeeId(parseInt(id));
+    const { data } = await documentService.getByEmployeeId(id);
     setDocuments(data || []);
     setDocumentsLoading(false);
   };
 
   const fetchNotes = async () => {
     setNotesLoading(true);
-    const { data } = await noteService.getByEmployeeId(parseInt(id));
+    const { data } = await noteService.getByEmployeeId(id);
     setNotes(data || []);
     setNotesLoading(false);
   };
@@ -281,6 +304,37 @@ const EmployeeDetailPage = () => {
     },
   ];
 
+  // Mock Bank Details
+  const bankDetails = {
+    bankName: "Global Trust Bank",
+    accountNumber: "8899 4567 2233 4589",
+    accountType: "Savings",
+    ifscCode: "GTB0004589",
+    branch: "Downtown Branch",
+    taxId: "TAX-8899-7766",
+    holderName: employee?.name || "Employee Name",
+  };
+
+  // Mock Education Details
+  const education = [
+    {
+      id: 1,
+      degree: "Master of Computer Science",
+      institution: "Tech University",
+      year: "2018 - 2020",
+      grade: "Distinction",
+      description: "Specialized in Artificial Intelligence and Machine Learning.",
+    },
+    {
+      id: 2,
+      degree: "Bachelor of Technology",
+      institution: "City Engineering College",
+      year: "2014 - 2018",
+      grade: "First Class",
+      description: "Major in Computer Science and Engineering.",
+    },
+  ];
+
   // Export to PDF function
   const exportToPDF = async () => {
     try {
@@ -338,118 +392,9 @@ Exported on: ${new Date().toLocaleString()}
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "overview":
+      case "profile":
         return (
           <>
-            {/* Contact Information */}
-            <div className="card employee-detail-section">
-              <h2 className="section-title">Contact Information</h2>
-              <div className="employee-detail-grid">
-                <div className="detail-item">
-                  <Mail className="detail-icon" />
-                  <div className="detail-content">
-                    <p className="detail-label">Email</p>
-                    <p className="detail-value">{employee.email}</p>
-                  </div>
-                  <button
-                    className="copy-btn"
-                    onClick={() => copyToClipboard(employee.email, "email")}
-                    title="Copy email"
-                  >
-                    {copiedField === "email" ? (
-                      <Check size={18} className="copy-icon success" />
-                    ) : (
-                      <Copy size={18} className="copy-icon" />
-                    )}
-                  </button>
-                </div>
-                <div className="detail-item">
-                  <Phone className="detail-icon" />
-                  <div className="detail-content">
-                    <p className="detail-label">Phone</p>
-                    <p className="detail-value">{contactInfo.phone}</p>
-                  </div>
-                  <button
-                    className="copy-btn"
-                    onClick={() => copyToClipboard(contactInfo.phone, "phone")}
-                    title="Copy phone"
-                  >
-                    {copiedField === "phone" ? (
-                      <Check size={18} className="copy-icon success" />
-                    ) : (
-                      <Copy size={18} className="copy-icon" />
-                    )}
-                  </button>
-                </div>
-                <div className="detail-item">
-                  <MapPin className="detail-icon" />
-                  <div className="detail-content">
-                    <p className="detail-label">Location</p>
-                    <p className="detail-value">{contactInfo.location}</p>
-                  </div>
-                </div>
-                <div className="detail-item">
-                  <Hash className="detail-icon" />
-                  <div className="detail-content">
-                    <p className="detail-label">Employee ID</p>
-                    <p className="detail-value">{contactInfo.employeeId}</p>
-                  </div>
-                  <button
-                    className="copy-btn"
-                    onClick={() =>
-                      copyToClipboard(contactInfo.employeeId, "id")
-                    }
-                    title="Copy ID"
-                  >
-                    {copiedField === "id" ? (
-                      <Check size={18} className="copy-icon success" />
-                    ) : (
-                      <Copy size={18} className="copy-icon" />
-                    )}
-                  </button>
-                </div>
-                <div className="detail-item">
-                  <Building2 className="detail-icon" />
-                  <div className="detail-content">
-                    <p className="detail-label">Department</p>
-                    <p className="detail-value">{employee.department}</p>
-                  </div>
-                </div>
-                <div className="detail-item">
-                  <Briefcase className="detail-icon" />
-                  <div className="detail-content">
-                    <p className="detail-label">Role</p>
-                    <p className="detail-value">{employee.role}</p>
-                  </div>
-                </div>
-                <div className="detail-item">
-                  <User className="detail-icon" />
-                  <div className="detail-content">
-                    <p className="detail-label">Reporting Manager</p>
-                    <p className="detail-value">{contactInfo.manager}</p>
-                  </div>
-                </div>
-                <div className="detail-item">
-                  <Calendar className="detail-icon" />
-                  <div className="detail-content">
-                    <p className="detail-label">Join Date</p>
-                    <p className="detail-value">
-                      {employee.join_date
-                        ? new Date(employee.join_date).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          },
-                        )
-                        : "N/A"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Statistics */}
             <div className="card employee-detail-section">
               <h2 className="section-title">Performance Statistics</h2>
@@ -475,18 +420,208 @@ Exported on: ${new Date().toLocaleString()}
                 ))}
               </div>
             </div>
-
-            {/* Skills & Competencies - Hidden until data is available */}
-            {/* <div className="card employee-detail-section">
-              <h2 className="section-title">
-                <Target size={20} />
-                Skills & Competencies
-              </h2>
-              <div className="p-4 text-muted text-center">
-                Skills data not available yet.
-              </div>
-            </div> */}
           </>
+        );
+
+      case "personal":
+        return (
+          <div className="card employee-detail-section">
+            <h2 className="section-title">Contact Information</h2>
+            <div className="employee-detail-grid">
+              <div className="detail-item">
+                <Mail className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Email</p>
+                  <p className="detail-value">{employee.email}</p>
+                </div>
+                <button
+                  className="copy-btn"
+                  onClick={() => copyToClipboard(employee.email, "email")}
+                  title="Copy email"
+                >
+                  {copiedField === "email" ? (
+                    <Check size={18} className="copy-icon success" />
+                  ) : (
+                    <Copy size={18} className="copy-icon" />
+                  )}
+                </button>
+              </div>
+              <div className="detail-item">
+                <Phone className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Phone</p>
+                  <p className="detail-value">{contactInfo.phone}</p>
+                </div>
+                <button
+                  className="copy-btn"
+                  onClick={() => copyToClipboard(contactInfo.phone, "phone")}
+                  title="Copy phone"
+                >
+                  {copiedField === "phone" ? (
+                    <Check size={18} className="copy-icon success" />
+                  ) : (
+                    <Copy size={18} className="copy-icon" />
+                  )}
+                </button>
+              </div>
+              <div className="detail-item">
+                <MapPin className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Location</p>
+                  <p className="detail-value">{contactInfo.location}</p>
+                </div>
+              </div>
+              <div className="detail-item">
+                <Hash className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Employee ID</p>
+                  <p className="detail-value">{contactInfo.employeeId}</p>
+                </div>
+                <button
+                  className="copy-btn"
+                  onClick={() =>
+                    copyToClipboard(contactInfo.employeeId, "id")
+                  }
+                  title="Copy ID"
+                >
+                  {copiedField === "id" ? (
+                    <Check size={18} className="copy-icon success" />
+                  ) : (
+                    <Copy size={18} className="copy-icon" />
+                  )}
+                </button>
+              </div>
+              <div className="detail-item">
+                <Building2 className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Department</p>
+                  <p className="detail-value">{employee.department}</p>
+                </div>
+              </div>
+              <div className="detail-item">
+                <Briefcase className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Role</p>
+                  <p className="detail-value">{employee.role}</p>
+                </div>
+              </div>
+              <div className="detail-item">
+                <User className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Reporting Manager</p>
+                  <p className="detail-value">{contactInfo.manager}</p>
+                </div>
+              </div>
+              <div className="detail-item">
+                <Calendar className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Join Date</p>
+                  <p className="detail-value">
+                    {employee.join_date
+                      ? new Date(employee.join_date).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        },
+                      )
+                      : "N/A"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "bank":
+        return (
+          <div className="card employee-detail-section">
+            <h2 className="section-title">Bank Account Details</h2>
+            <div className="employee-detail-grid">
+              <div className="detail-item">
+                <Landmark className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Bank Name</p>
+                  <p className="detail-value">{bankDetails.bankName}</p>
+                </div>
+              </div>
+              <div className="detail-item">
+                <CreditCard className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Account Number</p>
+                  <p className="detail-value">{bankDetails.accountNumber}</p>
+                </div>
+                <button
+                  className="copy-btn"
+                  onClick={() =>
+                    copyToClipboard(bankDetails.accountNumber, "account")
+                  }
+                  title="Copy Account Number"
+                >
+                  {copiedField === "account" ? (
+                    <Check size={18} className="copy-icon success" />
+                  ) : (
+                    <Copy size={18} className="copy-icon" />
+                  )}
+                </button>
+              </div>
+              <div className="detail-item">
+                <FileText className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Account Type</p>
+                  <p className="detail-value">{bankDetails.accountType}</p>
+                </div>
+              </div>
+              <div className="detail-item">
+                <Hash className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">IFSC / Sort Code</p>
+                  <p className="detail-value">{bankDetails.ifscCode}</p>
+                </div>
+              </div>
+              <div className="detail-item">
+                <MapPin className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Branch</p>
+                  <p className="detail-value">{bankDetails.branch}</p>
+                </div>
+              </div>
+              <div className="detail-item">
+                <User className="detail-icon" />
+                <div className="detail-content">
+                  <p className="detail-label">Account Holder</p>
+                  <p className="detail-value">{bankDetails.holderName}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "education":
+        return (
+          <div className="card employee-detail-section">
+            <h2 className="section-title">Education</h2>
+            <div className="employment-timeline">
+              {education.map((edu) => (
+                <div key={edu.id} className="timeline-item">
+                  <div className="timeline-icon">
+                    <School size={14} />
+                  </div>
+                  <div className="timeline-content">
+                    <h3 className="timeline-title">{edu.degree}</h3>
+                    <p className="timeline-department">{edu.institution}</p>
+                    <p className="timeline-date">{edu.year}</p>
+                    <p className="timeline-description">
+                      Grade: {edu.grade}
+                      <br />
+                      {edu.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         );
 
       case "history":
@@ -496,7 +631,7 @@ Exported on: ${new Date().toLocaleString()}
             <div className="employment-timeline">
               {employmentHistory.map((position) => (
                 <div key={position.id} className="timeline-item">
-                  <div className="timeline-marker">
+                  <div className="timeline-marker simple">
                     {position.isCurrent && <div className="timeline-pulse" />}
                   </div>
                   <div className="timeline-content">
@@ -670,11 +805,32 @@ Exported on: ${new Date().toLocaleString()}
       <div className="tabs-container">
         <div className="tabs-nav">
           <button
-            className={`tab-btn ${activeTab === "overview" ? "active" : ""}`}
-            onClick={() => setActiveTab("overview")}
+            className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
+            onClick={() => setActiveTab("profile")}
           >
             <UserCircle size={18} />
-            Overview
+            Profile
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "personal" ? "active" : ""}`}
+            onClick={() => setActiveTab("personal")}
+          >
+            <User size={18} />
+            Personal Information
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "bank" ? "active" : ""}`}
+            onClick={() => setActiveTab("bank")}
+          >
+            <Landmark size={18} />
+            Bank Details
+          </button>
+          <button
+            className={`tab-btn ${activeTab === "education" ? "active" : ""}`}
+            onClick={() => setActiveTab("education")}
+          >
+            <GraduationCap size={18} />
+            Education
           </button>
           <button
             className={`tab-btn ${activeTab === "history" ? "active" : ""}`}

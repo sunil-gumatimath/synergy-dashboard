@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { Menu, Search, X } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { employeeService } from "../services/employeeService";
@@ -182,7 +182,7 @@ const Header = ({ onMobileMenuToggle }) => {
 
       <div className="header-actions">
         <button className="icon-btn">🔔</button>
-        <div className="user-profile">
+        <Link to="/profile" className="user-profile cursor-pointer hover:bg-gray-100 rounded-lg transition-colors">
           <div className="text-right hidden sm:block">
             <p className="text-sm font-medium text-main">{getUserName()}</p>
             <p className="text-xs text-muted">{user?.email}</p>
@@ -192,7 +192,7 @@ const Header = ({ onMobileMenuToggle }) => {
             alt={getUserName()}
             className="user-avatar"
           />
-        </div>
+        </Link>
       </div>
     </header>
   );

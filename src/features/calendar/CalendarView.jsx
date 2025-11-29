@@ -16,7 +16,7 @@ import {
   subDays,
   parseISO,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, MapPin, Plus, Award, Clock, Trash2, Edit2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Plus, Award, Clock, Trash2, Edit2, Calendar } from "lucide-react";
 import { employeeService } from "../../services/employeeService";
 import { calendarService } from "../../services/calendarService";
 import LoadingSpinner from "../../components/LoadingSpinner";
@@ -183,7 +183,8 @@ const CalendarView = () => {
     return (
       <div className="calendar-header">
         <div className="calendar-header-title">
-          <h2>
+          <h2 className="flex items-center gap-2">
+            <Calendar size={28} className="text-primary" />
             {view === "month" && format(currentMonth, "MMMM yyyy")}
             {view === "week" && `Week of ${format(startOfWeek(currentMonth), "MMM d, yyyy")}`}
             {view === "day" && format(currentMonth, "MMMM d, yyyy")}

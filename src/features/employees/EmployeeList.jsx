@@ -402,6 +402,17 @@ const EmployeeList = () => {
 
   return (
     <div className="employees-container">
+      {/* Header Title */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-main flex items-center gap-2">
+            <Users size={28} className="text-primary" />
+            Employees
+          </h1>
+          <p className="text-muted text-sm">Manage your team members</p>
+        </div>
+      </div>
+
       {/* Bulk Action Toolbar - appears when items selected */}
       <BulkActionToolbar
         selectedCount={selectedEmployeeIds.size}

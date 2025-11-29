@@ -9,6 +9,8 @@ import {
   LogOut,
   ChevronRight,
   ChevronLeft,
+  ClipboardList,
+  LifeBuoy,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -24,6 +26,8 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
       path: "/analytics",
     },
     { icon: Users, label: "Employees", id: "employees", path: "/employees" },
+    { icon: ClipboardList, label: "Tasks", id: "tasks", path: "/tasks" },
+    { icon: LifeBuoy, label: "Help Desk", id: "support", path: "/support" },
     { icon: Calendar, label: "Calendar", id: "calendar", path: "/calendar" },
     { icon: Settings, label: "Settings", id: "settings", path: "/settings" },
   ];
@@ -112,7 +116,11 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
           </nav>
 
           <div className="sidebar-footer">
-            <div className="user-profile-sidebar">
+            <Link
+              to="/profile"
+              className="user-profile-sidebar"
+              style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}
+            >
               <div className="user-avatar-sidebar">{getUserInitials()}</div>
               {!isCollapsed && (
                 <div className="user-info-sidebar">
@@ -120,15 +128,15 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
                   <span className="user-email-sidebar">{user?.email}</span>
                 </div>
               )}
-              <button
-                className="sidebar-logout-btn"
-                aria-label="Logout"
-                onClick={handleLogout}
-                title="Logout"
-              >
-                <LogOut size={16} />
-              </button>
-            </div>
+            </Link>
+            <button
+              className="sidebar-logout-btn"
+              aria-label="Logout"
+              onClick={handleLogout}
+              title="Logout"
+            >
+              <LogOut size={16} />
+            </button>
           </div>
         </aside>
       </div>

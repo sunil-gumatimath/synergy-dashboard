@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User, Bell, Shield, Palette, Save, AlertCircle } from "lucide-react";
+import { User, Bell, Shield, Palette, Save, AlertCircle, Settings as SettingsIcon } from "lucide-react";
 import Toast from "../../components/Toast";
 import "./settings-styles.css";
 
@@ -423,6 +423,17 @@ const SettingsView = () => {
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-main flex items-center gap-2">
+            <SettingsIcon size={28} className="text-primary" />
+            Settings
+          </h1>
+          <p className="text-muted text-sm">Manage your account and preferences</p>
+        </div>
+      </div>
+
       {/* Tab Navigation */}
       <div className="settings-tabs">
         <nav className="settings-tabs-nav">

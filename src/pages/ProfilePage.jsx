@@ -1,0 +1,61 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
+import LoadingSpinner from '../components/LoadingSpinner';
+
+const ProfilePage = () => {
+    const { user } = useAuth();
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            if (!user?.email) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase
+                    .from('employees')
+                    .select('id')
+                    .eq('email', user.email)
+                    .single();
+
+                if (data) {
+                    navigate(`/employees/${data.id}`, { replace: true });
+                } else {
+                    setLoading(false);
+                }
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, [user, navigate]);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-full">
+                <LoadingSpinner size="lg" message="Loading your profile..." />
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col items-center justify-center h-[60vh] text-center p-8">
+            <h2 className="text-2xl font-bold mb-4">Profile Not Found</h2>
+            <p className="text-muted mb-6">
+                We couldn't find an employee record associated with your email ({user?.email}).
+            </p>
+            <p className="text-sm text-muted">
+                Please contact your administrator to link your account.
+            </p>
+        </div>
+    );
+};
+
+export default ProfilePage;

@@ -460,6 +460,32 @@
   border-radius: 50%;
   border: 3px solid var(--primary);
   z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-icon {
+  width: 24px;
+  height: 24px;
+  background: var(--bg-main);
+  border-radius: 50%;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: -2.25rem;
+  top: 0;
+  z-index: 2;
+}
+
+.timeline-marker.simple {
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--primary);
+  left: -2rem;
 }
 
 .timeline-pulse {

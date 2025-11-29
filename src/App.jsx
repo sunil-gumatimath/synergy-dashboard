@@ -8,12 +8,19 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Header from "./components/Header";
 import LoadingSpinner from "./components/LoadingSpinner";
 import EmployeeDetailPage from "./pages/EmployeeDetailPage";
+import ProfilePage from "./pages/ProfilePage";
 
 const AnalyticsDashboard = React.lazy(
   () => import("./features/analytics/AnalyticsDashboard"),
 );
 const CalendarView = React.lazy(
   () => import("./features/calendar/CalendarView"),
+);
+const TaskBoard = React.lazy(
+  () => import("./features/tasks/TaskBoard"),
+);
+const SupportView = React.lazy(
+  () => import("./features/support/SupportView"),
 );
 
 function App() {
@@ -24,6 +31,8 @@ function App() {
   const getActiveTab = () => {
     const path = location.pathname;
     if (path.startsWith("/employees")) return "employees";
+    if (path.startsWith("/tasks")) return "tasks";
+    if (path.startsWith("/support")) return "support";
     if (path.startsWith("/analytics")) return "analytics";
     if (path.startsWith("/calendar")) return "calendar";
     if (path.startsWith("/settings")) return "settings";
@@ -94,7 +103,35 @@ function App() {
               }
             />
 
+            <Route
+              path="/tasks"
+              element={
+                <Suspense
+                  fallback={
+                    <LoadingSpinner size="lg" message="Loading tasks..." />
+                  }
+                >
+                  <TaskBoard />
+                </Suspense>
+              }
+            />
+
+            <Route
+              path="/support"
+              element={
+                <Suspense
+                  fallback={
+                    <LoadingSpinner size="lg" message="Loading support..." />
+                  }
+                >
+                  <SupportView />
+                </Suspense>
+              }
+            />
+
             <Route path="/settings" element={<SettingsView />} />
+
+            <Route path="/profile" element={<ProfilePage />} />
 
             <Route
               path="*"
