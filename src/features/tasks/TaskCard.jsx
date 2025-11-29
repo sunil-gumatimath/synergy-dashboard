@@ -1,8 +1,8 @@
 import React from "react";
 import { Draggable } from "@hello-pangea/dnd";
-import { Calendar, MessageSquare, Paperclip } from "lucide-react";
+import { Calendar, MessageSquare, Paperclip, Trash2 } from "lucide-react";
 
-const TaskCard = ({ task, index }) => {
+const TaskCard = ({ task, index, onEdit, onDelete }) => {
     const getPriorityClass = (priority) => {
         switch (priority.toLowerCase()) {
             case "high":
@@ -22,16 +22,33 @@ const TaskCard = ({ task, index }) => {
         <Draggable draggableId={task.id.toString()} index={index}>
             {(provided, snapshot) => (
                 <div
-                    className={`task-card ${snapshot.isDragging ? "dragging" : ""}`}
+                    className={`task-card group ${snapshot.isDragging ? "dragging" : ""}`}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                 >
-                    <div className={`task-priority-badge ${getPriorityClass(task.priority)}`}>
-                        {task.priority}
+                    <div className="flex justify-between items-start mb-2">
+                        <div className={`task-priority-badge ${getPriorityClass(task.priority)}`}>
+                            {task.priority}
+                        </div>
+                        <button
+                            className="text-muted hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete(task);
+                            }}
+                            title="Delete Task"
+                        >
+                            <Trash2 size={14} />
+                        </button>
                     </div>
 
-                    <h4 className="task-title">{task.title}</h4>
+                    <h4
+                        className="task-title cursor-pointer hover:text-primary transition-colors"
+                        onClick={() => onEdit(task)}
+                    >
+                        {task.title}
+                    </h4>
 
                     {task.description && (
                         <p className="task-description">{task.description}</p>

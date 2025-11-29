@@ -3,7 +3,7 @@ import { Droppable } from "@hello-pangea/dnd";
 import { Plus } from "lucide-react";
 import TaskCard from "./TaskCard";
 
-const TaskColumn = ({ columnId, title, tasks }) => {
+const TaskColumn = ({ columnId, title, tasks, onEdit, onDelete, onAdd }) => {
     return (
         <div className="task-column">
             <div className="task-column-header">
@@ -21,14 +21,20 @@ const TaskColumn = ({ columnId, title, tasks }) => {
                         {...provided.droppableProps}
                     >
                         {tasks.map((task, index) => (
-                            <TaskCard key={task.id} task={task} index={index} />
+                            <TaskCard
+                                key={task.id}
+                                task={task}
+                                index={index}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
+                            />
                         ))}
                         {provided.placeholder}
                     </div>
                 )}
             </Droppable>
 
-            <button className="add-task-btn">
+            <button className="add-task-btn" onClick={onAdd}>
                 <Plus size={16} />
                 Add Task
             </button>

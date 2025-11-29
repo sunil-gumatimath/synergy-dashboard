@@ -24,21 +24,59 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
       label: "Analytics",
       id: "analytics",
       path: "/analytics",
+      roles: ["Admin", "Manager"],
     },
-    { icon: Users, label: "Employees", id: "employees", path: "/employees" },
-    { icon: ClipboardList, label: "Tasks", id: "tasks", path: "/tasks" },
-    { icon: LifeBuoy, label: "Help Desk", id: "support", path: "/support" },
-    { icon: Calendar, label: "Calendar", id: "calendar", path: "/calendar" },
-    { icon: Settings, label: "Settings", id: "settings", path: "/settings" },
+    {
+      icon: Users,
+      label: "Employees",
+      id: "employees",
+      path: "/employees",
+      roles: ["Admin", "Manager"],
+    },
+    {
+      icon: ClipboardList,
+      label: "Tasks",
+      id: "tasks",
+      path: "/tasks",
+      roles: ["Admin", "Manager", "Employee"],
+    },
+    {
+      icon: LifeBuoy,
+      label: "Help Desk",
+      id: "support",
+      path: "/support",
+      roles: ["Admin", "Manager", "Employee"],
+    },
+    {
+      icon: Calendar,
+      label: "Calendar",
+      id: "calendar",
+      path: "/calendar",
+      roles: ["Admin", "Manager", "Employee"],
+    },
+    {
+      icon: Settings,
+      label: "Settings",
+      id: "settings",
+      path: "/settings",
+      roles: ["Admin", "Manager", "Employee"],
+    },
   ];
+
+  const filteredMenuItems = menuItems.filter(item =>
+    !item.roles || (user?.role && item.roles.includes(user.role)) || user?.role === 'Admin' // Admin always sees everything as fallback
+  );
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
 
   const handleLogout = async () => {
-    if (confirm("Are you sure you want to logout?")) {
+    try {
+      console.log("Logging out...");
       await signOut();
+    } catch (error) {
+      console.error("Logout failed:", error);
     }
   };
 
@@ -88,7 +126,7 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
           </div>
 
           <nav className="sidebar-nav">
-            {menuItems.map((item) => {
+            {filteredMenuItems.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
