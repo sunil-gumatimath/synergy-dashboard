@@ -27,6 +27,8 @@ import {
   Target,
   BookOpen,
   Zap,
+  DollarSign,
+  CheckCircle,
 } from "lucide-react";
 import { employeeService } from "../services/employeeService";
 import noteService from "../services/noteService";
@@ -237,13 +239,45 @@ const EmployeeDetailPage = () => {
   // Stats (using available data)
   const stats = [
     {
+      id: 1,
+      label: "Performance Score",
+      value: employee?.performance_score ? `${employee.performance_score}%` : "N/A",
+      icon: <TrendingUp className="stat-icon" />,
+      color:
+        employee?.performance_score >= 80
+          ? "success"
+          : employee?.performance_score >= 60
+            ? "warning"
+            : "danger",
+      trend: employee?.performance_score ? "+5%" : "",
+      trendDirection: "up",
+    },
+    {
       id: 2,
       label: "Time with Company",
       value: getEmploymentDuration(employee?.join_date),
       icon: <Clock className="stat-icon" />,
-      color: "success",
+      color: "primary",
       trend: "",
       trendDirection: null,
+    },
+    {
+      id: 3,
+      label: "Annual Salary",
+      value: employee?.salary ? `$${employee.salary.toLocaleString()}` : "N/A",
+      icon: <DollarSign className="stat-icon" />,
+      color: "info",
+      trend: "",
+      trendDirection: null,
+    },
+    {
+      id: 4,
+      label: "Projects Completed",
+      value: "12",
+      icon: <CheckCircle className="stat-icon" />,
+      color: "purple",
+      trend: "+2",
+      trendDirection: "up",
     },
   ];
 
