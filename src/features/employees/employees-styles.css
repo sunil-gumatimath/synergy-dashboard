@@ -29,16 +29,18 @@
 
 .employees-search-icon {
   position: absolute;
-  left: 12px;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
   color: var(--text-muted);
   pointer-events: none;
-  z-index: 1;
+  z-index: 10;
 }
 
 .employees-search-input {
   width: 100%;
   padding: var(--space-md) var(--space-lg);
-  padding-left: 2.75rem;
+  padding-left: 3rem;
   padding-right: 2.5rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);

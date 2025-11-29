@@ -139,7 +139,7 @@ const CreateTaskModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
                                     name="due_date"
                                     value={formData.due_date}
                                     onChange={handleChange}
-                                    className={`form-input pl-9 ${errors.due_date ? "border-red-500" : ""}`}
+                                    className={`form-input pl-10 ${errors.due_date ? "border-red-500" : ""}`}
                                 />
                                 <Calendar size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                             </div>
@@ -160,7 +160,7 @@ const CreateTaskModal = ({ isOpen, onClose, onSubmit, isLoading }) => {
                                 name="assignee_id"
                                 value={formData.assignee_id}
                                 onChange={handleChange}
-                                className={`form-select pl-9 ${errors.assignee_id ? "border-red-500" : ""}`}
+                                className={`form-select pl-10 ${errors.assignee_id ? "border-red-500" : ""}`}
                                 disabled={loadingEmployees}
                             >
                                 <option value="">Select Employee</option>

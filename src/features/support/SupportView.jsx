@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Search, Filter, MessageSquare, Clock, CheckCircle, AlertCircle, LifeBuoy } from "lucide-react";
+import { Plus, Search, Filter, MessageSquare, Clock, CheckCircle, AlertCircle, LifeBuoy, X } from "lucide-react";
 import { taskService } from "../../services/taskService";
 import CreateTicketModal from "../../components/CreateTicketModal";
 import LoadingSpinner from "../../components/LoadingSpinner";
@@ -13,6 +13,7 @@ const SupportView = () => {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [toast, setToast] = useState(null);
     const [filter, setFilter] = useState("all");
+    const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
         fetchTickets();
@@ -122,12 +123,23 @@ const SupportView = () => {
                     <h2 className="font-semibold">My Tickets</h2>
                     <div className="flex gap-2">
                         <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={16} />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" size={16} />
                             <input
                                 type="text"
                                 placeholder="Search tickets..."
-                                className="pl-9 pr-4 py-1.5 border border-[var(--border)] rounded-[var(--radius-md)] text-sm w-48 focus:outline-none focus:border-[var(--primary)]"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="pl-11 pr-10 py-2 border border-[var(--border)] rounded-[var(--radius-md)] text-sm w-48 focus:outline-none focus:border-[var(--primary)]" style={{ paddingLeft: '2.5rem' }}
                             />
+                            {searchTerm && (
+                                <button
+                                    onClick={() => setSearchTerm("")}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-main transition-colors"
+                                    title="Clear search"
+                                >
+                                    <X size={16} />
+                                </button>
+                            )}
                         </div>
                         <button className="btn btn-ghost btn-sm">
                             <Filter size={16} />
@@ -152,7 +164,17 @@ const SupportView = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[var(--border)]">
-                                {tickets.map((ticket) => (
+                                {tickets.filter((ticket) => {
+                                    // Apply search filter
+                                    if (!searchTerm) return true;
+                                    const term = searchTerm.toLowerCase();
+                                    return (
+                                        ticket.title.toLowerCase().includes(term) ||
+                                        (ticket.category && ticket.category.toLowerCase().includes(term)) ||
+                                        (ticket.priority && ticket.priority.toLowerCase().includes(term)) ||
+                                        ticket.id.toString().includes(term)
+                                    );
+                                }).map((ticket) => (
                                     <tr key={ticket.id} className="hover:bg-[var(--bg-body)] transition-colors cursor-pointer">
                                         <td className="p-4 font-mono text-xs text-muted">#{ticket.id}</td>
                                         <td className="p-4 font-medium">{ticket.title}</td>

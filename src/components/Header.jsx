@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { Menu, Search, X } from "lucide-react";
+import { Menu, Search, X, Bell } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { employeeService } from "../services/employeeService";
 import PropTypes from "prop-types";
@@ -125,11 +125,11 @@ const Header = ({ onMobileMenuToggle }) => {
       {/* Global Search */}
       <div className="header-search-container" ref={searchRef}>
         <div className="header-search-input-wrapper">
-          <Search size={18} className="header-search-icon" />
+          <Search size={18} className="header-search-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none', zIndex: 10 }} />
           <input
             type="text"
             placeholder="Search employees..."
-            className="header-search-input"
+            className="header-search-input" style={{ paddingLeft: '4rem' }}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => {
@@ -181,7 +181,7 @@ const Header = ({ onMobileMenuToggle }) => {
       </div>
 
       <div className="header-actions">
-        <button className="icon-btn">🔔</button>
+        <button className="icon-btn"><Bell size={20} /></button>
         <Link to="/profile" className="user-profile cursor-pointer hover:bg-gray-100 rounded-lg transition-colors">
           <div className="text-right hidden sm:block">
             <p className="text-sm font-medium text-main">{getUserName()}</p>

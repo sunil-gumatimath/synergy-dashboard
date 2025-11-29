@@ -7,8 +7,6 @@ import {
   Briefcase,
   ArrowRight,
   Check,
-  Github,
-  Chrome,
 } from "lucide-react";
 import "../index.css";
 import "./login-styles.css";
@@ -19,6 +17,7 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -31,6 +30,7 @@ const LoginPage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setError("");
+    setSuccessMessage("");
   };
 
   const validateForm = () => {
@@ -74,6 +74,7 @@ const LoginPage = () => {
     if (!validateForm()) return;
     setLoading(true);
     setError("");
+    setSuccessMessage("");
     try {
       if (isLogin) {
         const { error: signInError } = await signIn(
@@ -81,8 +82,18 @@ const LoginPage = () => {
           formData.password,
         );
         if (signInError) {
-          setError(signInError.message || "Invalid email or password");
+          // Handle specific error cases
+          if (signInError.message?.includes('Invalid login credentials')) {
+            setError("Invalid email or password. Please try again.");
+          } else if (signInError.message?.includes('Email not confirmed')) {
+            setError("Please verify your email address before signing in.");
+          } else if (signInError.message?.includes('JWT') || signInError.code?.includes('JWT')) {
+            setError("Session expired. Please try signing in again.");
+          } else {
+            setError(signInError.message || "Failed to sign in. Please try again.");
+          }
         }
+        // Success is handled by AuthContext redirecting to the app
       } else {
         const { error: signUpError } = await signUp(
           formData.email,
@@ -90,21 +101,31 @@ const LoginPage = () => {
           { full_name: formData.name },
         );
         if (signUpError) {
-          setError(signUpError.message || "Failed to create account");
+          // Handle specific signup errors
+          if (signUpError.message?.includes('already registered')) {
+            setError("This email is already registered. Try signing in instead.");
+          } else if (signUpError.message?.includes('Password')) {
+            setError("Password is too weak. Use at least 6 characters with numbers and letters.");
+          } else {
+            setError(signUpError.message || "Failed to create account. Please try again.");
+          }
         } else {
+          // Show success message and switch to login
           setError("");
           setIsLogin(true);
           setFormData({
-            email: "",
+            email: formData.email, // Keep email for easy login
             password: "",
             confirmPassword: "",
             name: "",
           });
+          // Show success message
+          setSuccessMessage("Account created successfully! Please sign in with your credentials.");
         }
       }
     } catch (err) {
-      setError("An unexpected error occurred. Please try again.");
       console.error("Auth error:", err);
+      setError("An unexpected error occurred. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
@@ -113,6 +134,7 @@ const LoginPage = () => {
   const toggleMode = () => {
     setIsLogin(!isLogin);
     setError("");
+    setSuccessMessage("");
     setFormData({ email: "", password: "", confirmPassword: "", name: "" });
   };
 
@@ -159,6 +181,14 @@ const LoginPage = () => {
               <div className="error-alert">
                 <AlertCircle size={18} className="error-icon" />
                 <p>{error}</p>
+              </div>
+            )}
+
+            {/* Success Message */}
+            {successMessage && (
+              <div className="success-alert">
+                <Check size={18} className="success-icon" />
+                <p>{successMessage}</p>
               </div>
             )}
 
@@ -297,20 +327,7 @@ const LoginPage = () => {
                 )}
               </button>
 
-              {/* Social Login */}
-              <div className="social-login">
-                <div className="divider">
-                  <span>Or continue with</span>
-                </div>
-                <div className="social-buttons">
-                  <button type="button" className="social-btn">
-                    <Chrome size={18} />
-                  </button>
-                  <button type="button" className="social-btn">
-                    <Github size={18} />
-                  </button>
-                </div>
-              </div>
+
             </form>
 
             {/* Toggle Mode */}

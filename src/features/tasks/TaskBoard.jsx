@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext } from "@hello-pangea/dnd";
-import { Plus, Filter, Search, ClipboardList } from "lucide-react";
+import { Plus, Filter, Search, ClipboardList, X } from "lucide-react";
 import TaskColumn from "./TaskColumn";
 import { taskService } from "../../services/taskService";
 import LoadingSpinner from "../../components/LoadingSpinner";
@@ -12,7 +12,7 @@ import Toast from "../../components/Toast";
 const TaskBoard = () => {
     const [tasks, setTasks] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [filter, setFilter] = useState("all"); // all, my-tasks
+    const [searchTerm, setSearchTerm] = useState("");
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [toast, setToast] = useState(null);
 
@@ -23,10 +23,6 @@ const TaskBoard = () => {
         done: "Done",
     };
 
-    useEffect(() => {
-        fetchTasks();
-    }, []);
-
     const fetchTasks = async () => {
         setIsLoading(true);
         const { data } = await taskService.getAll();
@@ -34,8 +30,13 @@ const TaskBoard = () => {
         setIsLoading(false);
     };
 
+    useEffect(() => {
+        fetchTasks();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const handleCreateTask = async (taskData) => {
-        const { data, error } = await taskService.create(taskData);
+        const { data: _data, error } = await taskService.create(taskData);
 
         if (error) {
             setToast({ type: "error", message: "Failed to create task" });
@@ -70,7 +71,20 @@ const TaskBoard = () => {
     };
 
     const getTasksByStatus = (status) => {
-        return tasks.filter((task) => task.status === status);
+        let filteredTasks = tasks.filter((task) => task.status === status);
+
+        // Apply search filter
+        if (searchTerm) {
+            const term = searchTerm.toLowerCase();
+            filteredTasks = filteredTasks.filter(
+                (task) =>
+                    task.title.toLowerCase().includes(term) ||
+                    (task.description && task.description.toLowerCase().includes(term)) ||
+                    (task.assignee?.name && task.assignee.name.toLowerCase().includes(term))
+            );
+        }
+
+        return filteredTasks;
     };
 
     if (isLoading) {
@@ -90,12 +104,25 @@ const TaskBoard = () => {
                 </div>
                 <div className="flex gap-3">
                     <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" size={18} />
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+                            <Search className="text-muted" size={18} />
+                        </div>
                         <input
                             type="text"
                             placeholder="Search tasks..."
-                            className="pl-10 pr-4 py-2 border border-[var(--border)] rounded-[var(--radius-md)] bg-[var(--bg-surface)] text-sm w-64 focus:outline-none focus:border-[var(--primary)]"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-10 pr-10 py-2.5 border border-[var(--border)] rounded-[var(--radius-md)] bg-[var(--bg-surface)] text-sm w-80 focus:outline-none focus:border-[var(--primary)]"
                         />
+                        {searchTerm && (
+                            <button
+                                onClick={() => setSearchTerm("")}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-main transition-colors z-10"
+                                title="Clear search"
+                            >
+                                <X size={16} />
+                            </button>
+                        )}
                     </div>
                     <button className="btn btn-ghost">
                         <Filter size={18} />
