@@ -9,6 +9,7 @@ import Header from "./components/Header";
 import LoadingSpinner from "./components/LoadingSpinner";
 import EmployeeDetailPage from "./pages/EmployeeDetailPage";
 import ProfilePage from "./pages/ProfilePage";
+import { useAuth } from "./contexts/AuthContext";
 
 const AnalyticsDashboard = React.lazy(
   () => import("./features/analytics/AnalyticsDashboard"),
@@ -22,6 +23,17 @@ const TaskBoard = React.lazy(
 const SupportView = React.lazy(
   () => import("./features/support/SupportView"),
 );
+const EmployeeDashboard = React.lazy(
+  () => import("./features/dashboard/EmployeeDashboard"),
+);
+
+const HomeRedirect = () => {
+  const { user } = useAuth();
+  if (user?.role === 'Admin' || user?.role === 'Manager') {
+    return <Navigate to="/analytics" replace />;
+  }
+  return <Navigate to="/dashboard" replace />;
+};
 
 function App() {
   const location = useLocation();
@@ -30,13 +42,14 @@ function App() {
   // Determine active tab from current route
   const getActiveTab = () => {
     const path = location.pathname;
+    if (path.startsWith("/dashboard")) return "dashboard";
     if (path.startsWith("/employees")) return "employees";
     if (path.startsWith("/tasks")) return "tasks";
     if (path.startsWith("/support")) return "support";
     if (path.startsWith("/analytics")) return "analytics";
     if (path.startsWith("/calendar")) return "calendar";
     if (path.startsWith("/settings")) return "settings";
-    return "analytics";
+    return "dashboard"; // Default fallback
   };
 
   const activeTab = getActiveTab();
@@ -63,7 +76,22 @@ function App() {
           <Header onMobileMenuToggle={toggleMobileMenu} />
 
           <Routes>
-            <Route path="/" element={<Navigate to="/analytics" replace />} />
+            <Route path="/" element={<HomeRedirect />} />
+
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={['Employee', 'Admin', 'Manager']}>
+                  <Suspense
+                    fallback={
+                      <LoadingSpinner size="lg" message="Loading dashboard..." />
+                    }
+                  >
+                    <EmployeeDashboard />
+                  </Suspense>
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="/analytics"
@@ -79,6 +107,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+// ... existing routes ...
 
             <Route
               path="/employees"

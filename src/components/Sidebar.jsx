@@ -21,6 +21,13 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const menuItems = [
     {
       icon: LayoutDashboard,
+      label: "Dashboard",
+      id: "dashboard",
+      path: "/dashboard",
+      roles: ["Employee"],
+    },
+    {
+      icon: LayoutDashboard,
       label: "Analytics",
       id: "analytics",
       path: "/analytics",
@@ -163,7 +170,7 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
               {!isCollapsed && (
                 <div className="user-info-sidebar">
                   <span className="user-name-sidebar">{getUserName()}</span>
-                  <span className="user-email-sidebar">{user?.email}</span>
+                  <span className="user-email-sidebar">{user?.role || 'Employee'}</span>
                 </div>
               )}
             </Link>
