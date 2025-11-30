@@ -70,11 +70,14 @@ const Header = ({ onMobileMenuToggle }) => {
   // Determine active tab from current route
   const getActiveTab = () => {
     const path = location.pathname;
+    if (path.startsWith("/dashboard")) return "dashboard";
     if (path.startsWith("/employees")) return "employees";
+    if (path.startsWith("/tasks")) return "tasks";
+    if (path.startsWith("/support")) return "support";
     if (path.startsWith("/analytics")) return "analytics";
     if (path.startsWith("/calendar")) return "calendar";
     if (path.startsWith("/settings")) return "settings";
-    return "analytics";
+    return "dashboard"; // Default fallback
   };
 
   // Get page title based on route
@@ -85,6 +88,10 @@ const Header = ({ onMobileMenuToggle }) => {
     if (path.startsWith("/employees/") && path !== "/employees") {
       return "Employee Details";
     }
+
+    // Special case for Help Desk
+    if (activeTab === "support") return "Help Desk";
+
     return activeTab.charAt(0).toUpperCase() + activeTab.slice(1);
   };
 
