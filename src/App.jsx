@@ -10,6 +10,7 @@ import LoadingSpinner from "./components/common/LoadingSpinner";
 import EmployeeDetailPage from "./pages/EmployeeDetailPage";
 import ProfilePage from "./pages/ProfilePage";
 import { useAuth } from "./contexts/AuthContext";
+import "./components/common/Avatar.css";
 
 const AnalyticsDashboard = React.lazy(
   () => import("./features/analytics/AnalyticsDashboard"),
@@ -17,8 +18,8 @@ const AnalyticsDashboard = React.lazy(
 const CalendarView = React.lazy(
   () => import("./features/calendar/CalendarView"),
 );
-const TaskBoard = React.lazy(
-  () => import("./features/tasks/TaskBoard"),
+const TasksView = React.lazy(
+  () => import("./features/tasks/TasksView"),
 );
 const SupportView = React.lazy(
   () => import("./features/support/SupportView"),
@@ -31,6 +32,9 @@ const LeaveManagement = React.lazy(
 );
 const TimeTracking = React.lazy(
   () => import("./features/timetracking/TimeTracking"),
+);
+const ReportsView = React.lazy(
+  () => import("./features/reports/ReportsView"),
 );
 
 const HomeRedirect = () => {
@@ -56,6 +60,7 @@ function App() {
     if (path.startsWith("/support")) return "support";
     if (path.startsWith("/analytics")) return "analytics";
     if (path.startsWith("/calendar")) return "calendar";
+    if (path.startsWith("/reports")) return "reports";
     if (path.startsWith("/settings")) return "settings";
     return "dashboard"; // Default fallback
   };
@@ -159,7 +164,7 @@ function App() {
                     <LoadingSpinner size="lg" message="Loading tasks..." />
                   }
                 >
-                  <TaskBoard />
+                  <TasksView />
                 </Suspense>
               }
             />
@@ -200,6 +205,21 @@ function App() {
                 >
                   <TimeTracking />
                 </Suspense>
+              }
+            />
+
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <Suspense
+                    fallback={
+                      <LoadingSpinner size="lg" message="Loading reports..." />
+                    }
+                  >
+                    <ReportsView />
+                  </Suspense>
+                </ProtectedRoute>
               }
             />
 

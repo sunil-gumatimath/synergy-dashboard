@@ -759,9 +759,25 @@ button {
   transition: all 0.2s ease;
 }
 
-.user-profile-sidebar:hover .user-avatar-sidebar {
+.user-avatar-sidebar-img {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 2px solid white;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.user-profile-sidebar:hover .user-avatar-sidebar,
+.user-profile-sidebar:hover .user-avatar-sidebar-img {
   transform: scale(1.05);
   box-shadow: var(--shadow-md);
+}
+
+.user-avatar-sidebar-component {
+  border: 2px solid white;
+  box-shadow: var(--shadow-sm);
 }
 
 .user-info-sidebar {
@@ -1262,6 +1278,24 @@ button {
 
 .modal-body {
   padding: var(--space-xl);
+}
+
+.avatar-preview-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  background: var(--bg-body);
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border);
+}
+
+.avatar-preview-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
 }
 
 .modal-footer {
