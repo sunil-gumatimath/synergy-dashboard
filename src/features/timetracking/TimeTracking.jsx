@@ -155,18 +155,18 @@ const TimeTracking = () => {
     return (
         <div className="timetracking">
             {/* Header */}
-            <div className="timetracking-header">
-                <div className="timetracking-header-left">
-                    <h1>
-                        <Clock size={24} />
+            <div className="flex items-center justify-between mb-6">
+                <div>
+                    <h1 className="text-2xl font-bold text-main flex items-center gap-2">
+                        <Clock size={28} className="text-primary" />
                         Time Tracking
                     </h1>
-                    <p>Track your work hours and view timesheets</p>
+                    <p className="text-muted text-sm">Track your work hours and view timesheets</p>
                 </div>
             </div>
 
             {/* Clock In/Out Card */}
-            <div className="clock-card">
+            <div className="card clock-card">
                 <div className="clock-display">
                     <div className="current-time">
                         {new Date().toLocaleTimeString("en-US", {
@@ -250,7 +250,7 @@ const TimeTracking = () => {
 
             {/* Weekly Summary */}
             {weeklySummary && (
-                <div className="weekly-section">
+                <div className="card weekly-section">
                     <div className="section-header">
                         <h2>
                             <Calendar size={20} />

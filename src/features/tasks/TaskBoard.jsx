@@ -196,11 +196,11 @@ const TaskBoard = () => {
                             {filterPriority === 'all' ? 'Filter' : `Priority: ${filterPriority.charAt(0).toUpperCase() + filterPriority.slice(1)}`}
                         </button>
                         {showFilterMenu && (
-                            <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-20">
+                            <div className="absolute top-full right-0 mt-2 w-48 bg-[var(--bg-surface)] shadow-lg border border-[var(--border)] py-1 z-20">
                                 {['all', 'high', 'medium', 'low'].map((priority) => (
                                     <button
                                         key={priority}
-                                        className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${filterPriority === priority ? 'text-primary font-medium' : 'text-gray-700'}`}
+                                        className={`w-full text-left px-4 py-2 text-sm hover:bg-[var(--bg-body)] ${filterPriority === priority ? 'text-primary font-medium bg-[var(--primary-light)]' : 'text-[var(--text-main)]'}`}
                                         onClick={() => {
                                             setFilterPriority(priority);
                                             setShowFilterMenu(false);
