@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { X, AlertCircle, User } from "lucide-react";
+import Avatar from "./common/Avatar";
 
 const AddEmployeeModal = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
     email: "",
     role: "",
     department: "",
+    gender: "other",
     status: "Active",
     joinDate: new Date().toISOString().split("T")[0],
   });
@@ -26,6 +28,11 @@ const AddEmployeeModal = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
   ];
 
   const statuses = ["Active", "On Leave", "Offline"];
+  const genders = [
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+    { value: "other", label: "Prefer not to say" }
+  ];
 
   const validateForm = () => {
     const newErrors = {};
@@ -76,6 +83,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
       email: "",
       role: "",
       department: "",
+      gender: "other",
       status: "Active",
       joinDate: new Date().toISOString().split("T")[0],
     });
@@ -112,6 +120,16 @@ const AddEmployeeModal = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="modal-body">
+          {/* Avatar Preview */}
+          <div className="avatar-preview-section">
+            <Avatar
+              name={formData.name || "New Employee"}
+              gender={formData.gender}
+              size="xl"
+            />
+            <p className="avatar-preview-hint">Avatar preview based on name and gender</p>
+          </div>
+
           <div className="form-grid">
             {/* Name */}
             <div className="form-group">
@@ -217,6 +235,26 @@ const AddEmployeeModal = ({ isOpen, onClose, onSubmit, isLoading = false }) => {
                 {statuses.map((status) => (
                   <option key={status} value={status}>
                     {status}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Gender */}
+            <div className="form-group">
+              <label htmlFor="gender" className="form-label">
+                Gender
+              </label>
+              <select
+                id="gender"
+                value={formData.gender}
+                onChange={(e) => handleChange("gender", e.target.value)}
+                className="form-select"
+                disabled={isLoading}
+              >
+                {genders.map((g) => (
+                  <option key={g.value} value={g.value}>
+                    {g.label}
                   </option>
                 ))}
               </select>

@@ -16,7 +16,9 @@ import {
   X,
   Umbrella,
   Timer,
+  FileText,
 } from "lucide-react";
+import Avatar from "../common/Avatar";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
@@ -79,6 +81,13 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
       id: "calendar",
       path: "/calendar",
       roles: ["Admin", "Manager", "Employee"],
+    },
+    {
+      icon: FileText,
+      label: "Reports",
+      id: "reports",
+      path: "/reports",
+      roles: ["Admin", "Manager"],
     },
     {
       icon: Settings,
@@ -185,7 +194,12 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
               className="user-profile-sidebar"
               style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}
             >
-              <div className="user-avatar-sidebar">{getUserInitials()}</div>
+              <Avatar
+                name={getUserName()}
+                gender={user?.gender || 'other'}
+                size="md"
+                className="user-avatar-sidebar-component"
+              />
               {!isCollapsed && (
                 <div className="user-info-sidebar">
                   <span className="user-name-sidebar">{getUserName()}</span>

@@ -62,9 +62,10 @@ export const employeeService = {
             role: employeeData.role,
             department: employeeData.department,
             status: employeeData.status || "Active",
-            avatar:
-              employeeData.avatar ||
-              `https://api.dicebear.com/9.x/micah/svg?seed=${employeeData.name}`,
+            gender: employeeData.gender || "other",
+            phone: employeeData.phone || null,
+            address: employeeData.address || null,
+            salary: employeeData.salary || 0,
             join_date:
               employeeData.joinDate || new Date().toISOString().split("T")[0],
           },
@@ -95,7 +96,10 @@ export const employeeService = {
       if (updates.department !== undefined)
         updateData.department = updates.department;
       if (updates.status !== undefined) updateData.status = updates.status;
-      if (updates.avatar !== undefined) updateData.avatar = updates.avatar;
+      if (updates.gender !== undefined) updateData.gender = updates.gender;
+      if (updates.phone !== undefined) updateData.phone = updates.phone;
+      if (updates.address !== undefined) updateData.address = updates.address;
+      if (updates.salary !== undefined) updateData.salary = updates.salary;
       if (updates.joinDate !== undefined)
         updateData.join_date = updates.joinDate;
 
