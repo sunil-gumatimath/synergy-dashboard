@@ -2,11 +2,12 @@ import React, { memo } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { Edit, Trash } from "lucide-react";
+import Avatar from "./common/Avatar";
 
 /**
  * Optimized Employee Card Component
  * Uses React.memo to prevent unnecessary re-renders
- * Implements lazy loading for avatar images
+ * Uses Avatar component with initials and gender-based colors
  * Supports multi-select with checkbox
  */
 const EmployeeCard = memo(
@@ -77,12 +78,11 @@ const EmployeeCard = memo(
             </div>
           )}
           <div className="employee-info">
-            <img
-              src={employee.avatar}
-              alt={employee.name}
+            <Avatar
+              name={employee.name}
+              gender={employee.gender || 'other'}
+              size="lg"
               className="employee-avatar"
-              loading="lazy"
-              decoding="async"
             />
             <div className="employee-details">
               <h3>{employee.name}</h3>
@@ -134,13 +134,13 @@ EmployeeCard.displayName = "EmployeeCard";
 
 EmployeeCard.propTypes = {
   employee: PropTypes.shape({
-    id: PropTypes.number.isRequired,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     name: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
     role: PropTypes.string.isRequired,
     department: PropTypes.string.isRequired,
     status: PropTypes.string.isRequired,
-    avatar: PropTypes.string.isRequired,
+    gender: PropTypes.string,
   }).isRequired,
   onEdit: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,

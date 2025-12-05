@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import PropTypes from "prop-types";
 import { X, AlertCircle, Edit2 } from "lucide-react";
+import Avatar from "./common/Avatar";
 
 const EditEmployeeModal = ({
   isOpen,
@@ -17,6 +18,7 @@ const EditEmployeeModal = ({
         email: employee.email || "",
         role: employee.role || "",
         department: employee.department || "",
+        gender: employee.gender || "other",
         status: employee.status || "Active",
         joinDate: employee.join_date || employee.joinDate || "",
       };
@@ -26,6 +28,7 @@ const EditEmployeeModal = ({
       email: "",
       role: "",
       department: "",
+      gender: "other",
       status: "Active",
       joinDate: "",
     };
@@ -33,6 +36,21 @@ const EditEmployeeModal = ({
 
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
+
+  // Reset form when employee changes
+  useEffect(() => {
+    if (employee) {
+      setFormData({
+        name: employee.name || "",
+        email: employee.email || "",
+        role: employee.role || "",
+        department: employee.department || "",
+        gender: employee.gender || "other",
+        status: employee.status || "Active",
+        joinDate: employee.join_date || employee.joinDate || "",
+      });
+    }
+  }, [employee]);
 
   const departments = [
     "Engineering",
@@ -46,6 +64,11 @@ const EditEmployeeModal = ({
   ];
 
   const statuses = ["Active", "On Leave", "Offline"];
+  const genders = [
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+    { value: "other", label: "Prefer not to say" }
+  ];
 
   const validateForm = () => {
     const newErrors = {};
@@ -122,6 +145,16 @@ const EditEmployeeModal = ({
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="modal-body">
+          {/* Avatar Preview */}
+          <div className="avatar-preview-section">
+            <Avatar
+              name={formData.name || "Employee"}
+              gender={formData.gender}
+              size="xl"
+            />
+            <p className="avatar-preview-hint">Avatar updates with name and gender</p>
+          </div>
+
           <div className="form-grid">
             {/* Name */}
             <div className="form-group">
@@ -212,6 +245,26 @@ const EditEmployeeModal = ({
               )}
             </div>
 
+            {/* Gender */}
+            <div className="form-group">
+              <label htmlFor="edit-gender" className="form-label">
+                Gender
+              </label>
+              <select
+                id="edit-gender"
+                value={formData.gender}
+                onChange={(e) => handleChange("gender", e.target.value)}
+                className="form-select"
+                disabled={isLoading}
+              >
+                {genders.map((g) => (
+                  <option key={g.value} value={g.value}>
+                    {g.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {/* Status */}
             <div className="form-group">
               <label htmlFor="edit-status" className="form-label">
@@ -282,11 +335,12 @@ const EditEmployeeModal = ({
 EditEmployeeModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   employee: PropTypes.shape({
-    id: PropTypes.number,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     name: PropTypes.string,
     email: PropTypes.string,
     role: PropTypes.string,
     department: PropTypes.string,
+    gender: PropTypes.string,
     status: PropTypes.string,
     join_date: PropTypes.string,
     joinDate: PropTypes.string,
