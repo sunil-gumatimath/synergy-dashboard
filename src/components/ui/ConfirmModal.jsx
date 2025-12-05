@@ -1,0 +1,116 @@
+import React from "react";
+import PropTypes from "prop-types";
+import { AlertTriangle, X } from "lucide-react";
+
+const ConfirmModal = ({
+  isOpen,
+  onClose,
+  onCancel,
+  onConfirm,
+  title,
+  message,
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  type = "danger",
+  isLoading = false,
+}) => {
+  if (!isOpen) return null;
+
+  // Support both onClose and onCancel props, prioritizing onCancel for the Cancel button action
+  const handleClose = onCancel || onClose;
+
+  const getIconColor = () => {
+    switch (type) {
+      case "danger":
+        return "text-red-600 bg-red-50";
+      case "warning":
+        return "text-amber-600 bg-amber-50";
+      case "info":
+        return "text-indigo-600 bg-indigo-50";
+      default:
+        return "text-red-600 bg-red-50";
+    }
+  };
+
+  const getButtonClass = () => {
+    switch (type) {
+      case "danger":
+        return "bg-red-600 hover:bg-red-700 text-white border-transparent";
+      case "warning":
+        return "bg-amber-600 hover:bg-amber-700 text-white border-transparent";
+      case "info":
+        return "bg-indigo-600 hover:bg-indigo-700 text-white border-transparent";
+      default:
+        return "btn-primary";
+    }
+  };
+
+  return (
+    <div
+      className="modal-overlay"
+      onClick={!isLoading ? handleClose : undefined}
+    >
+      <div
+        className="modal-content max-w-md animate-scale-in"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 flex flex-col items-center text-center">
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${getIconColor()}`}>
+            <AlertTriangle size={32} strokeWidth={2} />
+          </div>
+
+          <h3 className="text-xl font-bold text-main mb-2">{title}</h3>
+
+          <p className="text-muted leading-relaxed mb-8 max-w-xs mx-auto">
+            {message}
+          </p>
+
+          <div className="flex gap-3 w-full">
+            <button
+              type="button"
+              onClick={handleClose}
+              disabled={isLoading}
+              className="btn btn-ghost flex-1 justify-center border-border"
+            >
+              {cancelText}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (!isLoading) {
+                  onConfirm();
+                }
+              }}
+              disabled={isLoading}
+              className={`btn flex-1 justify-center ${getButtonClass()} ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+            >
+              {isLoading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                confirmText
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+ConfirmModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func,
+  onCancel: PropTypes.func,
+  onConfirm: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
+  confirmText: PropTypes.string,
+  cancelText: PropTypes.string,
+  type: PropTypes.oneOf(["danger", "warning", "info"]),
+  isLoading: PropTypes.bool,
+};
+
+export default ConfirmModal;
