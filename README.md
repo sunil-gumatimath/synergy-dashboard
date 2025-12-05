@@ -23,6 +23,33 @@ A modern, comprehensive employee management dashboard built with React, Vite, an
 - Performance metrics visualization
 - Real-time statistics and insights
 
+### 🔔 **Notification System** (NEW)
+
+- Real-time in-app notifications with bell icon
+- Unread count badge with pulse animation
+- Mark as read (single/all), delete, clear all
+- Auto-trigger on task assignment
+- Browser push notification support
+- Multiple notification types (info, success, warning, error, task, event, ticket)
+
+### ⏱️ **Time Tracking** (NEW)
+
+- Clock in/out with live timer
+- Weekly timesheet with daily breakdown
+- Overtime tracking and approvals
+- Work schedule management
+- Monthly hours summary
+- Visual progress bars for daily hours
+
+### 📅 **Leave Management** (NEW)
+
+- Multiple leave types (Annual, Sick, Personal, Maternity, Paternity, etc.)
+- Leave balance tracking with visual progress
+- Apply for leave with half-day support
+- Manager approval workflow
+- Upcoming holidays calendar
+- Leave request history
+
 ### 📄 **Documents & Notes System**
 
 - Secure file upload and management per employee
@@ -33,6 +60,7 @@ A modern, comprehensive employee management dashboard built with React, Vite, an
 
 - Secure login/signup with Supabase
 - Protected routes and session management
+- Role-based access control (Admin, Manager, Employee)
 - Glassmorphism login UI with animated background
 
 ### 📅 **Calendar View**
