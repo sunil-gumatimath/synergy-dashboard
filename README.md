@@ -152,6 +152,29 @@ Navigate to `http://localhost:5123` (or the port shown in your terminal)
 
 ---
 
+## 🐳 Docker Deployment
+
+You can run the application in a production-ready container using Docker.
+
+### Prerequisites
+- Docker & Docker Compose installed
+
+### Steps
+1. Create a `.env` file with your Supabase credentials (same as `.env.local`):
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+2. Build and run the container:
+```bash
+docker-compose up -d --build
+```
+
+3. Access the application at `http://localhost:8080`
+
+---
+
 ## 🔑 Sample Login Credentials
 
 | Email | Password | Role |
@@ -169,7 +192,7 @@ Navigate to `http://localhost:5123` (or the port shown in your terminal)
 | **Backend** | Supabase (PostgreSQL, Auth, Storage) |
 | **Charts** | Recharts 3.4 |
 | **Icons** | Lucide React |
-| **Routing** | React Router 7.1 |
+| **Routing** | React Router 7.9 |
 | **Date Handling** | date-fns |
 
 ---
@@ -179,6 +202,9 @@ Navigate to `http://localhost:5123` (or the port shown in your terminal)
 ```
 react-browser/
 ├── database/
+│   ├── migrations/          # DB migrations
+│   ├── schema/              # Schema definitions
+│   ├── seeds/               # Seed data
 │   └── aurora_complete_setup.sql    # Complete DB setup script
 ├── src/
 │   ├── components/
@@ -197,6 +223,7 @@ react-browser/
 │   │   ├── support/         # Help desk
 │   │   ├── tasks/           # Task board
 │   │   └── timetracking/    # Time tracking
+│   ├── hooks/               # Custom hooks
 │   ├── lib/                 # Supabase client
 │   ├── pages/               # Page components
 │   ├── services/            # API services
@@ -230,19 +257,8 @@ react-browser/
 | `employee_notes` | Manager notes on employees |
 | `support_tickets` | Help desk tickets |
 
-### Seed Data Included
 
-- ✅ **19 Employees** with Indian names across 7 departments
-- ✅ **7 Leave Types** (Annual, Sick, Personal, Maternity, Paternity, Unpaid, Comp Off)
-- ✅ **22 Holidays** (India 2024-2025)
-- ✅ **12 Tasks** with various priorities
-- ✅ **8 Calendar Events**
-- ✅ **8 Support Tickets**
-- ✅ Row Level Security (RLS) policies
-- ✅ Auto-update triggers for timestamps
-- ✅ Performance indexes
 
----
 
 ## 🎨 Design Features
 
@@ -282,6 +298,8 @@ react-browser/
 - 👥 **19 Indian Employees**: Comprehensive seed data
 - 📅 **22 Indian Holidays**: 2024-2025 calendar
 - 🎨 **UI Improvements**: Modern card-based layouts, animations
+- 🐳 **Docker Support**: Full Docker setup with Nginx production server
+- 📁 **Project Restructuring**: Improved folder structure with dedicated migrations and hooks
 
 ---
 
@@ -289,14 +307,5 @@ react-browser/
 
 MIT License - Free to use for personal and commercial projects.
 
----
 
-## 👨‍💻 Author
 
-**Sunil Gumatimath**
-
-- GitHub: [@sunil-gumatimath](https://github.com/sunil-gumatimath)
-
----
-
-<p align="center">Built with ❤️ using React & Supabase</p>
