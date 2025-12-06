@@ -63,16 +63,18 @@ CREATE TABLE public.tasks (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. CALENDAR EVENTS
 CREATE TABLE public.calendar_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT NOT NULL,
     description TEXT,
-    start_date TIMESTAMPTZ NOT NULL,
-    end_date TIMESTAMPTZ NOT NULL,
-    all_day BOOLEAN DEFAULT FALSE,
-    type TEXT DEFAULT 'meeting',
-    color TEXT DEFAULT '#4f46e5',
+    date DATE NOT NULL,
+    time TEXT,
+    end_time TEXT,
+    type TEXT DEFAULT 'event',
+    location TEXT,
+    recurrence TEXT DEFAULT 'none',
+    is_all_day BOOLEAN DEFAULT FALSE,
+    color TEXT,
     employee_id UUID REFERENCES public.employees(id) ON DELETE CASCADE,
     created_by UUID REFERENCES public.employees(id) ON DELETE SET NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
