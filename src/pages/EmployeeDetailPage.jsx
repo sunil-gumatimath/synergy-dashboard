@@ -23,6 +23,8 @@ import {
     Award,
     Target,
     Plus,
+    Mail,
+    ArrowLeft,
 } from "lucide-react";
 import { employeeService } from "../services/employeeService";
 import noteService from "../services/noteService";
