@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import PropTypes from "prop-types";
-import { X, AlertCircle, Edit2 } from "lucide-react";
+import { X, AlertCircle, Edit2, Phone, IndianRupee } from "lucide-react";
 import Avatar from "./common/Avatar";
 
 const EditEmployeeModal = ({
@@ -21,6 +21,12 @@ const EditEmployeeModal = ({
         gender: employee.gender || "other",
         status: employee.status || "Active",
         joinDate: employee.join_date || employee.joinDate || "",
+        phone: employee.phone || "",
+        address: employee.address || "",
+        location: employee.location || "",
+        salary: employee.salary || "",
+        manager: employee.manager || "",
+        employment_type: employee.employment_type || "Full-time",
       };
     }
     return {
@@ -31,6 +37,12 @@ const EditEmployeeModal = ({
       gender: "other",
       status: "Active",
       joinDate: "",
+      phone: "",
+      address: "",
+      location: "",
+      salary: "",
+      manager: "",
+      employment_type: "Full-time",
     };
   }, [employee]);
 
@@ -48,6 +60,12 @@ const EditEmployeeModal = ({
         gender: employee.gender || "other",
         status: employee.status || "Active",
         joinDate: employee.join_date || employee.joinDate || "",
+        phone: employee.phone || "",
+        address: employee.address || "",
+        location: employee.location || "",
+        salary: employee.salary || "",
+        manager: employee.manager || "",
+        employment_type: employee.employment_type || "Full-time",
       });
     }
   }, [employee]);
@@ -58,17 +76,20 @@ const EditEmployeeModal = ({
     "Product",
     "Marketing",
     "Sales",
-    "HR",
+    "Human Resources",
     "IT",
     "Data",
+    "Finance",
+    "Operations",
   ];
 
-  const statuses = ["Active", "On Leave", "Offline"];
+  const statuses = ["Active", "On Leave", "Inactive"];
   const genders = [
     { value: "male", label: "Male" },
     { value: "female", label: "Female" },
     { value: "other", label: "Prefer not to say" }
   ];
+  const employmentTypes = ["Full-time", "Part-time", "Contract", "Intern", "Freelance"];
 
   const validateForm = () => {
     const newErrors = {};
@@ -122,7 +143,7 @@ const EditEmployeeModal = ({
 
   return (
     <div className="modal-overlay" onClick={handleClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content modal-content--large" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="modal-header">
           <div className="flex items-center gap-3">
@@ -296,6 +317,153 @@ const EditEmployeeModal = ({
                 value={formData.joinDate}
                 onChange={(e) => handleChange("joinDate", e.target.value)}
                 className="form-input"
+                disabled={isLoading}
+              />
+            </div>
+
+            {/* Employment Type */}
+            <div className="form-group">
+              <label htmlFor="edit-employment_type" className="form-label">
+                Employment Type
+              </label>
+              <select
+                id="edit-employment_type"
+                value={formData.employment_type}
+                onChange={(e) => handleChange("employment_type", e.target.value)}
+                className="form-select"
+                disabled={isLoading}
+              >
+                {employmentTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Section Divider - Contact */}
+          <div style={{
+            margin: '20px 0 12px',
+            paddingTop: '12px',
+            borderTop: '1px solid var(--border-color)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <Phone size={14} style={{ color: 'var(--primary)' }} />
+            <span style={{
+              fontSize: '12px',
+              fontWeight: '600',
+              color: 'var(--text-secondary)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>
+              Contact & Location
+            </span>
+          </div>
+
+          <div className="form-grid">
+            {/* Phone */}
+            <div className="form-group">
+              <label htmlFor="edit-phone" className="form-label">
+                Phone Number
+              </label>
+              <input
+                id="edit-phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
+                className="form-input"
+                placeholder="+91 98765 43210"
+                disabled={isLoading}
+              />
+            </div>
+
+            {/* Location */}
+            <div className="form-group">
+              <label htmlFor="edit-location" className="form-label">
+                Work Location
+              </label>
+              <input
+                id="edit-location"
+                type="text"
+                value={formData.location}
+                onChange={(e) => handleChange("location", e.target.value)}
+                className="form-input"
+                placeholder="e.g., Bengaluru, Karnataka"
+                disabled={isLoading}
+              />
+            </div>
+
+            {/* Address */}
+            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+              <label htmlFor="edit-address" className="form-label">
+                Full Address
+              </label>
+              <input
+                id="edit-address"
+                type="text"
+                value={formData.address}
+                onChange={(e) => handleChange("address", e.target.value)}
+                className="form-input"
+                placeholder="Enter full address"
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          {/* Section Divider - Compensation */}
+          <div style={{
+            margin: '20px 0 12px',
+            paddingTop: '12px',
+            borderTop: '1px solid var(--border-color)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}>
+            <IndianRupee size={14} style={{ color: 'var(--primary)' }} />
+            <span style={{
+              fontSize: '12px',
+              fontWeight: '600',
+              color: 'var(--text-secondary)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>
+              Compensation & Management
+            </span>
+          </div>
+
+          <div className="form-grid">
+            {/* Salary */}
+            <div className="form-group">
+              <label htmlFor="edit-salary" className="form-label">
+                Annual Salary (₹)
+              </label>
+              <input
+                id="edit-salary"
+                type="number"
+                value={formData.salary}
+                onChange={(e) => handleChange("salary", e.target.value)}
+                className="form-input"
+                placeholder="e.g., 1200000"
+                disabled={isLoading}
+                min="0"
+              />
+            </div>
+
+            {/* Manager */}
+            <div className="form-group">
+              <label htmlFor="edit-manager" className="form-label">
+                Reporting Manager
+              </label>
+              <input
+                id="edit-manager"
+                type="text"
+                value={formData.manager}
+                onChange={(e) => handleChange("manager", e.target.value)}
+                className="form-input"
+                placeholder="Enter manager name"
                 disabled={isLoading}
               />
             </div>

@@ -12,8 +12,6 @@ import {
   ClipboardList,
   LifeBuoy,
   Home,
-  Menu,
-  X,
   Umbrella,
   Timer,
   FileText,
@@ -108,7 +106,6 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
   const handleLogout = async () => {
     try {
-      console.log("Logging out...");
       await signOut();
     } catch (error) {
       console.error("Logout failed:", error);
@@ -124,16 +121,6 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
       return user.email.split("@")[0];
     }
     return "User";
-  };
-
-  // Get user initials
-  const getUserInitials = () => {
-    const name = getUserName();
-    const parts = name.split(" ");
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
-    return name.substring(0, 2).toUpperCase();
   };
 
   return (
