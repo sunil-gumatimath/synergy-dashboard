@@ -8,7 +8,6 @@ const TABLE_NAME = "calendar_events";
 export const calendarService = {
     /**
      * Fetch all calendar events
-     * @returns {Promise<{data: Array, error: Error|null}>}
      */
     async getAll() {
         try {
@@ -17,97 +16,80 @@ export const calendarService = {
                 .select("*")
                 .order("date", { ascending: true });
 
-            if (error) throw error;
+            if (error) {
+                console.error("Error fetching calendar events:", error);
+                return { data: null, error };
+            }
             return { data, error: null };
         } catch (error) {
-            console.error("Error fetching calendar events:", error);
-            return { data: [], error };
+            console.error("Error in getAll:", error);
+            return { data: null, error };
         }
     },
 
     /**
-     * Create a new event
-     * @param {Object} eventData - Event data
-     * @returns {Promise<{data: Object|null, error: Error|null}>}
+     * Create a new calendar event
      */
     async create(eventData) {
         try {
             const { data, error } = await supabase
                 .from(TABLE_NAME)
-                .insert([
-                    {
-                        title: eventData.title,
-                        description: eventData.description,
-                        date: eventData.date,
-                        time: eventData.time,
-                        end_time: eventData.endTime || null,
-                        type: eventData.type || "event",
-                        location: eventData.location,
-                        recurrence: eventData.recurrence || "none",
-                        is_all_day: eventData.isAllDay || false,
-                    },
-                ])
+                .insert([eventData])
                 .select()
                 .single();
 
-            if (error) throw error;
+            if (error) {
+                console.error("Error creating calendar event:", error);
+                return { data: null, error };
+            }
             return { data, error: null };
         } catch (error) {
-            console.error("Error creating event:", error);
+            console.error("Error in create:", error);
             return { data: null, error };
         }
     },
 
     /**
-     * Update an existing event
-     * @param {number} id - Event ID
-     * @param {Object} updates - Fields to update
-     * @returns {Promise<{data: Object|null, error: Error|null}>}
+     * Update an existing calendar event
      */
-    async update(id, updates) {
+    async update(id, eventData) {
         try {
-            // Transform field names from camelCase to snake_case for database
-            const dbUpdates = {
-                title: updates.title,
-                description: updates.description,
-                date: updates.date,
-                time: updates.time,
-                end_time: updates.endTime || null,
-                type: updates.type || "event",
-                location: updates.location,
-                recurrence: updates.recurrence || "none",
-                is_all_day: updates.isAllDay || false,
-            };
-
             const { data, error } = await supabase
                 .from(TABLE_NAME)
-                .update(dbUpdates)
+                .update(eventData)
                 .eq("id", id)
                 .select()
                 .single();
 
-            if (error) throw error;
+            if (error) {
+                console.error("Error updating calendar event:", error);
+                return { data: null, error };
+            }
             return { data, error: null };
         } catch (error) {
-            console.error("Error updating event:", error);
+            console.error("Error in update:", error);
             return { data: null, error };
         }
     },
 
     /**
-     * Delete an event
-     * @param {number} id - Event ID
-     * @returns {Promise<{success: boolean, error: Error|null}>}
+     * Delete a calendar event
      */
     async delete(id) {
         try {
-            const { error } = await supabase.from(TABLE_NAME).delete().eq("id", id);
+            const { error } = await supabase
+                .from(TABLE_NAME)
+                .delete()
+                .eq("id", id);
 
-            if (error) throw error;
+            if (error) {
+                console.error("Error deleting calendar event:", error);
+                return { success: false, error };
+            }
             return { success: true, error: null };
         } catch (error) {
-            console.error("Error deleting event:", error);
+            console.error("Error in delete:", error);
             return { success: false, error };
         }
-    },
+    }
 };

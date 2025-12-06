@@ -249,7 +249,7 @@ const EmployeeDashboard = () => {
             <div className="emp-dash-quick-actions">
                 <QuickActionButton icon={ClipboardList} label="View Tasks" to="/tasks" color="#4f46e5" />
                 <QuickActionButton icon={CalendarPlus} label="Calendar" to="/calendar" color="#10b981" />
-                <QuickActionButton icon={Timer} label="Time Track" to="/time-tracking" color="#f59e0b" />
+                <QuickActionButton icon={Timer} label="Time Track" to="/timetracking" color="#f59e0b" />
                 <QuickActionButton icon={FileText} label="Leave Request" to="/leave" color="#ec4899" />
             </div>
 

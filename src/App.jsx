@@ -18,6 +18,7 @@ const AnalyticsDashboard = React.lazy(
 const CalendarView = React.lazy(
   () => import("./features/calendar/CalendarView"),
 );
+
 const TasksView = React.lazy(
   () => import("./features/tasks/TasksView"),
 );

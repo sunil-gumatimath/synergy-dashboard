@@ -1,286 +1,284 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { X, Calendar, Clock, MapPin, Type, AlignLeft, Repeat, Sun } from "lucide-react";
+import { X, Calendar, Clock, MapPin, Type, Repeat } from "lucide-react";
+import { format } from "date-fns";
+import "./calendar-styles.css";
 
-const AddEventModal = ({
-    isOpen,
-    onClose,
-    onSave,
-    initialDate,
-    eventToEdit = null,
-    isLoading = false,
-}) => {
+const AddEventModal = ({ isOpen, onClose, onSave, initialDate, eventToEdit, isLoading }) => {
     const [formData, setFormData] = useState({
         title: "",
-        date: "",
-        time: "",
-        endTime: "",
-        type: "event",
+        date: format(new Date(), "yyyy-MM-dd"),
+        time: "09:00",
+        end_time: "10:00",
         location: "",
         description: "",
-        isAllDay: false,
+        type: "meeting",
         recurrence: "none",
+        is_all_day: false
     });
 
+    const [errors, setErrors] = useState({});
+
     useEffect(() => {
-        if (isOpen) {
-            if (eventToEdit) {
-                setFormData({
-                    title: eventToEdit.title || "",
-                    date: eventToEdit.date ? new Date(eventToEdit.date).toLocaleDateString("en-CA") : "",
-                    time: eventToEdit.time === "All Day" ? "" : (eventToEdit.time || ""),
-                    endTime: eventToEdit.endTime || "",
-                    type: eventToEdit.type || "event",
-                    location: eventToEdit.location || "",
-                    description: eventToEdit.description || "",
-                    isAllDay: eventToEdit.time === "All Day" || eventToEdit.isAllDay || false,
-                    recurrence: eventToEdit.recurrence || "none",
-                });
-            } else {
-                const dateToUse = initialDate || new Date();
-                setFormData({
-                    title: "",
-                    date: dateToUse.toLocaleDateString("en-CA"),
-                    time: "",
-                    endTime: "",
-                    type: "event",
-                    location: "",
-                    description: "",
-                    isAllDay: false,
-                    recurrence: "none",
-                });
-            }
+        if (eventToEdit) {
+            setFormData({
+                title: eventToEdit.title || "",
+                date: eventToEdit.date ? format(new Date(eventToEdit.date), "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd"),
+                time: eventToEdit.time || "09:00",
+                end_time: eventToEdit.end_time || eventToEdit.endTime || "10:00",
+                location: eventToEdit.location || "",
+                description: eventToEdit.description || "",
+                type: eventToEdit.type || "meeting",
+                recurrence: eventToEdit.recurrence || "none",
+                is_all_day: eventToEdit.is_all_day || eventToEdit.isAllDay || false
+            });
+        } else if (initialDate) {
+            setFormData(prev => ({
+                ...prev,
+                date: format(initialDate, "yyyy-MM-dd"),
+                title: "",
+                time: "09:00",
+                end_time: "10:00",
+                location: "",
+                description: "",
+                type: "meeting",
+                recurrence: "none",
+                is_all_day: false
+            }));
         }
-    }, [isOpen, initialDate, eventToEdit]);
+    }, [eventToEdit, initialDate, isOpen]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData((prev) => ({
+        setFormData(prev => ({
             ...prev,
-            [name]: type === "checkbox" ? checked : value,
+            [name]: type === "checkbox" ? checked : value
         }));
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: null }));
+        }
+    };
+
+    const validate = () => {
+        const newErrors = {};
+        if (!formData.title.trim()) {
+            newErrors.title = "Title is required";
+        }
+        if (!formData.date) {
+            newErrors.date = "Date is required";
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const submitData = {
-            ...formData,
-            time: formData.isAllDay ? "All Day" : formData.time,
+        if (!validate()) return;
+
+        const eventData = {
+            title: formData.title.trim(),
+            date: formData.date,
+            time: formData.is_all_day ? "All Day" : formData.time,
+            end_time: formData.is_all_day ? null : formData.end_time,
+            location: formData.location.trim(),
+            description: formData.description.trim(),
+            type: formData.type,
+            recurrence: formData.recurrence,
+            is_all_day: formData.is_all_day
         };
-        onSave(submitData);
+
+        onSave(eventData);
     };
 
     if (!isOpen) return null;
+
+    const eventTypes = [
+        { value: "meeting", label: "Meeting" },
+        { value: "holiday", label: "Holiday" },
+        { value: "deadline", label: "Deadline" },
+        { value: "personal", label: "Personal" }
+    ];
 
     const recurrenceOptions = [
         { value: "none", label: "Does not repeat" },
         { value: "daily", label: "Daily" },
         { value: "weekly", label: "Weekly" },
         { value: "monthly", label: "Monthly" },
-        { value: "yearly", label: "Yearly" },
+        { value: "yearly", label: "Yearly" }
     ];
 
     return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div
-                className="modal-content max-w-lg w-full animate-scale-in bg-white rounded-lg shadow-xl overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-            >
-                {/* Window Header */}
-                <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-white">
-                    <h3 className="text-lg font-semibold text-gray-900">
-                        {eventToEdit ? "Edit Event" : "Create Event"}
-                    </h3>
-                    <button
-                        onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 p-1 rounded transition-colors"
-                    >
-                        <X size={20} />
+        <div className="event-modal-overlay" onClick={onClose}>
+            <div className="event-modal-container" onClick={(e) => e.stopPropagation()}>
+                {/* Header */}
+                <div className="event-modal-header">
+                    <div className="event-modal-title">
+                        <Calendar size={20} />
+                        <h2>{eventToEdit ? "Edit Event" : "Add New Event"}</h2>
+                    </div>
+                    <button type="button" className="event-modal-close" onClick={onClose}>
+                        <X size={18} />
                     </button>
                 </div>
 
-                {/* Window Body */}
-                <form onSubmit={handleSubmit}>
-                    <div className="p-6 space-y-4 max-h-[65vh] overflow-y-auto">
-                        <div className="space-y-1.5">
-                            <label className="block text-sm font-medium text-gray-700">Event Name</label>
-                            <div className="relative">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                    <Type size={16} className="text-gray-400" />
-                                </div>
-                                <input
-                                    type="text"
-                                    name="title"
-                                    value={formData.title}
-                                    onChange={handleChange}
-                                    required
-                                    className="form-input !pl-9 w-full border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-md text-sm"
-                                    placeholder="Enter event name..."
-                                />
-                            </div>
-                        </div>
+                {/* Form */}
+                <form onSubmit={handleSubmit} className="event-modal-body">
+                    {/* Title */}
+                    <div className="event-form-field">
+                        <label>
+                            <Type size={14} />
+                            <span>Event Title <span className="required">*</span></span>
+                        </label>
+                        <input
+                            type="text"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleChange}
+                            placeholder="Enter event title"
+                            className={errors.title ? "error" : ""}
+                        />
+                        {errors.title && <span className="field-error">{errors.title}</span>}
+                    </div>
 
-                        {/* All Day Toggle */}
-                        <div className="flex items-center gap-3 py-2 px-3 bg-gray-50 rounded-lg border border-gray-200">
-                            <Sun size={18} className="text-amber-500" />
-                            <label className="flex items-center gap-2 cursor-pointer flex-1">
-                                <input
-                                    type="checkbox"
-                                    name="isAllDay"
-                                    checked={formData.isAllDay}
-                                    onChange={handleChange}
-                                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                />
-                                <span className="text-sm font-medium text-gray-700">All-day event</span>
+                    {/* Date & Type Row */}
+                    <div className="event-form-row">
+                        <div className="event-form-field">
+                            <label>
+                                <Calendar size={14} />
+                                <span>Date <span className="required">*</span></span>
                             </label>
+                            <input
+                                type="date"
+                                name="date"
+                                value={formData.date}
+                                onChange={handleChange}
+                                className={errors.date ? "error" : ""}
+                            />
+                            {errors.date && <span className="field-error">{errors.date}</span>}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                                <label className="block text-sm font-medium text-gray-700">Date</label>
-                                <div className="relative">
-                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                        <Calendar size={16} className="text-gray-400" />
-                                    </div>
-                                    <input
-                                        type="date"
-                                        name="date"
-                                        value={formData.date}
-                                        onChange={handleChange}
-                                        required
-                                        className="form-input !pl-9 w-full border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-md text-sm"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="space-y-1.5">
-                                <label className="block text-sm font-medium text-gray-700">Type</label>
-                                <select
-                                    name="type"
-                                    value={formData.type}
-                                    onChange={handleChange}
-                                    className="form-select w-full border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-md text-sm"
-                                >
-                                    <option value="event">Event</option>
-                                    <option value="meeting">Meeting</option>
-                                    <option value="holiday">Holiday</option>
-                                    <option value="deadline">Deadline</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Time Fields - Hidden when All Day is selected */}
-                        {!formData.isAllDay && (
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-1.5">
-                                    <label className="block text-sm font-medium text-gray-700">Start Time</label>
-                                    <div className="relative">
-                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                            <Clock size={16} className="text-gray-400" />
-                                        </div>
-                                        <input
-                                            type="time"
-                                            name="time"
-                                            value={formData.time}
-                                            onChange={handleChange}
-                                            className="form-input !pl-9 w-full border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-md text-sm"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-1.5">
-                                    <label className="block text-sm font-medium text-gray-700">End Time</label>
-                                    <div className="relative">
-                                        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                            <Clock size={16} className="text-gray-400" />
-                                        </div>
-                                        <input
-                                            type="time"
-                                            name="endTime"
-                                            value={formData.endTime}
-                                            onChange={handleChange}
-                                            className="form-input !pl-9 w-full border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-md text-sm"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Recurrence */}
-                        <div className="space-y-1.5">
-                            <label className="block text-sm font-medium text-gray-700">Repeat</label>
-                            <div className="relative">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                    <Repeat size={16} className="text-gray-400" />
-                                </div>
-                                <select
-                                    name="recurrence"
-                                    value={formData.recurrence}
-                                    onChange={handleChange}
-                                    className="form-select !pl-9 w-full border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-md text-sm"
-                                >
-                                    {recurrenceOptions.map((option) => (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <label className="block text-sm font-medium text-gray-700">Location</label>
-                            <div className="relative">
-                                <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-                                    <MapPin size={16} className="text-gray-400" />
-                                </div>
-                                <input
-                                    type="text"
-                                    name="location"
-                                    value={formData.location}
-                                    onChange={handleChange}
-                                    className="form-input !pl-9 w-full border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-md text-sm"
-                                    placeholder="Add location"
-                                />
-                            </div>
-                        </div>
-
-                        <div className="space-y-1.5">
-                            <label className="block text-sm font-medium text-gray-700">Description</label>
-                            <div className="relative">
-                                <div className="absolute left-3 top-3 pointer-events-none">
-                                    <AlignLeft size={16} className="text-gray-400" />
-                                </div>
-                                <textarea
-                                    name="description"
-                                    value={formData.description}
-                                    onChange={handleChange}
-                                    className="form-textarea !pl-9 w-full min-h-[80px] py-2 border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-md text-sm resize-none"
-                                    placeholder="Add description..."
-                                />
-                            </div>
+                        <div className="event-form-field">
+                            <label>Event Type</label>
+                            <select
+                                name="type"
+                                value={formData.type}
+                                onChange={handleChange}
+                            >
+                                {eventTypes.map(type => (
+                                    <option key={type.value} value={type.value}>
+                                        {type.label}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
-                    {/* Window Footer */}
-                    <div className="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-200">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="min-w-[80px] px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                            disabled={isLoading}
+                    {/* All Day Toggle */}
+                    <div className="event-form-checkbox">
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="is_all_day"
+                                checked={formData.is_all_day}
+                                onChange={handleChange}
+                            />
+                            <span className="custom-checkbox"></span>
+                            <span>All Day Event</span>
+                        </label>
+                    </div>
+
+                    {/* Time Row - only show if not all day */}
+                    {!formData.is_all_day && (
+                        <div className="event-form-row">
+                            <div className="event-form-field">
+                                <label>
+                                    <Clock size={14} />
+                                    <span>Start Time</span>
+                                </label>
+                                <input
+                                    type="time"
+                                    name="time"
+                                    value={formData.time}
+                                    onChange={handleChange}
+                                />
+                            </div>
+
+                            <div className="event-form-field">
+                                <label>
+                                    <Clock size={14} />
+                                    <span>End Time</span>
+                                </label>
+                                <input
+                                    type="time"
+                                    name="end_time"
+                                    value={formData.end_time}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Location */}
+                    <div className="event-form-field">
+                        <label>
+                            <MapPin size={14} />
+                            <span>Location</span>
+                        </label>
+                        <input
+                            type="text"
+                            name="location"
+                            value={formData.location}
+                            onChange={handleChange}
+                            placeholder="Enter location (optional)"
+                        />
+                    </div>
+
+                    {/* Recurrence */}
+                    <div className="event-form-field">
+                        <label>
+                            <Repeat size={14} />
+                            <span>Repeat</span>
+                        </label>
+                        <select
+                            name="recurrence"
+                            value={formData.recurrence}
+                            onChange={handleChange}
                         >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            className="min-w-[80px] px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors shadow-sm"
-                            disabled={isLoading}
-                        >
-                            {isLoading ? "Saving..." : "Save"}
-                        </button>
+                            {recurrenceOptions.map(opt => (
+                                <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Description */}
+                    <div className="event-form-field">
+                        <label>Description</label>
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            placeholder="Add event description (optional)"
+                            rows={3}
+                        />
                     </div>
                 </form>
+
+                {/* Footer */}
+                <div className="event-modal-footer">
+                    <button type="button" className="btn-cancel" onClick={onClose}>
+                        Cancel
+                    </button>
+                    <button
+                        type="submit"
+                        className="btn-save"
+                        onClick={handleSubmit}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? "Saving..." : eventToEdit ? "Update Event" : "Create Event"}
+                    </button>
+                </div>
             </div>
         </div>
     );
@@ -292,7 +290,7 @@ AddEventModal.propTypes = {
     onSave: PropTypes.func.isRequired,
     initialDate: PropTypes.instanceOf(Date),
     eventToEdit: PropTypes.object,
-    isLoading: PropTypes.bool,
+    isLoading: PropTypes.bool
 };
 
 export default AddEventModal;
