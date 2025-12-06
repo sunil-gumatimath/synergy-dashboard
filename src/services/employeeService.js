@@ -102,6 +102,14 @@ export const employeeService = {
       if (updates.salary !== undefined) updateData.salary = updates.salary;
       if (updates.joinDate !== undefined)
         updateData.join_date = updates.joinDate;
+      // New fields
+      if (updates.location !== undefined) updateData.location = updates.location;
+      if (updates.manager !== undefined) updateData.manager = updates.manager;
+      if (updates.employment_type !== undefined) updateData.employment_type = updates.employment_type;
+      if (updates.projects_completed !== undefined) updateData.projects_completed = updates.projects_completed;
+      if (updates.bank_details !== undefined) updateData.bank_details = updates.bank_details;
+      if (updates.education !== undefined) updateData.education = updates.education;
+      if (updates.performance_score !== undefined) updateData.performance_score = updates.performance_score;
 
       const { data, error } = await supabase
         .from(TABLE_NAME)

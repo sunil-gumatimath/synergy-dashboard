@@ -1218,6 +1218,10 @@ button {
   animation: scaleIn 0.2s ease-out;
 }
 
+.modal-content--large {
+  max-width: 800px;
+}
+
 .modal-header {
   display: flex;
   align-items: flex-start;

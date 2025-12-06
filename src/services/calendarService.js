@@ -40,8 +40,11 @@ export const calendarService = {
                         description: eventData.description,
                         date: eventData.date,
                         time: eventData.time,
+                        end_time: eventData.endTime || null,
                         type: eventData.type || "event",
                         location: eventData.location,
+                        recurrence: eventData.recurrence || "none",
+                        is_all_day: eventData.isAllDay || false,
                     },
                 ])
                 .select()
@@ -63,9 +66,22 @@ export const calendarService = {
      */
     async update(id, updates) {
         try {
+            // Transform field names from camelCase to snake_case for database
+            const dbUpdates = {
+                title: updates.title,
+                description: updates.description,
+                date: updates.date,
+                time: updates.time,
+                end_time: updates.endTime || null,
+                type: updates.type || "event",
+                location: updates.location,
+                recurrence: updates.recurrence || "none",
+                is_all_day: updates.isAllDay || false,
+            };
+
             const { data, error } = await supabase
                 .from(TABLE_NAME)
-                .update(updates)
+                .update(dbUpdates)
                 .eq("id", id)
                 .select()
                 .single();

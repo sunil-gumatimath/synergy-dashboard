@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
+import { authService } from "../services/authService";
 import {
   AlertCircle,
   Eye,
   EyeOff,
-  Briefcase,
   ArrowRight,
   Check,
+  X,
+  Mail,
 } from "lucide-react";
+import AuroraLogo from "../components/common/AuroraLogo";
 import "../index.css";
 import "./login-styles.css";
 
@@ -18,6 +21,13 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Forgot Password Modal state
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetMessage, setResetMessage] = useState({ type: "", text: "" });
 
   const [formData, setFormData] = useState({
     email: "",
@@ -26,11 +36,27 @@ const LoginPage = () => {
     name: "",
   });
 
+  // Load remembered email on mount
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem("aurora_remembered_email");
+    if (rememberedEmail) {
+      setFormData((prev) => ({ ...prev, email: rememberedEmail }));
+      setRememberMe(true);
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setError("");
     setSuccessMessage("");
+  };
+
+  const handleRememberMeChange = (e) => {
+    setRememberMe(e.target.checked);
+    if (!e.target.checked) {
+      localStorage.removeItem("aurora_remembered_email");
+    }
   };
 
   const validateForm = () => {
@@ -77,6 +103,13 @@ const LoginPage = () => {
     setSuccessMessage("");
     try {
       if (isLogin) {
+        // Handle Remember Me
+        if (rememberMe) {
+          localStorage.setItem("aurora_remembered_email", formData.email);
+        } else {
+          localStorage.removeItem("aurora_remembered_email");
+        }
+
         const { error: signInError } = await signIn(
           formData.email,
           formData.password,
@@ -131,6 +164,39 @@ const LoginPage = () => {
     }
   };
 
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    if (!resetEmail || !resetEmail.includes("@")) {
+      setResetMessage({ type: "error", text: "Please enter a valid email address" });
+      return;
+    }
+
+    setResetLoading(true);
+    setResetMessage({ type: "", text: "" });
+
+    try {
+      const { error } = await authService.resetPassword(resetEmail);
+      if (error) {
+        setResetMessage({ type: "error", text: error.message || "Failed to send reset email" });
+      } else {
+        setResetMessage({
+          type: "success",
+          text: "Password reset link sent! Check your email inbox.",
+        });
+        // Clear email after successful send
+        setTimeout(() => {
+          setShowForgotPassword(false);
+          setResetEmail("");
+          setResetMessage({ type: "", text: "" });
+        }, 3000);
+      }
+    } catch (err) {
+      setResetMessage({ type: "error", text: "An unexpected error occurred" });
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   const toggleMode = () => {
     setIsLogin(!isLogin);
     setError("");
@@ -149,12 +215,89 @@ const LoginPage = () => {
         <div className="shape shape-3"></div>
       </div>
 
+      {/* Forgot Password Modal */}
+      {showForgotPassword && (
+        <div className="forgot-password-modal-overlay" onClick={() => setShowForgotPassword(false)}>
+          <div className="forgot-password-modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="modal-close-btn"
+              onClick={() => setShowForgotPassword(false)}
+              aria-label="Close"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="modal-icon">
+              <Mail size={32} />
+            </div>
+
+            <h3 className="modal-title">Reset Password</h3>
+            <p className="modal-subtitle">
+              Enter your email address and we'll send you a link to reset your password.
+            </p>
+
+            {resetMessage.text && (
+              <div className={`reset-message ${resetMessage.type}`}>
+                {resetMessage.type === "error" ? (
+                  <AlertCircle size={16} />
+                ) : (
+                  <Check size={16} />
+                )}
+                <span>{resetMessage.text}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleForgotPassword} className="reset-form">
+              <div className="form-group">
+                <input
+                  type="email"
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  className="form-input"
+                  placeholder=" "
+                  disabled={resetLoading}
+                  autoComplete="email"
+                />
+                <label className="floating-label">Email Address</label>
+              </div>
+
+              <button
+                type="submit"
+                className="submit-btn"
+                disabled={resetLoading}
+              >
+                {resetLoading ? (
+                  <div className="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                ) : (
+                  <>
+                    <span>Send Reset Link</span>
+                    <ArrowRight size={18} />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <button
+              type="button"
+              className="back-to-login-btn"
+              onClick={() => setShowForgotPassword(false)}
+            >
+              Back to Sign In
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="login-container">
         {/* Logo and Title */}
         <div className="login-header">
           <div className="logo-wrapper">
-            <Briefcase className="logo-icon" size={32} />
+            <AuroraLogo size={40} className="logo-icon" />
           </div>
           <h1 className="app-title">Aurora</h1>
         </div>
@@ -301,12 +444,24 @@ const LoginPage = () => {
               {isLogin && (
                 <div className="form-actions">
                   <label className="checkbox-label">
-                    <input type="checkbox" className="checkbox-input" />
+                    <input
+                      type="checkbox"
+                      className="checkbox-input"
+                      checked={rememberMe}
+                      onChange={handleRememberMeChange}
+                    />
                     <span className="checkbox-text">Remember me</span>
                   </label>
-                  <a href="#" className="forgot-password-link">
+                  <button
+                    type="button"
+                    className="forgot-password-link"
+                    onClick={() => {
+                      setResetEmail(formData.email);
+                      setShowForgotPassword(true);
+                    }}
+                  >
                     Forgot Password?
-                  </a>
+                  </button>
                 </div>
               )}
 
@@ -325,8 +480,6 @@ const LoginPage = () => {
                   </>
                 )}
               </button>
-
-
             </form>
 
             {/* Toggle Mode */}

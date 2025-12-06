@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import LoadingSpinner from '../components/common/LoadingSpinner';
+import { Skeleton } from '../components/common/Skeleton';
 
 const ProfilePage = () => {
     const { user } = useAuth();
@@ -39,8 +39,12 @@ const ProfilePage = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-full">
-                <LoadingSpinner size="lg" message="Loading your profile..." />
+            <div className="flex items-center justify-center h-full p-8">
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                    <Skeleton width="80px" height="80px" borderRadius="50%" />
+                    <Skeleton width="200px" height="20px" />
+                    <Skeleton width="160px" height="14px" />
+                </div>
             </div>
         );
     }
