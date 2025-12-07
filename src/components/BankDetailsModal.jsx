@@ -9,31 +9,25 @@ const BankDetailsModal = ({
     onSubmit,
     isLoading = false,
 }) => {
-    const [formData, setFormData] = useState({
-        bankName: "",
-        accountNumber: "",
-        ifscCode: "",
-        branch: "",
+    // Initialize form data based on employee's bank details
+    const getInitialFormData = () => ({
+        bankName: employee?.bank_details?.bankName || "",
+        accountNumber: employee?.bank_details?.accountNumber || "",
+        ifscCode: employee?.bank_details?.ifscCode || "",
+        branch: employee?.bank_details?.branch || "",
     });
+
+    const [formData, setFormData] = useState(getInitialFormData);
     const [errors, setErrors] = useState({});
 
+    // Reset form data when employee changes (only when modal opens with new employee)
     useEffect(() => {
-        if (employee?.bank_details) {
-            setFormData({
-                bankName: employee.bank_details.bankName || "",
-                accountNumber: employee.bank_details.accountNumber || "",
-                ifscCode: employee.bank_details.ifscCode || "",
-                branch: employee.bank_details.branch || "",
-            });
-        } else {
-            setFormData({
-                bankName: "",
-                accountNumber: "",
-                ifscCode: "",
-                branch: "",
-            });
+        if (isOpen && employee) {
+            const newData = getInitialFormData();
+            setFormData(newData);
         }
-    }, [employee]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [employee?.id, isOpen]);
 
     const validateForm = () => {
         const newErrors = {};

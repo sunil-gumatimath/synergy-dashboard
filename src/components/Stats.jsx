@@ -15,7 +15,9 @@ const Stats = () => {
     setIsLoading(false);
   }, []);
 
+
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchEmployees();
 
     // Real-time subscription

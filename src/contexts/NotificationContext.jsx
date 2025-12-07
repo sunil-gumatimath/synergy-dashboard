@@ -15,11 +15,12 @@ export const NotificationProvider = ({ children }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     // Fetch notifications
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
     const fetchNotifications = useCallback(async () => {
         if (!user?.id) return;
 
         setLoading(true);
-        const { data, error } = await notificationService.getNotifications();
+        const { data, error } = await notificationService.getNotifications({ userId: user.id });
         if (!error) {
             setNotifications(data);
             setUnreadCount(data.filter((n) => !n.read).length);
@@ -28,10 +29,13 @@ export const NotificationProvider = ({ children }) => {
     }, [user?.id]);
 
     // Initial fetch
+
     useEffect(() => {
         if (user?.id) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchNotifications();
         } else {
+             
             setNotifications([]);
             setUnreadCount(0);
             setLoading(false);

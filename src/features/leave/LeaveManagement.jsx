@@ -45,6 +45,7 @@ const LeaveManagement = () => {
     // Fetch data
     useEffect(() => {
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.employeeId]);
 
     const fetchData = async () => {
@@ -96,6 +97,7 @@ const LeaveManagement = () => {
         if (!loading) {
             fetchRequests();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeTab]);
 
     const showToast = (type, message) => {

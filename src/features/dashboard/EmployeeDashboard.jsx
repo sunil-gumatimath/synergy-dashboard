@@ -149,8 +149,8 @@ const EmployeeDashboard = () => {
     };
 
     const greeting = getGreeting();
-    const pendingTasks = tasks.filter(t => t.status !== 'done');
-    const completedTasks = tasks.filter(t => t.status === 'done');
+    const pendingTasks = tasks.filter(t => t.status !== 'Done');
+    const completedTasks = tasks.filter(t => t.status === 'Done');
     const todayEvents = events.filter(e => {
         const eventDate = new Date(e.date).toDateString();
         const today = new Date().toDateString();

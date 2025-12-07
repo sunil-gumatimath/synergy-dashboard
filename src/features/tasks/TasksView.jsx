@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { taskService } from '../../services/taskService.js';
 import { employeeService } from '../../services/employeeService.js';
-import { useAuth } from '../../contexts/AuthContext.jsx';
+
 import { SkeletonTaskCard, SkeletonStatCard, Skeleton } from '../../components/common/Skeleton';
 import './TasksView.css';
 
@@ -14,7 +14,7 @@ const STATUSES = ['To Do', 'In Progress', 'Review', 'Done'];
 const PRIORITIES = ['Low', 'Medium', 'High', 'Urgent'];
 
 const TasksView = () => {
-    const { user } = useAuth();
+
     const [tasks, setTasks] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,11 +26,7 @@ const TasksView = () => {
     const [filters, setFilters] = useState({ status: 'all', priority: 'all' });
     const [stats, setStats] = useState(null);
 
-    useEffect(() => {
-        loadData();
-    }, []);
-
-    const loadData = async () => {
+    const loadData = React.useCallback(async () => {
         setLoading(true);
         const [tasksRes, employeesRes, statsRes] = await Promise.all([
             taskService.getAll(),
@@ -41,7 +37,12 @@ const TasksView = () => {
         setEmployees(employeesRes.data || []);
         setStats(statsRes.data);
         setLoading(false);
-    };
+    }, []);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        loadData();
+    }, [loadData]);
 
     const filteredTasks = useMemo(() => {
         return tasks.filter(task => {
@@ -415,7 +416,7 @@ const TasksView = () => {
 };
 
 // Task Card Component
-const TaskCard = ({ task, onEdit, onDelete, onStatusChange, onClick, getInitials, getPriorityColor, formatDate, isOverdue }) => {
+const TaskCard = ({ task, onEdit, onDelete, onStatusChange: _onStatusChange, onClick, getInitials, getPriorityColor, formatDate, isOverdue }) => {
     const [showMenu, setShowMenu] = useState(false);
 
     return (

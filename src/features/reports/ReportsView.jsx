@@ -9,14 +9,20 @@ import {
     getTimeTrackingReport, getEmployeeSummaryReport,
     getDepartments, exportToCSV, printReport
 } from '../../services/reportsService.js';
+import { formatDateForInput } from '../../utils/dateUtils';
 import { SkeletonStatCard, SkeletonTable, Skeleton } from '../../components/common/Skeleton';
 import './ReportsView.css';
 
 const ReportsView = () => {
     const [activeReport, setActiveReport] = useState('attendance');
-    const [dateRange, setDateRange] = useState({
-        start: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0],
-        end: new Date().toISOString().split('T')[0]
+    const [dateRange, setDateRange] = useState(() => {
+        const end = new Date();
+        const start = new Date();
+        start.setDate(end.getDate() - 30);
+        return {
+            start: formatDateForInput(start),
+            end: formatDateForInput(end)
+        };
     });
     const [department, setDepartment] = useState('all');
     const [departments, setDepartments] = useState([]);
@@ -33,6 +39,7 @@ const ReportsView = () => {
     ];
 
     useEffect(() => { fetchDepartments(); }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { fetchReport(); }, [activeReport, dateRange, department]);
 
     const fetchDepartments = async () => {

@@ -50,6 +50,7 @@ const EditEmployeeModal = ({
   const [errors, setErrors] = useState({});
 
   // Reset form when employee changes
+   
   useEffect(() => {
     if (employee) {
       setFormData({
@@ -68,7 +69,8 @@ const EditEmployeeModal = ({
         employment_type: employee.employment_type || "Full-time",
       });
     }
-  }, [employee]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [employee?.id]);
 
   const departments = [
     "Engineering",

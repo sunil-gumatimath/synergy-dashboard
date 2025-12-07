@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
           const now = Date.now();
 
           if (expiresAt < now) {
-            console.log('Session expired, attempting to refresh...');
+
             const { data: { session: newSession }, error: refreshError } =
               await supabase.auth.refreshSession();
 
@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }) => {
               setSession(null);
               setUser(null);
             } else {
-              console.log('Session refreshed successfully');
+
               setSession(newSession);
               await fetchAndSetUser(newSession.user);
             }
@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }) => {
     // Listen for auth changes (including automatic token refresh)
     const { subscription } = authService.onAuthStateChange(
       async (event, newSession) => {
-        console.log('Auth event:', event);
+
         setSession(newSession);
 
         if (newSession?.user) {
@@ -109,10 +109,7 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
         }
 
-        // Handle token refresh
-        if (event === 'TOKEN_REFRESHED') {
-          console.log('Token refreshed successfully');
-        }
+
 
         // Handle sign out
         if (event === 'SIGNED_OUT') {

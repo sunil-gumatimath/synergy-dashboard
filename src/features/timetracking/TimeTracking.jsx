@@ -52,6 +52,7 @@ const TimeTracking = () => {
         } finally {
             setLoading(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [employeeId]);
 
     const fetchWeeklySummary = async () => {
@@ -75,6 +76,7 @@ const TimeTracking = () => {
 
     useEffect(() => {
         fetchWeeklySummary();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [weekOffset, employeeId]);
 
     // Update elapsed time every minute while clocked in
