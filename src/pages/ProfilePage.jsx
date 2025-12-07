@@ -17,7 +17,7 @@ const ProfilePage = () => {
             }
 
             try {
-                const { data, error } = await supabase
+                const { data, error: _error } = await supabase
                     .from('employees')
                     .select('id')
                     .eq('email', user.email)
@@ -28,8 +28,8 @@ const ProfilePage = () => {
                 } else {
                     setLoading(false);
                 }
-            } catch (error) {
-                console.error('Error fetching profile:', error);
+            } catch (_err) {
+                console.error('Error fetching profile:', _err);
                 setLoading(false);
             }
         };

@@ -190,7 +190,7 @@ const LoginPage = () => {
           setResetMessage({ type: "", text: "" });
         }, 3000);
       }
-    } catch (err) {
+    } catch {
       setResetMessage({ type: "error", text: "An unexpected error occurred" });
     } finally {
       setResetLoading(false);

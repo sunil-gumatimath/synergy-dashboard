@@ -25,7 +25,7 @@ export const withTokenRefresh = async (apiCall, maxRetries = 1) => {
                 error?.message?.toLowerCase().includes('jwt');
 
             if (isJWTError && retries < maxRetries) {
-                console.log('JWT error detected, attempting to refresh session...');
+
 
                 // Try to refresh the session
                 const { data: { session }, error: refreshError } = await supabase.auth.getSession();
@@ -37,7 +37,7 @@ export const withTokenRefresh = async (apiCall, maxRetries = 1) => {
                     throw new Error('Session expired. Please log in again.');
                 }
 
-                console.log('Session refreshed, retrying API call...');
+
                 retries++;
                 continue;
             }
@@ -67,7 +67,7 @@ export const isSessionValid = async () => {
         const fiveMinutes = 5 * 60 * 1000;
 
         if (expiresAt - now < fiveMinutes) {
-            console.log('Token expiring soon, refreshing...');
+
             const { data: { session: newSession }, error: refreshError } =
                 await supabase.auth.refreshSession();
 

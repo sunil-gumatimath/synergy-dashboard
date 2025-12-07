@@ -211,10 +211,10 @@ export const getTaskReport = async (startDate, endDate, departmentFilter = null)
         };
 
         filteredData.forEach(task => {
-            if (task.status && statusCounts.hasOwnProperty(task.status)) {
+            if (task.status && Object.hasOwn(statusCounts, task.status)) {
                 statusCounts[task.status]++;
             }
-            if (task.priority && priorityCounts.hasOwnProperty(task.priority)) {
+            if (task.priority && Object.hasOwn(priorityCounts, task.priority)) {
                 priorityCounts[task.priority]++;
             }
         });

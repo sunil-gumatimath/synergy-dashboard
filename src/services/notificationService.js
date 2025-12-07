@@ -7,17 +7,23 @@ export const notificationService = {
     /**
      * Get all notifications for the current user
      * @param {Object} options - Query options
+     * @param {string} options.userId - User ID to fetch notifications for
      * @param {boolean} options.unreadOnly - Only fetch unread notifications
      * @param {number} options.limit - Maximum number of notifications to fetch
      * @returns {Promise<{data: Array, error: Error|null}>}
      */
-    async getNotifications({ unreadOnly = false, limit = 50 } = {}) {
+    async getNotifications({ userId = null, unreadOnly = false, limit = 50 } = {}) {
         try {
             let query = supabase
                 .from("notifications")
                 .select("*")
                 .order("created_at", { ascending: false })
                 .limit(limit);
+
+            // Filter by user_id if provided
+            if (userId) {
+                query = query.eq("user_id", userId);
+            }
 
             if (unreadOnly) {
                 query = query.eq("read", false);
@@ -35,14 +41,22 @@ export const notificationService = {
 
     /**
      * Get unread notification count
+     * @param {string} userId - User ID to count notifications for
      * @returns {Promise<{count: number, error: Error|null}>}
      */
-    async getUnreadCount() {
+    async getUnreadCount(userId = null) {
         try {
-            const { count, error } = await supabase
+            let query = supabase
                 .from("notifications")
                 .select("*", { count: "exact", head: true })
                 .eq("read", false);
+
+            // Filter by user_id if provided
+            if (userId) {
+                query = query.eq("user_id", userId);
+            }
+
+            const { count, error } = await query;
 
             if (error) throw error;
             return { count: count || 0, error: null };
