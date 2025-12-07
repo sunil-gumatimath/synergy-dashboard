@@ -11,6 +11,7 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit, isLoading, ticketToEdit 
 
     const [errors, setErrors] = useState({});
 
+     
     useEffect(() => {
         if (isOpen) {
             if (ticketToEdit) {
@@ -30,7 +31,8 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit, isLoading, ticketToEdit 
             }
             setErrors({});
         }
-    }, [isOpen, ticketToEdit]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, ticketToEdit?.id]);
 
     if (!isOpen) return null;
 
@@ -58,8 +60,8 @@ const CreateTicketModal = ({ isOpen, onClose, onSubmit, isLoading, ticketToEdit 
             onSubmit({
                 ...formData,
                 type: 'ticket',
-                status: ticketToEdit ? ticketToEdit.status : 'todo', // Default status for new tickets
-                due_date: ticketToEdit ? ticketToEdit.due_date : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // Default 1 week due date
+                status: ticketToEdit ? ticketToEdit.status : 'todo',
+                due_date: ticketToEdit ? ticketToEdit.due_date : new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
             });
         }
     };

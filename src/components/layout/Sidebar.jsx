@@ -16,89 +16,126 @@ import {
   Timer,
   FileText,
 } from "lucide-react";
-import Avatar from "../common/Avatar";
+
 import { useAuth } from "../../contexts/AuthContext";
 
 const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const { user, signOut } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [notifications] = useState({
+    tasks: 0,
+    support: 0,
+    leave: 0,
+  });
 
-  const menuItems = [
+  // Menu items organized by sections
+  const menuSections = [
     {
-      icon: Home,
-      label: "Dashboard",
-      id: "dashboard",
-      path: "/dashboard",
-      roles: ["Employee"],
+      label: "Main",
+      items: [
+        {
+          icon: Home,
+          label: "Dashboard",
+          id: "dashboard",
+          path: "/dashboard",
+          roles: ["Employee"],
+        },
+        {
+          icon: LayoutDashboard,
+          label: "Analytics",
+          id: "analytics",
+          path: "/analytics",
+          roles: ["Admin", "Manager"],
+        },
+        {
+          icon: Users,
+          label: "Employees",
+          id: "employees",
+          path: "/employees",
+          roles: ["Admin", "Manager"],
+        },
+      ],
     },
     {
-      icon: LayoutDashboard,
-      label: "Analytics",
-      id: "analytics",
-      path: "/analytics",
-      roles: ["Admin", "Manager"],
+      label: "Work",
+      items: [
+        {
+          icon: ClipboardList,
+          label: "Tasks",
+          id: "tasks",
+          path: "/tasks",
+          roles: ["Admin", "Manager", "Employee"],
+          badge: notifications.tasks,
+        },
+        {
+          icon: Timer,
+          label: "Time Tracking",
+          id: "timetracking",
+          path: "/timetracking",
+          roles: ["Admin", "Manager", "Employee"],
+        },
+        {
+          icon: Umbrella,
+          label: "Leave",
+          id: "leave",
+          path: "/leave",
+          roles: ["Admin", "Manager", "Employee"],
+          badge: user?.role === "Admin" || user?.role === "Manager" ? notifications.leave : 0,
+        },
+      ],
     },
     {
-      icon: Users,
-      label: "Employees",
-      id: "employees",
-      path: "/employees",
-      roles: ["Admin", "Manager"],
+      label: "Connect",
+      items: [
+        {
+          icon: LifeBuoy,
+          label: "Help Desk",
+          id: "support",
+          path: "/support",
+          roles: ["Admin", "Manager", "Employee"],
+          badge: notifications.support,
+        },
+        {
+          icon: Calendar,
+          label: "Calendar",
+          id: "calendar",
+          path: "/calendar",
+          roles: ["Admin", "Manager", "Employee"],
+        },
+      ],
     },
     {
-      icon: ClipboardList,
-      label: "Tasks",
-      id: "tasks",
-      path: "/tasks",
-      roles: ["Admin", "Manager", "Employee"],
-    },
-    {
-      icon: Timer,
-      label: "Time Tracking",
-      id: "timetracking",
-      path: "/timetracking",
-      roles: ["Admin", "Manager", "Employee"],
-    },
-    {
-      icon: Umbrella,
-      label: "Leave",
-      id: "leave",
-      path: "/leave",
-      roles: ["Admin", "Manager", "Employee"],
-    },
-    {
-      icon: LifeBuoy,
-      label: "Help Desk",
-      id: "support",
-      path: "/support",
-      roles: ["Admin", "Manager", "Employee"],
-    },
-    {
-      icon: Calendar,
-      label: "Calendar",
-      id: "calendar",
-      path: "/calendar",
-      roles: ["Admin", "Manager", "Employee"],
-    },
-    {
-      icon: FileText,
-      label: "Reports",
-      id: "reports",
-      path: "/reports",
-      roles: ["Admin", "Manager"],
-    },
-    {
-      icon: Settings,
-      label: "Settings",
-      id: "settings",
-      path: "/settings",
-      roles: ["Admin", "Manager", "Employee"],
+      label: "Manage",
+      items: [
+        {
+          icon: FileText,
+          label: "Reports",
+          id: "reports",
+          path: "/reports",
+          roles: ["Admin", "Manager"],
+        },
+        {
+          icon: Settings,
+          label: "Settings",
+          id: "settings",
+          path: "/settings",
+          roles: ["Admin", "Manager", "Employee"],
+        },
+      ],
     },
   ];
 
-  const filteredMenuItems = menuItems.filter(item =>
-    !item.roles || (user?.role && item.roles.includes(user.role)) || user?.role === 'Admin' // Admin always sees everything as fallback
-  );
+  // Filter sections based on user role
+  const getFilteredSections = () => {
+    return menuSections.map(section => ({
+      ...section,
+      items: section.items.filter(item =>
+        !item.roles || (user?.role && item.roles.includes(user.role)) || user?.role === 'Admin'
+      ),
+    })).filter(section => section.items.length > 0);
+  };
+
+  const filteredSections = getFilteredSections();
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -112,16 +149,7 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
     }
   };
 
-  // Get user display name
-  const getUserName = () => {
-    if (user?.user_metadata?.full_name) {
-      return user.user_metadata.full_name;
-    }
-    if (user?.email) {
-      return user.email.split("@")[0];
-    }
-    return "User";
-  };
+
 
   return (
     <>
@@ -129,11 +157,13 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
       <div className="sidebar-container">
         {/* Collapse Toggle Button (Desktop only) */}
         <button
+          type="button"
           className="sidebar-collapse-toggle"
           onClick={toggleCollapse}
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
         </button>
 
         {/* Sidebar */}
@@ -141,66 +171,69 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
           className={`sidebar ${isMobileMenuOpen ? "mobile-open" : ""} ${isCollapsed ? "collapsed" : ""}`}
         >
           <div className="sidebar-header">
-            <div className="brand-logo">
-              <span className="text-xl font-bold">A</span>
-            </div>
-            {!isCollapsed && <h1 className="brand-name">Aurora</h1>}
+            <h1 className={`brand-name ${isCollapsed ? 'short' : ''}`}>
+              {isCollapsed ? "A" : "Aurora"}
+              <span className="brand-dot">.</span>
+            </h1>
           </div>
 
+
+
           <nav className="sidebar-nav">
-            {filteredMenuItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.id}
-                  to={item.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`nav-item ${activeTab === item.id ? "active" : ""}`}
-                  title={isCollapsed ? item.label : ""}
-                >
-                  <Icon size={20} strokeWidth={2} />
-                  {!isCollapsed && (
-                    <>
-                      <span className="nav-item-label">{item.label}</span>
-                      {activeTab === item.id && (
-                        <ChevronRight
-                          size={16}
-                          className="ml-auto opacity-50"
-                        />
+            {filteredSections.map((section, sectionIndex) => (
+              <div key={section.label} className="nav-section">
+                {!isCollapsed && (
+                  <div className="nav-section-label">{section.label}</div>
+                )}
+                {isCollapsed && sectionIndex > 0 && (
+                  <div className="nav-section-divider" />
+                )}
+                {section.items.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.id}
+                      to={item.path}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`nav-item ${activeTab === item.id ? "active" : ""}`}
+                      data-tooltip={item.label}
+                    >
+                      <span className="nav-item-icon">
+                        <Icon size={20} strokeWidth={2} />
+                      </span>
+                      {!isCollapsed && (
+                        <>
+                          <span className="nav-item-label">{item.label}</span>
+                          {item.badge > 0 && (
+                            <span className="nav-badge">{item.badge > 9 ? '9+' : item.badge}</span>
+                          )}
+                          {activeTab === item.id && !item.badge && (
+                            <ChevronRight
+                              size={16}
+                              className="nav-item-arrow"
+                            />
+                          )}
+                        </>
                       )}
-                    </>
-                  )}
-                </Link>
-              );
-            })}
+                      {isCollapsed && item.badge > 0 && (
+                        <span className="nav-badge-collapsed">{item.badge > 9 ? '9+' : item.badge}</span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </nav>
 
           <div className="sidebar-footer">
-            <Link
-              to="/profile"
-              className="user-profile-sidebar"
-              style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}
-            >
-              <Avatar
-                name={getUserName()}
-                gender={user?.gender || 'other'}
-                size="md"
-                className="user-avatar-sidebar-component"
-              />
-              {!isCollapsed && (
-                <div className="user-info-sidebar">
-                  <span className="user-name-sidebar">{getUserName()}</span>
-                  <span className="user-email-sidebar">{user?.role || 'Employee'}</span>
-                </div>
-              )}
-            </Link>
             <button
               className="sidebar-logout-btn"
               aria-label="Logout"
               onClick={handleLogout}
               title="Logout"
             >
-              <LogOut size={16} />
+              <LogOut size={20} />
+              {!isCollapsed && <span className="logout-label">Logout</span>}
             </button>
           </div>
         </aside>

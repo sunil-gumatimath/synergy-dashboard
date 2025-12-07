@@ -6,20 +6,21 @@ import "./Toast.css";
 const Toast = ({ message, type = "success", onClose, duration = 4000 }) => {
   const [isExiting, setIsExiting] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      handleClose();
-    }, duration);
-
-    return () => clearTimeout(timer);
-  }, [duration]);
-
   const handleClose = () => {
     setIsExiting(true);
     setTimeout(() => {
       onClose();
     }, 300); // Match animation duration
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleClose();
+    }, duration);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [duration]);
 
   const icons = {
     success: <CheckCircle size={20} />,

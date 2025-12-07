@@ -78,7 +78,7 @@ const SkeletonChart = () => (
   </div>
 );
 
-const StatCard = ({ title, value, change, icon: Icon, color, trend }) => (
+const StatCard = ({ title, value, change, icon: Icon, color }) => (
   <div className="card analytics-stat-card">
     <div className="analytics-stat-content">
       <p className="analytics-stat-label">{title}</p>

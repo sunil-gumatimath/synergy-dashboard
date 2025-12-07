@@ -176,11 +176,6 @@ const CalendarView = () => {
 
     const onDateClick = (day) => {
         setSelectedDate(day);
-        setMiniCalMonth(day);
-    };
-
-    const handleMiniCalDateSelect = (day) => {
-        setSelectedDate(day);
         setCurrentMonth(day);
     };
 

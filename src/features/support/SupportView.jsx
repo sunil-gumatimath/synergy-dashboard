@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Search, Filter, MessageSquare, Clock, CheckCircle, AlertCircle, LifeBuoy, X, Trash2 } from "lucide-react";
-import { taskService } from "../../services/taskService";
+import { supportService } from "../../services/supportService";
 import CreateTicketModal from "./CreateTicketModal";
 import ConfirmModal from "../../components/ui/ConfirmModal";
 import { SkeletonStatCard, SkeletonTable, Skeleton } from "../../components/common/Skeleton";
@@ -13,7 +13,7 @@ const SupportView = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [toast, setToast] = useState(null);
-    const [filter, setFilter] = useState("all");
+
     const [searchTerm, setSearchTerm] = useState("");
 
     // Edit/Delete State
@@ -21,28 +21,29 @@ const SupportView = () => {
     const [deletingTicket, setDeletingTicket] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    useEffect(() => {
-        fetchTickets();
-    }, []);
-
     const fetchTickets = async () => {
         setIsLoading(true);
-        // In a real app, we'd filter by type='ticket' and creator_id=user.id
-        const { data } = await taskService.getAll();
-        // Filter for ticket type
-        const ticketData = data ? data.filter(t => t.type === 'ticket' || t.title.includes('Support') || t.title.includes('Request')) : [];
-        setTickets(ticketData);
+        // Fetch tickets from support_tickets table, optionally filter by user
+        const { data, error } = await supportService.getAll({ userId: user?.employeeId });
+        if (!error) {
+            setTickets(data || []);
+        }
         setIsLoading(false);
     };
+
+    useEffect(() => {
+        fetchTickets();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleCreateTicket = async (ticketData) => {
         // Add user info to the ticket
         const newTicket = {
             ...ticketData,
-            creator_id: user?.id
+            createdBy: user?.employeeId
         };
 
-        const { data, error } = await taskService.create(newTicket);
+        const { error } = await supportService.create(newTicket);
 
         if (error) {
             setToast({ type: "error", message: "Failed to create ticket" });
@@ -56,7 +57,7 @@ const SupportView = () => {
     const handleUpdateTicket = async (ticketData) => {
         if (!editingTicket) return;
 
-        const { error } = await taskService.update(editingTicket.id, ticketData);
+        const { error } = await supportService.update(editingTicket.id, ticketData);
 
         if (error) {
             setToast({ type: "error", message: "Failed to update ticket" });
@@ -71,7 +72,7 @@ const SupportView = () => {
     const handleDeleteTicket = async () => {
         if (!deletingTicket) return;
 
-        const { error } = await taskService.delete(deletingTicket.id);
+        const { error } = await supportService.delete(deletingTicket.id);
 
         if (error) {
             setToast({ type: "error", message: "Failed to delete ticket" });
@@ -96,17 +97,27 @@ const SupportView = () => {
 
     const getStatusColor = (status) => {
         switch (status) {
-            case "done": return "text-green-600 bg-green-50 border-green-200";
-            case "in-progress": return "text-blue-600 bg-blue-50 border-blue-200";
-            default: return "text-gray-600 bg-gray-50 border-gray-200";
+            case "resolved": return "text-green-600 bg-green-50 border-green-200";
+            case "in_progress": return "text-blue-600 bg-blue-50 border-blue-200";
+            case "closed": return "text-gray-600 bg-gray-100 border-gray-300";
+            default: return "text-orange-600 bg-orange-50 border-orange-200";
         }
     };
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case "done": return <CheckCircle size={14} />;
-            case "in-progress": return <Clock size={14} />;
+            case "resolved": return <CheckCircle size={14} />;
+            case "in_progress": return <Clock size={14} />;
             default: return <AlertCircle size={14} />;
+        }
+    };
+
+    const getStatusLabel = (status) => {
+        switch (status) {
+            case "resolved": return "Resolved";
+            case "in_progress": return "In Progress";
+            case "closed": return "Closed";
+            default: return "Open";
         }
     };
 
@@ -141,7 +152,7 @@ const SupportView = () => {
                         <Clock size={20} />
                     </div>
                     <div>
-                        <p className="text-2xl font-bold">{tickets.filter(t => t.status !== 'done').length}</p>
+                        <p className="text-2xl font-bold">{tickets.filter(t => t.status === 'open' || t.status === 'in_progress').length}</p>
                         <p className="text-sm text-muted">Open Tickets</p>
                     </div>
                 </div>
@@ -150,7 +161,7 @@ const SupportView = () => {
                         <CheckCircle size={20} />
                     </div>
                     <div>
-                        <p className="text-2xl font-bold">{tickets.filter(t => t.status === 'done').length}</p>
+                        <p className="text-2xl font-bold">{tickets.filter(t => t.status === 'resolved' || t.status === 'closed').length}</p>
                         <p className="text-sm text-muted">Resolved</p>
                     </div>
                 </div>
@@ -236,11 +247,11 @@ const SupportView = () => {
                                         <td className="p-4">
                                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(ticket.status)}`}>
                                                 {getStatusIcon(ticket.status)}
-                                                {ticket.status === 'done' ? 'Resolved' : ticket.status === 'in-progress' ? 'In Progress' : 'Open'}
+                                                {getStatusLabel(ticket.status)}
                                             </span>
                                         </td>
                                         <td className="p-4 text-sm text-muted">
-                                            {new Date(ticket.created_at || Date.now()).toLocaleDateString()}
+                                            {new Date(ticket.created_at || new Date()).toLocaleDateString()}
                                         </td>
                                         <td className="p-4">
                                             <span className={`text-xs font-semibold uppercase ${ticket.priority === 'high' ? 'text-red-600' :

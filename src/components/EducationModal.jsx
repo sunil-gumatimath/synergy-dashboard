@@ -12,13 +12,15 @@ const EducationModal = ({
     const [educationList, setEducationList] = useState([]);
     const [errors, setErrors] = useState({});
 
+     
     useEffect(() => {
         if (employee?.education && Array.isArray(employee.education)) {
             setEducationList(employee.education.map((edu, idx) => ({ ...edu, id: idx })));
         } else {
             setEducationList([]);
         }
-    }, [employee]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [employee?.id]);
 
     const addEducation = () => {
         setEducationList((prev) => [

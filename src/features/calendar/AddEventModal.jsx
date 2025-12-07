@@ -19,6 +19,7 @@ const AddEventModal = ({ isOpen, onClose, onSave, initialDate, eventToEdit, isLo
 
     const [errors, setErrors] = useState({});
 
+     
     useEffect(() => {
         if (eventToEdit) {
             setFormData({
@@ -46,7 +47,8 @@ const AddEventModal = ({ isOpen, onClose, onSave, initialDate, eventToEdit, isLo
                 is_all_day: false
             }));
         }
-    }, [eventToEdit, initialDate, isOpen]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [eventToEdit?.id, initialDate, isOpen]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
