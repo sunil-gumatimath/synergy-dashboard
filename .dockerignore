@@ -1,8 +1,14 @@
 # Dependencies
 node_modules
+bun.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # Build output (we build fresh in Docker)
 dist
+dist-ssr
+build
 
 # Environment files (pass via build args instead)
 .env
