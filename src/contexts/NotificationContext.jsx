@@ -3,7 +3,20 @@ import PropTypes from "prop-types";
 import { notificationService } from "../services/notificationService.js";
 import { useAuth } from "./AuthContext";
 
-const NotificationContext = createContext({});
+const NotificationContext = createContext({
+    notifications: [],
+    unreadCount: 0,
+    loading: true,
+    isOpen: false,
+    fetchNotifications: () => { },
+    markAsRead: () => { },
+    markAllAsRead: () => { },
+    deleteNotification: () => { },
+    clearAll: () => { },
+    togglePanel: () => { },
+    closePanel: () => { },
+    requestPermission: () => { },
+});
 
 /* eslint-disable react-refresh/only-export-components */
 
@@ -35,7 +48,7 @@ export const NotificationProvider = ({ children }) => {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             fetchNotifications();
         } else {
-             
+
             setNotifications([]);
             setUnreadCount(0);
             setLoading(false);

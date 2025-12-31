@@ -39,6 +39,12 @@ const TimeTracking = React.lazy(
 const ReportsView = React.lazy(
   () => import("./features/reports/ReportsView"),
 );
+const TeamChat = React.lazy(
+  () => import("./features/chat/TeamChat"),
+);
+const PerformanceReviews = React.lazy(
+  () => import("./features/performance/PerformanceReviews"),
+);
 
 const HomeRedirect = () => {
   const { user } = useAuth();
@@ -71,6 +77,8 @@ function App() {
     if (path.startsWith("/analytics")) return "analytics";
     if (path.startsWith("/calendar")) return "calendar";
     if (path.startsWith("/reports")) return "reports";
+    if (path.startsWith("/chat")) return "chat";
+    if (path.startsWith("/performance")) return "performance";
     if (path.startsWith("/settings")) return "settings";
     return "dashboard"; // Default fallback
   };
@@ -261,6 +269,34 @@ function App() {
                   }
                 >
                   <ReportsView />
+                </Suspense>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/chat"
+            element={
+              <Suspense
+                fallback={
+                  <LoadingSpinner size="lg" message="Loading chat..." />
+                }
+              >
+                <TeamChat />
+              </Suspense>
+            }
+          />
+
+          <Route
+            path="/performance"
+            element={
+              <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Employee']}>
+                <Suspense
+                  fallback={
+                    <LoadingSpinner size="lg" message="Loading performance reviews..." />
+                  }
+                >
+                  <PerformanceReviews />
                 </Suspense>
               </ProtectedRoute>
             }
