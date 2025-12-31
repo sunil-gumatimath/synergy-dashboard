@@ -21,12 +21,20 @@ const ResetPasswordPage = () => {
     const [success, setSuccess] = useState(false);
     const [passwordStrength, setPasswordStrength] = useState({ level: 0, text: "" });
 
-    // Check if we have a valid reset token in URL
+    // Check if we have a valid reset token in URL (hash fragment)
     useEffect(() => {
-        const accessToken = searchParams.get("access_token");
-        const type = searchParams.get("type");
+        // Parse hash fragment for access_token
+        const hashParams = new URLSearchParams(window.location.hash.substring(1)); // Remove the leading '#'
+        const accessToken = hashParams.get("access_token");
+        const type = hashParams.get("type");
 
-        if (!accessToken && type !== "recovery") {
+        // Also check query params as fallback or for specific flows
+        const searchedAccessToken = searchParams.get("access_token");
+
+        // Supabase sends token in hash, but sometimes we might get it in query
+        const finalToken = accessToken || searchedAccessToken;
+
+        if (!finalToken && type !== "recovery") {
             // No valid token, might be a direct navigation
             // We'll still show the form but handle errors gracefully
         }

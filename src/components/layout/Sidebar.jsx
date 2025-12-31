@@ -15,18 +15,25 @@ import {
   Umbrella,
   Timer,
   FileText,
+  MessageCircle,
+  Target,
 } from "lucide-react";
 
 import { useAuth } from "../../contexts/AuthContext";
 
+import { useNotifications } from "../../contexts/NotificationContext";
+
 const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
   const { user, signOut } = useAuth();
+  const { notifications: allNotifications } = useNotifications();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [notifications] = useState({
-    tasks: 0,
-    support: 0,
-    leave: 0,
-  });
+
+  // derived state for notification counts
+  const notifications = {
+    tasks: (allNotifications || []).filter(n => n.type === 'task' && !n.read).length,
+    support: (allNotifications || []).filter(n => n.type === 'support' && !n.read).length,
+    leave: (allNotifications || []).filter(n => n.type === 'leave' && !n.read).length,
+  };
 
   // Menu items organized by sections
   const menuSections = [
@@ -88,6 +95,13 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
       label: "Connect",
       items: [
         {
+          icon: MessageCircle,
+          label: "Team Chat",
+          id: "chat",
+          path: "/chat",
+          roles: ["Admin", "Manager", "Employee"],
+        },
+        {
           icon: LifeBuoy,
           label: "Help Desk",
           id: "support",
@@ -107,6 +121,13 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
     {
       label: "Manage",
       items: [
+        {
+          icon: Target,
+          label: "Performance",
+          id: "performance",
+          path: "/performance",
+          roles: ["Admin", "Manager", "Employee"],
+        },
         {
           icon: FileText,
           label: "Reports",

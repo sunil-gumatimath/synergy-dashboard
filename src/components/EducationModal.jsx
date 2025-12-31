@@ -12,7 +12,7 @@ const EducationModal = ({
     const [educationList, setEducationList] = useState([]);
     const [errors, setErrors] = useState({});
 
-     
+
     useEffect(() => {
         if (employee?.education && Array.isArray(employee.education)) {
             setEducationList(employee.education.map((edu, idx) => ({ ...edu, id: idx })));
@@ -20,7 +20,7 @@ const EducationModal = ({
             setEducationList([]);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [employee?.id]);
+    }, [employee?.id, employee?.education]);
 
     const addEducation = () => {
         setEducationList((prev) => [
@@ -81,7 +81,13 @@ const EducationModal = ({
             grade: grade.trim(),
         }));
 
-        await onSubmit(employee.id, { education: cleanEducation });
+        try {
+            await onSubmit(employee.id, { education: cleanEducation });
+            handleClose();
+        } catch (error) {
+            console.error("Failed to update education:", error);
+            // Optional: Set a form error here if needed
+        }
     };
 
     const handleClose = () => {

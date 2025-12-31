@@ -2,6 +2,24 @@
 
 A comprehensive **Employee Management System** built with modern web technologies. Streamline HR operations, workforce management, and organizational productivity with an intuitive, feature-rich dashboard.
 
+## Recent Updates
+
+### Performance & Architecture
+- Multi-stage Docker build with Bun for optimized production images
+- Code splitting and lazy loading for faster initial load times
+- Nginx configuration with gzip compression and security headers
+- Enhanced mobile responsiveness and PWA capabilities
+- Service worker for offline support and faster caching
+
+### New Features
+- Team Chat with real-time messaging
+- Performance Reviews with analytics and goal tracking
+- Enhanced Settings with Account, Appearance, Notifications, Preferences, and Security sections
+- Employee profile page with comprehensive details
+- Real-time notifications system
+- Dark/light theme support
+- Toast notifications for user feedback
+
 ## Features
 
 ### HR Core
@@ -26,6 +44,7 @@ A comprehensive **Employee Management System** built with modern web technologie
 - **Interactive Calendar**: Schedule events, meetings, and holidays with visual calendar view
 - **Analytics Dashboard**: Comprehensive insights with charts, metrics, and performance indicators
 - **Reports Generation**: Detailed reports on employees, attendance, leave, and productivity
+- **Team Chat**: Real-time messaging and collaboration for teams
 
 ### Support & Development
 
@@ -46,6 +65,7 @@ A comprehensive **Employee Management System** built with modern web technologie
 - **Recharts** - Beautiful, customizable charts and data visualizations
 - **Lucide React** - Modern icon library with consistent design
 - **Date-fns** - Modern JavaScript date utility library
+- **@hello-pangea/dnd** - Drag-and-drop functionality for task management
 
 ### Backend & Database
 
@@ -58,10 +78,18 @@ A comprehensive **Employee Management System** built with modern web technologie
 
 ### Infrastructure & DevOps
 
-- **Docker** - Containerization for consistent deployment
-- **Nginx** - Production web server with reverse proxy
+- **Docker** - Multi-stage containerization for consistent deployment
+- **Nginx** - Production web server with reverse proxy, gzip, and security headers
 - **Bun** - Fast JavaScript runtime and package manager
 - **ESLint** - Code linting and quality assurance
+
+### PWA Capabilities
+
+- Service Worker for offline caching
+- Installable as standalone app
+- App shortcuts for quick access
+- Responsive design for all devices
+- Mobile-enhanced UI
 
 ## Database Schema
 
@@ -102,7 +130,7 @@ A comprehensive **Employee Management System** built with modern web technologie
 ### Prerequisites
 
 - Node.js 18+ or Bun runtime
-- Supabase account ([supabase.com](https://supabase.com))
+- Supabase account (supabase.com)
 
 ### 1. Clone & Install
 
@@ -118,7 +146,7 @@ npm install
 
 ### 2. Database Setup
 
-1. Create a new project at [Supabase](https://supabase.com)
+1. Create a new project at Supabase
 2. Go to SQL Editor and run `database/aurora_ems_complete.sql`
 3. This creates 26 tables with complete seed data including:
    - 10 sample employees (Admin, Managers, Employees)
@@ -172,7 +200,7 @@ Access at `http://localhost:8080`
 ### Manual Docker Build
 
 ```bash
-# Build image
+# Build image (multi-stage with Bun)
 docker build -t aurora-ems .
 
 # Run container
@@ -198,7 +226,7 @@ docker run -d \
 ```
 aurora-ems/
 ├── database/           # SQL schema and migrations
-├── public/            # Static assets
+├── public/            # Static assets (PWA manifest, service worker)
 ├── src/
 │   ├── components/    # Reusable UI components
 │   │   ├── common/    # Shared components (Avatar, Toast, etc.)
@@ -208,16 +236,18 @@ aurora-ems/
 │   ├── features/      # Feature modules
 │   │   ├── analytics/ # Analytics dashboard
 │   │   ├── calendar/  # Calendar management
+│   │   ├── chat/      # Team chat
 │   │   ├── dashboard/ # Employee dashboard
 │   │   └── ...        # Other features
 │   ├── lib/           # External service configurations
 │   ├── pages/         # Page components
 │   ├── services/      # API service layer
 │   └── utils/         # Utility functions
+├── supabase/          # Supabase migrations
 ├── docker-compose.yml # Docker orchestration
-├── Dockerfile        # Container configuration
-├── nginx.conf        # Production server config
-└── vite.config.js    # Build configuration
+├── Dockerfile         # Multi-stage container configuration
+├── nginx.conf         # Production server config
+└── vite.config.js     # Build configuration with code splitting
 ```
 
 ## Available Scripts
@@ -265,6 +295,46 @@ bun run lint         # Run ESLint
 - Task assignment and tracking
 - Priority and status management
 - Due date notifications
+
+### Team Chat
+
+- Real-time messaging
+- Individual and group conversations
+- Message search and history
+- Online status indicators
+
+### Performance Reviews
+
+- Employee performance evaluations
+- Goal setting and tracking
+- Performance analytics and metrics
+- Review workflow for managers
+
+### PWA Features
+
+- Install as desktop/mobile app
+- Offline support with service worker
+- App shortcuts for quick navigation
+- Fast caching with service worker
+
+## Performance Optimizations
+
+- Code splitting with lazy loading for routes
+- Manual chunk splitting for heavy dependencies (React, Recharts, Supabase)
+- Terser minification with console removal
+- Gzip compression in Nginx
+- Asset caching with immutable cache headers
+- Pre-bundling of heavy dependencies
+- CSS code splitting enabled
+
+## Security
+
+- Row Level Security (RLS) on all database tables
+- Role-based access control (RBAC)
+- Protected routes for different user roles
+- Security headers in Nginx (X-Frame-Options, X-Content-Type-Options, X-XSS-Protection)
+- Environment variable protection
+- Secure authentication with Supabase Auth
 
 ## License
 
