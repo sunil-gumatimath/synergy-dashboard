@@ -6,7 +6,7 @@ import React, {
   Suspense,
   lazy,
 } from "react";
-import { UserPlus, Users, RefreshCw, Download, Search, X } from "lucide-react";
+import { UserPlus, Users, RefreshCw, Download, Search, X, LayoutGrid, List } from "lucide-react";
 import "./employees-styles.css";
 import { employeeService } from "../../services/employeeService";
 import { supabase } from "../../lib/supabase";
@@ -16,6 +16,7 @@ import { SkeletonEmployeeCard, SkeletonFilterBar, Skeleton } from "../../compone
 import FilterPanel from "../../components/FilterPanel";
 import SortControls from "../../components/SortControls";
 import BulkActionToolbar from "../../components/BulkActionToolbar";
+import EmployeesByRole from "./EmployeesByRole";
 
 // Lazy load modals for better performance
 const AddEmployeeModal = lazy(
@@ -27,6 +28,7 @@ const EditEmployeeModal = lazy(
 const ConfirmModal = lazy(() => import("../../components/ui/ConfirmModal"));
 
 const EmployeeList = () => {
+  const [viewMode, setViewMode] = useState("cards"); // "cards" | "byRole"
   const [employees, setEmployees] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -427,228 +429,257 @@ const EmployeeList = () => {
           </h1>
           <p className="text-muted text-sm">Manage your team members</p>
         </div>
+        {/* View Mode Toggle */}
+        <div className="employees-view-toggle">
+          <button
+            type="button"
+            className={`employees-view-btn ${viewMode === "cards" ? "active" : ""}`}
+            onClick={() => setViewMode("cards")}
+            title="Card View"
+          >
+            <LayoutGrid size={16} />
+            <span>Cards</span>
+          </button>
+          <button
+            type="button"
+            className={`employees-view-btn ${viewMode === "byRole" ? "active" : ""}`}
+            onClick={() => setViewMode("byRole")}
+            title="View by Role"
+          >
+            <List size={16} />
+            <span>By Role</span>
+          </button>
+        </div>
       </div>
 
-      {/* Bulk Action Toolbar - appears when items selected */}
-      <BulkActionToolbar
-        selectedCount={selectedEmployeeIds.size}
-        onClearSelection={handleClearSelection}
-        onBulkDelete={handleBulkDelete}
-        onBulkStatusChange={handleBulkStatusChange}
-      />
+      {/* By Role View */}
+      {viewMode === "byRole" && <EmployeesByRole />}
 
-      <div className="employees-header">
-        <div className="employees-search-wrapper">
-          <Search className="employees-search-icon" size={20} />
-          <input
-            type="text"
-            placeholder="Search employees by name, role, department..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="employees-search-input"
+      {/* Card View */}
+      {viewMode === "cards" && (
+        <>
+          {/* Bulk Action Toolbar - appears when items selected */}
+          <BulkActionToolbar
+            selectedCount={selectedEmployeeIds.size}
+            onClearSelection={handleClearSelection}
+            onBulkDelete={handleBulkDelete}
+            onBulkStatusChange={handleBulkStatusChange}
           />
-          {searchTerm && (
-            <button
-              className="employees-search-clear"
-              onClick={() => setSearchTerm("")}
-              title="Clear search"
-            >
-              <X size={16} />
-            </button>
-          )}
-        </div>
-        <div className="flex gap-2">
-          {/* CSV Actions */}
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={() => {
-              const headers = [
-                "ID",
-                "Name",
-                "Email",
-                "Role",
-                "Department",
-                "Status",
-                "Join Date",
-              ];
-              const csvContent = [
-                headers.join(","),
-                ...filteredAndSortedEmployees.map((emp) =>
-                  [
-                    emp.id,
-                    `"${emp.name}"`,
-                    emp.email,
-                    emp.role,
-                    emp.department,
-                    emp.status,
-                    emp.join_date,
-                  ].join(","),
-                ),
-              ].join("\n");
 
-              const blob = new Blob([csvContent], { type: "text/csv" });
-              const url = window.URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = `employees_export_${new Date().toISOString().split("T")[0]}.csv`;
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-              window.URL.revokeObjectURL(url);
-            }}
-            title="Export to CSV"
-          >
-            <Download size={18} />
-          </button>
+          <div className="employees-header">
+            <div className="employees-search-wrapper">
+              <Search className="employees-search-icon" size={20} />
+              <input
+                type="text"
+                placeholder="Search employees by name, role, department..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="employees-search-input"
+              />
+              {searchTerm && (
+                <button
+                  className="employees-search-clear"
+                  onClick={() => setSearchTerm("")}
+                  title="Clear search"
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+            <div className="flex gap-2">
+              {/* CSV Actions */}
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => {
+                  const headers = [
+                    "ID",
+                    "Name",
+                    "Email",
+                    "Role",
+                    "Department",
+                    "Status",
+                    "Join Date",
+                  ];
+                  const csvContent = [
+                    headers.join(","),
+                    ...filteredAndSortedEmployees.map((emp) =>
+                      [
+                        emp.id,
+                        `"${emp.name}"`,
+                        emp.email,
+                        emp.role,
+                        emp.department,
+                        emp.status,
+                        emp.join_date,
+                      ].join(","),
+                    ),
+                  ].join("\n");
 
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={() => fetchEmployees(true)}
-            disabled={isRefreshing}
-            title="Refresh employee list"
-          >
-            <RefreshCw
-              size={18}
-              className={isRefreshing ? "animate-spin" : ""}
+                  const blob = new Blob([csvContent], { type: "text/csv" });
+                  const url = window.URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `employees_export_${new Date().toISOString().split("T")[0]}.csv`;
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  window.URL.revokeObjectURL(url);
+                }}
+                title="Export to CSV"
+              >
+                <Download size={18} />
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={() => fetchEmployees(true)}
+                disabled={isRefreshing}
+                title="Refresh employee list"
+              >
+                <RefreshCw
+                  size={18}
+                  className={isRefreshing ? "animate-spin" : ""}
+                />
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => setShowAddModal(true)}
+              >
+                <UserPlus size={18} />
+                <span>Add Employee</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Filter and Sort Controls */}
+          <div className="employees-controls">
+            <FilterPanel
+              employees={employees}
+              filters={filters}
+              onFilterChange={handleFilterChange}
             />
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => setShowAddModal(true)}
-          >
-            <UserPlus size={18} />
-            <span>Add Employee</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Filter and Sort Controls */}
-      <div className="employees-controls">
-        <FilterPanel
-          employees={employees}
-          filters={filters}
-          onFilterChange={handleFilterChange}
-        />
-        <SortControls
-          sortBy={sortBy}
-          sortOrder={sortOrder}
-          onSortChange={handleSortChange}
-        />
-      </div>
-
-      {/* Results Count & Select All */}
-      {employees.length > 0 && (
-        <div className="employees-results">
-          <p>
-            Showing <strong>{filteredAndSortedEmployees.length}</strong> of{" "}
-            <strong>{employees.length}</strong> employees
-          </p>
-          {filteredAndSortedEmployees.length > 0 && (
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm"
-              onClick={handleSelectAll}
-            >
-              {selectedEmployeeIds.size === filteredAndSortedEmployees.length
-                ? "Deselect All"
-                : "Select All"}
-            </button>
-          )}
-        </div>
-      )}
-
-      {filteredAndSortedEmployees.length > 0 ? (
-        <div className="employees-grid">
-          {filteredAndSortedEmployees.map((employee) => (
-            <EmployeeCard
-              key={employee.id}
-              employee={employee}
-              onEdit={openEditModal}
-              onDelete={openDeleteModal}
-              isSelected={selectedEmployeeIds.has(employee.id)}
-              onToggleSelect={handleToggleSelect}
+            <SortControls
+              sortBy={sortBy}
+              sortOrder={sortOrder}
+              onSortChange={handleSortChange}
             />
-          ))}
-        </div>
-      ) : (
-        <div className="card employees-empty">
-          <Users size={64} className="employees-empty-icon" />
-          <h3 className="employees-empty-title">No employees found</h3>
-          <p className="employees-empty-description">
-            {searchTerm || filters.department || filters.role || filters.status
-              ? `No employees match your search and filter criteria. Try adjusting your filters.`
-              : "No employees in the system yet. Add your first employee to get started."}
-          </p>
-        </div>
-      )}
+          </div>
 
-      {/* Add Employee Modal */}
-      <Suspense fallback={null}>
-        <AddEmployeeModal
-          isOpen={showAddModal}
-          onClose={() => setShowAddModal(false)}
-          onSubmit={handleAddEmployee}
-          isLoading={actionLoading}
-        />
-      </Suspense>
+          {/* Results Count & Select All */}
+          {employees.length > 0 && (
+            <div className="employees-results">
+              <p>
+                Showing <strong>{filteredAndSortedEmployees.length}</strong> of{" "}
+                <strong>{employees.length}</strong> employees
+              </p>
+              {filteredAndSortedEmployees.length > 0 && (
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  onClick={handleSelectAll}
+                >
+                  {selectedEmployeeIds.size === filteredAndSortedEmployees.length
+                    ? "Deselect All"
+                    : "Select All"}
+                </button>
+              )}
+            </div>
+          )}
 
-      {/* Edit Employee Modal */}
-      <Suspense fallback={null}>
-        <EditEmployeeModal
-          isOpen={showEditModal}
-          employee={selectedEmployee}
-          onClose={() => {
-            setShowEditModal(false);
-            setSelectedEmployee(null);
-          }}
-          onSubmit={handleEditEmployee}
-          isLoading={actionLoading}
-        />
-      </Suspense>
+          {filteredAndSortedEmployees.length > 0 ? (
+            <div className="employees-grid">
+              {filteredAndSortedEmployees.map((employee) => (
+                <EmployeeCard
+                  key={employee.id}
+                  employee={employee}
+                  onEdit={openEditModal}
+                  onDelete={openDeleteModal}
+                  isSelected={selectedEmployeeIds.has(employee.id)}
+                  onToggleSelect={handleToggleSelect}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="card employees-empty">
+              <Users size={64} className="employees-empty-icon" />
+              <h3 className="employees-empty-title">No employees found</h3>
+              <p className="employees-empty-description">
+                {searchTerm || filters.department || filters.role || filters.status
+                  ? `No employees match your search and filter criteria. Try adjusting your filters.`
+                  : "No employees in the system yet. Add your first employee to get started."}
+              </p>
+            </div>
+          )}
 
-      {/* Delete Confirmation Modal */}
-      <Suspense fallback={null}>
-        <ConfirmModal
-          isOpen={showDeleteModal}
-          title="Delete Employee"
-          message={`Are you sure you want to delete ${selectedEmployee?.name}? This action cannot be undone.`}
-          confirmText="Delete"
-          cancelText="Cancel"
-          onConfirm={handleDeleteEmployee}
-          onCancel={() => {
-            setShowDeleteModal(false);
-            setSelectedEmployee(null);
-          }}
-          isLoading={actionLoading}
-          type="danger"
-        />
-      </Suspense>
+          {/* Add Employee Modal */}
+          <Suspense fallback={null}>
+            <AddEmployeeModal
+              isOpen={showAddModal}
+              onClose={() => setShowAddModal(false)}
+              onSubmit={handleAddEmployee}
+              isLoading={actionLoading}
+            />
+          </Suspense>
 
-      {/* Bulk Delete Confirmation Modal */}
-      <Suspense fallback={null}>
-        <ConfirmModal
-          isOpen={showBulkDeleteModal}
-          title="Delete Multiple Employees"
-          message={`Are you sure you want to delete ${selectedEmployeeIds.size} employee(s)? This action cannot be undone.`}
-          confirmText="Delete All"
-          cancelText="Cancel"
-          onConfirm={confirmBulkDelete}
-          onCancel={() => setShowBulkDeleteModal(false)}
-          isLoading={actionLoading}
-          type="danger"
-        />
-      </Suspense>
+          {/* Edit Employee Modal */}
+          <Suspense fallback={null}>
+            <EditEmployeeModal
+              isOpen={showEditModal}
+              employee={selectedEmployee}
+              onClose={() => {
+                setShowEditModal(false);
+                setSelectedEmployee(null);
+              }}
+              onSubmit={handleEditEmployee}
+              isLoading={actionLoading}
+            />
+          </Suspense>
 
-      {/* Toast Notifications */}
-      {toast && (
-        <Toast
-          type={toast.type}
-          message={toast.message}
-          onClose={() => setToast(null)}
-        />
+          {/* Delete Confirmation Modal */}
+          <Suspense fallback={null}>
+            <ConfirmModal
+              isOpen={showDeleteModal}
+              title="Delete Employee"
+              message={`Are you sure you want to delete ${selectedEmployee?.name}? This action cannot be undone.`}
+              confirmText="Delete"
+              cancelText="Cancel"
+              onConfirm={handleDeleteEmployee}
+              onCancel={() => {
+                setShowDeleteModal(false);
+                setSelectedEmployee(null);
+              }}
+              isLoading={actionLoading}
+              type="danger"
+            />
+          </Suspense>
+
+          {/* Bulk Delete Confirmation Modal */}
+          <Suspense fallback={null}>
+            <ConfirmModal
+              isOpen={showBulkDeleteModal}
+              title="Delete Multiple Employees"
+              message={`Are you sure you want to delete ${selectedEmployeeIds.size} employee(s)? This action cannot be undone.`}
+              confirmText="Delete All"
+              cancelText="Cancel"
+              onConfirm={confirmBulkDelete}
+              onCancel={() => setShowBulkDeleteModal(false)}
+              isLoading={actionLoading}
+              type="danger"
+            />
+          </Suspense>
+
+          {/* Toast Notifications */}
+          {toast && (
+            <Toast
+              type={toast.type}
+              message={toast.message}
+              onClose={() => setToast(null)}
+            />
+          )}
+        </>
       )}
     </div>
   );
