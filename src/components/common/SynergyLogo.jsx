@@ -1,9 +1,10 @@
+
 import React from "react";
 import PropTypes from "prop-types";
 
 /**
- * Synergy Logo - Custom SVG logo representing synergy and collaboration
- * Features flowing wave lines in purple and blue gradient
+ * Synergy Logo - "The Orbital"
+ * Represents connection, 360-degree management, and dynamic flow.
  */
 const SynergyLogo = ({ size = 32, className = "" }) => {
     return (
@@ -17,72 +18,46 @@ const SynergyLogo = ({ size = 32, className = "" }) => {
             aria-label="Synergy Logo"
         >
             <defs>
-                {/* Gradient for synergy waves */}
-                <linearGradient id="synergyGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#a78bfa" />
-                    <stop offset="50%" stopColor="#818cf8" />
-                    <stop offset="100%" stopColor="#6366f1" />
+                <linearGradient id="synergyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#6366f1" /> {/* Indigo-500 */}
+                    <stop offset="50%" stopColor="#8b5cf6" /> {/* Violet-500 */}
+                    <stop offset="100%" stopColor="#ec4899" /> {/* Pink-500 */}
                 </linearGradient>
-                <linearGradient id="synergyGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#c4b5fd" />
-                    <stop offset="50%" stopColor="#a78bfa" />
-                    <stop offset="100%" stopColor="#8b5cf6" />
-                </linearGradient>
-                <linearGradient id="synergyGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#8b5cf6" />
-                    <stop offset="50%" stopColor="#7c3aed" />
-                    <stop offset="100%" stopColor="#6d28d9" />
-                </linearGradient>
-                {/* Glow filter */}
-                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-                    <feMerge>
-                        <feMergeNode in="coloredBlur" />
-                        <feMergeNode in="SourceGraphic" />
-                    </feMerge>
+                <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="2" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
                 </filter>
             </defs>
 
-            {/* Synergy wave 1 - top */}
+            {/* Orbit Ring 1 (Top-Right to Bottom-Left) */}
             <path
-                d="M8 20 Q16 12, 26 18 T44 14 T58 22"
-                stroke="url(#synergyGradient1)"
-                strokeWidth="4"
-                strokeLinecap="round"
-                fill="none"
-                filter="url(#glow)"
-                opacity="0.9"
-            />
-
-            {/* Synergy wave 2 - middle */}
-            <path
-                d="M6 32 Q18 24, 32 32 T52 28 T60 36"
-                stroke="url(#synergyGradient2)"
+                d="M32 8 C 45.25 8, 56 18.75, 56 32 C 56 45.25, 45.25 56, 32 56"
+                stroke="url(#synergyGradient)"
                 strokeWidth="5"
                 strokeLinecap="round"
                 fill="none"
-                filter="url(#glow)"
+                filter="url(#softGlow)"
             />
 
-            {/* Synergy wave 3 - bottom */}
+            {/* Orbit Ring 2 (Bottom-Left to Top-Right - Offset) */}
             <path
-                d="M10 44 Q22 38, 36 46 T56 42"
-                stroke="url(#synergyGradient3)"
-                strokeWidth="4"
+                d="M32 56 C 18.75 56, 8 45.25, 8 32 C 8 18.75, 18.75 8, 32 8"
+                stroke="url(#synergyGradient)"
+                strokeWidth="5"
                 strokeLinecap="round"
                 fill="none"
-                filter="url(#glow)"
-                opacity="0.85"
+                strokeOpacity="0.6"
             />
 
-            {/* Small accent dot - star */}
-            <circle
-                cx="52"
-                cy="16"
-                r="2"
-                fill="#c4b5fd"
-                filter="url(#glow)"
+            {/* Central Connector (The "S" Energy) */}
+            <path
+                d="M24 32 L40 32"
+                stroke="url(#synergyGradient)"
+                strokeWidth="4"
+                strokeLinecap="round"
             />
+            <circle cx="32" cy="32" r="6" fill="url(#synergyGradient)" />
+            <circle cx="32" cy="32" r="2" fill="white" />
         </svg>
     );
 };

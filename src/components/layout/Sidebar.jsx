@@ -192,14 +192,14 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
           className={`sidebar ${isMobileMenuOpen ? "mobile-open" : ""} ${isCollapsed ? "collapsed" : ""}`}
         >
           <div className="sidebar-header">
-            <div className={`brand-logo ${isCollapsed ? 'short' : ''}`}>
+            <Link to="/dashboard" className={`brand-logo ${isCollapsed ? 'short' : ''}`}>
               <SynergyLogo size={isCollapsed ? 24 : 32} />
               {!isCollapsed && (
                 <h1 className="brand-name">
                   Synergy<span className="brand-dot">.</span>
                 </h1>
               )}
-            </div>
+            </Link>
           </div>
 
 
