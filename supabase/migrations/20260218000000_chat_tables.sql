@@ -1,5 +1,5 @@
 -- ============================================
--- AURORA EMS - TEAM CHAT TABLES
+-- SYNERGY EMS - TEAM CHAT TABLES
 -- Migration: 20260218000000_chat_tables.sql
 -- ============================================
 

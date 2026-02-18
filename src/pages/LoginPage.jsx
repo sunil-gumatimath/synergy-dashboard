@@ -10,7 +10,7 @@ import {
   X,
   Mail,
 } from "lucide-react";
-import AuroraLogo from "../components/common/AuroraLogo";
+import SynergyLogo from "../components/common/SynergyLogo";
 import "../index.css";
 import "./login-styles.css";
 
@@ -38,7 +38,7 @@ const LoginPage = () => {
 
   // Load remembered email on mount
   useEffect(() => {
-    const rememberedEmail = localStorage.getItem("aurora_remembered_email");
+    const rememberedEmail = localStorage.getItem("synergy_remembered_email");
     if (rememberedEmail) {
       setFormData((prev) => ({ ...prev, email: rememberedEmail }));
       setRememberMe(true);
@@ -55,7 +55,7 @@ const LoginPage = () => {
   const handleRememberMeChange = (e) => {
     setRememberMe(e.target.checked);
     if (!e.target.checked) {
-      localStorage.removeItem("aurora_remembered_email");
+      localStorage.removeItem("synergy_remembered_email");
     }
   };
 
@@ -105,9 +105,9 @@ const LoginPage = () => {
       if (isLogin) {
         // Handle Remember Me
         if (rememberMe) {
-          localStorage.setItem("aurora_remembered_email", formData.email);
+          localStorage.setItem("synergy_remembered_email", formData.email);
         } else {
-          localStorage.removeItem("aurora_remembered_email");
+          localStorage.removeItem("synergy_remembered_email");
         }
 
         const { error: signInError } = await signIn(
@@ -297,9 +297,9 @@ const LoginPage = () => {
         {/* Logo and Title */}
         <div className="login-header">
           <div className="logo-wrapper">
-            <AuroraLogo size={40} className="logo-icon" />
+            <SynergyLogo size={40} className="logo-icon" />
           </div>
-          <h1 className="app-title">Aurora</h1>
+          <h1 className="app-title">Synergy</h1>
         </div>
 
         {/* Form Card */}
@@ -503,7 +503,7 @@ const LoginPage = () => {
 
         {/* Footer */}
         <p className="auth-footer">
-          © 2025 Aurora. Secure employee management.
+          © {new Date().getFullYear()} Synergy. Secure employee management.
         </p>
       </div>
     </div>

@@ -1,5 +1,5 @@
 # ===================================================
-# Aurora Employee Management System - Dockerfile
+# Synergy Employee Management System - Dockerfile
 # Multi-stage build using Bun for optimized production
 # ===================================================
 

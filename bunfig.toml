@@ -1,4 +1,4 @@
-# Bun configuration for Aurora EMS
+# Bun configuration for Synergy EMS
 # This project uses Bun exclusively — do not use npm, yarn, or pnpm
 
 [install]

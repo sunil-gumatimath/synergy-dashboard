@@ -438,7 +438,7 @@ export const printReport = (elementId) => {
     printWindow.document.write(`
     <html>
       <head>
-        <title>Aurora EMS - Report</title>
+        <title>Synergy EMS - Report</title>
         <style>
           body { 
             font-family: 'Inter', system-ui, sans-serif; 
@@ -481,7 +481,7 @@ export const printReport = (elementId) => {
       </head>
       <body>
         <div class="report-header">
-          <h1>Aurora EMS</h1>
+          <h1>Synergy EMS</h1>
           <p>Generated on ${new Date().toLocaleDateString()}</p>
         </div>
         ${printContent.innerHTML}

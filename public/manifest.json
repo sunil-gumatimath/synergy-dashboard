@@ -1,6 +1,6 @@
 {
-    "name": "Aurora - Employee Management",
-    "short_name": "Aurora",
+    "name": "Synergy - Employee Management",
+    "short_name": "Synergy",
     "description": "Modern employee management system with HR features, time tracking, and team collaboration",
     "start_url": "/",
     "display": "standalone",
@@ -10,7 +10,7 @@
     "scope": "/",
     "icons": [
         {
-            "src": "/aurora.svg",
+            "src": "/synergy.svg",
             "sizes": "any",
             "type": "image/svg+xml",
             "purpose": "any"
@@ -71,7 +71,7 @@
             "url": "/dashboard",
             "icons": [
                 {
-                    "src": "/aurora.svg",
+                    "src": "/synergy.svg",
                     "sizes": "96x96"
                 }
             ]
@@ -83,7 +83,7 @@
             "url": "/tasks",
             "icons": [
                 {
-                    "src": "/aurora.svg",
+                    "src": "/synergy.svg",
                     "sizes": "96x96"
                 }
             ]
@@ -95,7 +95,7 @@
             "url": "/leave",
             "icons": [
                 {
-                    "src": "/aurora.svg",
+                    "src": "/synergy.svg",
                     "sizes": "96x96"
                 }
             ]

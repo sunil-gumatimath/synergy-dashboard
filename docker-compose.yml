@@ -1,17 +1,17 @@
 # ===================================================
-# Aurora Employee Management System - Docker Compose
+# Synergy Employee Management System - Docker Compose
 # ===================================================
 
 services:
-  aurora-app:
+  synergy-app:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         VITE_SUPABASE_URL: ${VITE_SUPABASE_URL}
         VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY}
-    image: aurora-employee-management:latest
-    container_name: aurora-employee-management
+    image: synergy-employee-management:latest
+    container_name: synergy-employee-management
     ports:
       - "8080:80"
     restart: unless-stopped

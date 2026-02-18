@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 
 import { useAuth } from "../../contexts/AuthContext";
-
+import SynergyLogo from "../common/SynergyLogo";
 import { useNotifications } from "../../contexts/NotificationContext";
 
 const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
@@ -192,10 +192,14 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
           className={`sidebar ${isMobileMenuOpen ? "mobile-open" : ""} ${isCollapsed ? "collapsed" : ""}`}
         >
           <div className="sidebar-header">
-            <h1 className={`brand-name ${isCollapsed ? 'short' : ''}`}>
-              {isCollapsed ? "A" : "Aurora"}
-              <span className="brand-dot">.</span>
-            </h1>
+            <div className={`brand-logo ${isCollapsed ? 'short' : ''}`}>
+              <SynergyLogo size={isCollapsed ? 24 : 32} />
+              {!isCollapsed && (
+                <h1 className="brand-name">
+                  Synergy<span className="brand-dot">.</span>
+                </h1>
+              )}
+            </div>
           </div>
 
 

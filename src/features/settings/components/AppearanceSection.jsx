@@ -32,7 +32,7 @@ const AppearanceSection = ({ settings, isSaving, onUpdateSetting }) => {
                 </div>
                 <div>
                     <h2 className="settings-panel-title">Appearance</h2>
-                    <p className="settings-panel-description">Customize how Aurora looks on your device</p>
+                    <p className="settings-panel-description">Customize how Synergy looks on your device</p>
                 </div>
             </div>
 

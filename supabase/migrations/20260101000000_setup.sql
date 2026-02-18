@@ -1,5 +1,5 @@
 -- ============================================
--- AURORA EMS - COMPLETE DATABASE SETUP
+-- SYNERGY EMS - COMPLETE DATABASE SETUP
 -- Version: 7.0 | All Features + Complete Seed Data
 -- ============================================
 
@@ -535,15 +535,15 @@ INSERT INTO public.holidays (name, date, description, is_recurring) VALUES
 -- ============================================
 INSERT INTO public.employees (name, email, department, role, status, phone, location, join_date, salary, performance_score, gender, employment_type, manager) VALUES
     ('Sunil Gumatimath', 'admin@gmail.com', 'IT', 'Admin', 'Active', '+91 98765 43210', 'Bengaluru', '2022-01-15', 180000, 4.9, 'male', 'Full-time', NULL),
-    ('Priya Sharma', 'priya.sharma@aurora.com', 'Human Resources', 'Manager', 'Active', '+91 98765 11111', 'Mumbai', '2022-03-10', 140000, 4.7, 'female', 'Full-time', 'Sunil Gumatimath'),
-    ('Rajesh Kumar', 'rajesh.kumar@aurora.com', 'Engineering', 'Manager', 'Active', '+91 98765 22222', 'Delhi', '2022-02-20', 155000, 4.6, 'male', 'Full-time', 'Sunil Gumatimath'),
-    ('Ananya Iyer', 'ananya.iyer@aurora.com', 'Design', 'Manager', 'Active', '+91 98765 33333', 'Chennai', '2022-04-05', 135000, 4.8, 'female', 'Full-time', 'Sunil Gumatimath'),
-    ('Vikram Reddy', 'vikram.reddy@aurora.com', 'Engineering', 'Employee', 'Active', '+91 98765 44444', 'Hyderabad', '2023-01-10', 95000, 4.3, 'male', 'Full-time', 'Rajesh Kumar'),
-    ('Sneha Patel', 'sneha.patel@aurora.com', 'Marketing', 'Employee', 'Active', '+91 98765 55555', 'Ahmedabad', '2023-02-15', 72000, 4.1, 'female', 'Full-time', 'Priya Sharma'),
-    ('Arjun Nair', 'arjun.nair@aurora.com', 'Engineering', 'Employee', 'Active', '+91 98765 66666', 'Kochi', '2023-03-20', 98000, 4.4, 'male', 'Full-time', 'Rajesh Kumar'),
-    ('Kavitha Menon', 'kavitha.menon@aurora.com', 'Engineering', 'Employee', 'Active', '+91 98765 77777', 'Trivandrum', '2023-05-10', 88000, 4.0, 'female', 'Full-time', 'Rajesh Kumar'),
-    ('Rohit Verma', 'rohit.verma@aurora.com', 'Design', 'Employee', 'Active', '+91 98765 88888', 'Pune', '2023-04-01', 82000, 4.2, 'male', 'Full-time', 'Ananya Iyer'),
-    ('Meera Krishnan', 'meera.krishnan@aurora.com', 'Design', 'Employee', 'Active', '+91 98765 99999', 'Bengaluru', '2023-06-15', 78000, 4.5, 'female', 'Full-time', 'Ananya Iyer');
+    ('Priya Sharma', 'priya.sharma@synergy.com', 'Human Resources', 'Manager', 'Active', '+91 98765 11111', 'Mumbai', '2022-03-10', 140000, 4.7, 'female', 'Full-time', 'Sunil Gumatimath'),
+    ('Rajesh Kumar', 'rajesh.kumar@synergy.com', 'Engineering', 'Manager', 'Active', '+91 98765 22222', 'Delhi', '2022-02-20', 155000, 4.6, 'male', 'Full-time', 'Sunil Gumatimath'),
+    ('Ananya Iyer', 'ananya.iyer@synergy.com', 'Design', 'Manager', 'Active', '+91 98765 33333', 'Chennai', '2022-04-05', 135000, 4.8, 'female', 'Full-time', 'Sunil Gumatimath'),
+    ('Vikram Reddy', 'vikram.reddy@synergy.com', 'Engineering', 'Employee', 'Active', '+91 98765 44444', 'Hyderabad', '2023-01-10', 95000, 4.3, 'male', 'Full-time', 'Rajesh Kumar'),
+    ('Sneha Patel', 'sneha.patel@synergy.com', 'Marketing', 'Employee', 'Active', '+91 98765 55555', 'Ahmedabad', '2023-02-15', 72000, 4.1, 'female', 'Full-time', 'Priya Sharma'),
+    ('Arjun Nair', 'arjun.nair@synergy.com', 'Engineering', 'Employee', 'Active', '+91 98765 66666', 'Kochi', '2023-03-20', 98000, 4.4, 'male', 'Full-time', 'Rajesh Kumar'),
+    ('Kavitha Menon', 'kavitha.menon@synergy.com', 'Engineering', 'Employee', 'Active', '+91 98765 77777', 'Trivandrum', '2023-05-10', 88000, 4.0, 'female', 'Full-time', 'Rajesh Kumar'),
+    ('Rohit Verma', 'rohit.verma@synergy.com', 'Design', 'Employee', 'Active', '+91 98765 88888', 'Pune', '2023-04-01', 82000, 4.2, 'male', 'Full-time', 'Ananya Iyer'),
+    ('Meera Krishnan', 'meera.krishnan@synergy.com', 'Design', 'Employee', 'Active', '+91 98765 99999', 'Bengaluru', '2023-06-15', 78000, 4.5, 'female', 'Full-time', 'Ananya Iyer');
 
 -- ============================================
 -- SEED DATA - TASKS
@@ -587,7 +587,7 @@ INSERT INTO public.trainings (title, description, category, instructor, duration
 -- SEED DATA - ANNOUNCEMENTS
 -- ============================================
 INSERT INTO public.announcements (title, content, type, priority, is_pinned, published_at, expires_at) VALUES
-    ('Welcome to Aurora EMS', 'Aurora EMS 2.0 launched with new features!', 'general', 'high', TRUE, NOW(), NOW() + INTERVAL '30 days'),
+    ('Welcome to Synergy EMS', 'Synergy EMS 2.0 launched with new features!', 'general', 'high', TRUE, NOW(), NOW() + INTERVAL '30 days'),
     ('Holiday Schedule 2025', 'Check the updated holiday schedule', 'info', 'normal', FALSE, NOW(), NOW() + INTERVAL '365 days'),
     ('Performance Reviews', 'Annual reviews Dec 15-31', 'important', 'high', TRUE, NOW(), NOW() + INTERVAL '45 days');
 
@@ -757,7 +757,7 @@ SELECT
     e.id,
     doc_name,
     doc_type,
-    'https://storage.aurora-ems.com/documents/' || e.id || '/' || LOWER(REPLACE(doc_name, ' ', '_')) || '.pdf',
+    'https://storage.synergy-ems.com/documents/' || e.id || '/' || LOWER(REPLACE(doc_name, ' ', '_')) || '.pdf',
     (50000 + RANDOM() * 500000)::INTEGER
 FROM public.employees e
 CROSS JOIN (VALUES 
@@ -878,7 +878,7 @@ SELECT
         ELSE 0
     END,
     CASE WHEN RANDOM() > 0.7 THEN NOW() - (RANDOM() * 30)::INTEGER * INTERVAL '1 day' ELSE NULL END,
-    CASE WHEN RANDOM() > 0.7 THEN 'https://certificates.aurora-ems.com/' || e.id || '/' || t.id || '.pdf' ELSE NULL END
+    CASE WHEN RANDOM() > 0.7 THEN 'https://certificates.synergy-ems.com/' || e.id || '/' || t.id || '.pdf' ELSE NULL END
 FROM public.trainings t
 CROSS JOIN public.employees e
 WHERE RANDOM() < 0.4

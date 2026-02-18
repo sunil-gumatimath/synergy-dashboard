@@ -1,10 +1,10 @@
-// Aurora PWA Service Worker
+// Synergy PWA Service Worker
 /* global clients */
-const CACHE_NAME = 'aurora-v1';
+const CACHE_NAME = 'synergy-v1';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
-    '/aurora.svg',
+    '/synergy.svg',
     '/manifest.json'
 ];
 
@@ -90,15 +90,15 @@ self.addEventListener('push', (event) => {
     const data = event.data.json();
     const options = {
         body: data.body,
-        icon: '/aurora.svg',
-        badge: '/aurora.svg',
+        icon: '/synergy.svg',
+        badge: '/synergy.svg',
         vibrate: [100, 50, 100],
         data: { url: data.url || '/' },
         actions: data.actions || []
     };
 
     event.waitUntil(
-        self.registration.showNotification(data.title || 'Aurora', options)
+        self.registration.showNotification(data.title || 'Synergy', options)
     );
 });
 
@@ -121,4 +121,4 @@ self.addEventListener('notificationclick', (event) => {
     );
 });
 
-console.log('[SW] Aurora Service Worker loaded');
+console.log('[SW] Synergy Service Worker loaded');

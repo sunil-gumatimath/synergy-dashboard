@@ -1,4 +1,4 @@
-# Aurora EMS
+# Synergy EMS
 
 A comprehensive **Employee Management System** built with modern web technologies. Streamline HR operations, workforce management, and organizational productivity with an intuitive, feature-rich dashboard.
 
@@ -170,12 +170,12 @@ A comprehensive **Employee Management System** built with modern web technologie
 ## Project Structure
 
 ```
-aurora-ems/
+synergy-ems/
 ├── database/                    # SQL schema and migrations
-│   ├── aurora_ems_complete.sql  # Complete database setup with seed data
+│   ├── synergy_ems_complete.sql  # Complete database setup with seed data
 │   └── update_user_roles.sql    # User role management scripts
 ├── public/                      # Static assets
-│   ├── aurora.svg              # Application logo
+│   ├── synergy.svg              # Application logo
 │   ├── staffly.svg             # Alternative logo
 │   ├── manifest.json           # PWA manifest
 │   ├── sw.js                   # Service worker
@@ -189,7 +189,7 @@ aurora-ems/
 │   │   │   ├── ProtectedRoute.jsx    # Authenticated route wrapper
 │   │   │   ├── Skeleton.jsx          # Skeleton loading states
 │   │   │   ├── Toast.jsx             # Toast notifications
-│   │   │   └── AuroraLogo.jsx        # Logo component
+│   │   │   └── SynergyLogo.jsx        # Logo component
 │   │   ├── layout/             # Layout components
 │   │   │   ├── Header.jsx            # Application header
 │   │   │   └── Sidebar.jsx           # Navigation sidebar
@@ -448,7 +448,7 @@ npm install
 ### 2. Database Setup
 
 1. Create a new project at Supabase
-2. Go to SQL Editor and run `database/aurora_ems_complete.sql`
+2. Go to SQL Editor and run `database/synergy_ems_complete.sql`
 3. This creates 26 tables with complete seed data including:
    - 10 sample employees (Admin, Managers, Employees)
    - 8 leave types with balances
@@ -503,15 +503,15 @@ Access at `http://localhost:8080`
 
 ```bash
 # Build image (multi-stage with Bun)
-docker build -t aurora-ems .
+docker build -t synergy-ems .
 
 # Run container
 docker run -d \
   -p 8080:80 \
   -e VITE_SUPABASE_URL=your_url \
   -e VITE_SUPABASE_ANON_KEY=your_key \
-  --name aurora-ems \
-  aurora-ems
+  --name synergy-ems \
+  synergy-ems
 ```
 
 ## Default Login Credentials
@@ -522,8 +522,8 @@ docker run -d \
 - Password: `Admin@123`
 
 **Demo Employees:** Various roles available in seed data
-- Managers: priya.sharma@aurora.com, rajesh.kumar@aurora.com
-- Employees: vikram.reddy@aurora.com, and more
+- Managers: priya.sharma@synergy.com, rajesh.kumar@synergy.com
+- Employees: vikram.reddy@synergy.com, and more
 
 ## Performance Optimizations
 
@@ -603,4 +603,4 @@ docker run -d \
 
 ## License
 
-This project is proprietary software. All rights reserved.
+This project is proprietary software. All rights reserved. © Synergy EMS.

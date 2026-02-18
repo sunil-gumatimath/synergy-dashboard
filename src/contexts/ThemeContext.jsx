@@ -26,11 +26,11 @@ export const ThemeProvider = ({ children }) => {
     };
 
     // Load saved preferences on mount
-     
+
     useEffect(() => {
-        const savedTheme = localStorage.getItem("aurora_theme") || "system";
-        const savedAccent = localStorage.getItem("aurora_accent_color") || "indigo";
-        const savedCompact = localStorage.getItem("aurora_compact_mode") === "true";
+        const savedTheme = localStorage.getItem("synergy_theme") || "system";
+        const savedAccent = localStorage.getItem("synergy_accent_color") || "indigo";
+        const savedCompact = localStorage.getItem("synergy_compact_mode") === "true";
 
         setTheme(savedTheme);
         setAccentColor(savedAccent);
@@ -99,14 +99,14 @@ export const ThemeProvider = ({ children }) => {
     // Update theme
     const updateTheme = useCallback((newTheme) => {
         setTheme(newTheme);
-        localStorage.setItem("aurora_theme", newTheme);
+        localStorage.setItem("synergy_theme", newTheme);
     }, []);
 
     // Update accent color
     const updateAccentColor = useCallback((newColor) => {
         if (accentColors[newColor]) {
             setAccentColor(newColor);
-            localStorage.setItem("aurora_accent_color", newColor);
+            localStorage.setItem("synergy_accent_color", newColor);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -114,22 +114,22 @@ export const ThemeProvider = ({ children }) => {
     // Update compact mode
     const updateCompactMode = useCallback((enabled) => {
         setCompactMode(enabled);
-        localStorage.setItem("aurora_compact_mode", enabled.toString());
+        localStorage.setItem("synergy_compact_mode", enabled.toString());
     }, []);
 
     // Sync settings from database (called after user settings are loaded)
     const syncFromDatabase = useCallback((settings) => {
         if (settings.theme) {
             setTheme(settings.theme);
-            localStorage.setItem("aurora_theme", settings.theme);
+            localStorage.setItem("synergy_theme", settings.theme);
         }
         if (settings.accentColor) {
             setAccentColor(settings.accentColor);
-            localStorage.setItem("aurora_accent_color", settings.accentColor);
+            localStorage.setItem("synergy_accent_color", settings.accentColor);
         }
         if (settings.compactMode !== undefined) {
             setCompactMode(settings.compactMode);
-            localStorage.setItem("aurora_compact_mode", settings.compactMode.toString());
+            localStorage.setItem("synergy_compact_mode", settings.compactMode.toString());
         }
     }, []);
 

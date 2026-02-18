@@ -2,10 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 
 /**
- * Aurora Logo - Custom SVG logo representing aurora borealis / northern lights
+ * Synergy Logo - Custom SVG logo representing synergy and collaboration
  * Features flowing wave lines in purple and blue gradient
  */
-const AuroraLogo = ({ size = 32, className = "" }) => {
+const SynergyLogo = ({ size = 32, className = "" }) => {
     return (
         <svg
             width={size}
@@ -14,21 +14,21 @@ const AuroraLogo = ({ size = 32, className = "" }) => {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
-            aria-label="Aurora Logo"
+            aria-label="Synergy Logo"
         >
             <defs>
-                {/* Gradient for aurora waves */}
-                <linearGradient id="auroraGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                {/* Gradient for synergy waves */}
+                <linearGradient id="synergyGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#a78bfa" />
                     <stop offset="50%" stopColor="#818cf8" />
                     <stop offset="100%" stopColor="#6366f1" />
                 </linearGradient>
-                <linearGradient id="auroraGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="synergyGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#c4b5fd" />
                     <stop offset="50%" stopColor="#a78bfa" />
                     <stop offset="100%" stopColor="#8b5cf6" />
                 </linearGradient>
-                <linearGradient id="auroraGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <linearGradient id="synergyGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#8b5cf6" />
                     <stop offset="50%" stopColor="#7c3aed" />
                     <stop offset="100%" stopColor="#6d28d9" />
@@ -43,10 +43,10 @@ const AuroraLogo = ({ size = 32, className = "" }) => {
                 </filter>
             </defs>
 
-            {/* Aurora wave 1 - top */}
+            {/* Synergy wave 1 - top */}
             <path
                 d="M8 20 Q16 12, 26 18 T44 14 T58 22"
-                stroke="url(#auroraGradient1)"
+                stroke="url(#synergyGradient1)"
                 strokeWidth="4"
                 strokeLinecap="round"
                 fill="none"
@@ -54,20 +54,20 @@ const AuroraLogo = ({ size = 32, className = "" }) => {
                 opacity="0.9"
             />
 
-            {/* Aurora wave 2 - middle */}
+            {/* Synergy wave 2 - middle */}
             <path
                 d="M6 32 Q18 24, 32 32 T52 28 T60 36"
-                stroke="url(#auroraGradient2)"
+                stroke="url(#synergyGradient2)"
                 strokeWidth="5"
                 strokeLinecap="round"
                 fill="none"
                 filter="url(#glow)"
             />
 
-            {/* Aurora wave 3 - bottom */}
+            {/* Synergy wave 3 - bottom */}
             <path
                 d="M10 44 Q22 38, 36 46 T56 42"
-                stroke="url(#auroraGradient3)"
+                stroke="url(#synergyGradient3)"
                 strokeWidth="4"
                 strokeLinecap="round"
                 fill="none"
@@ -87,9 +87,9 @@ const AuroraLogo = ({ size = 32, className = "" }) => {
     );
 };
 
-AuroraLogo.propTypes = {
+SynergyLogo.propTypes = {
     size: PropTypes.number,
     className: PropTypes.string,
 };
 
-export default AuroraLogo;
+export default SynergyLogo;
