@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     MessageCircle,
     Send,
@@ -11,23 +11,17 @@ import {
     Video,
     Paperclip,
     Smile,
-    Image as ImageIcon,
     Check,
     CheckCheck,
-    Circle,
     X,
     Hash,
     ChevronLeft,
     Loader2,
-    Edit2,
-    Trash2,
-    Reply,
-    Star,
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { chatService } from "../../services/chatService";
-import { format, isToday, isYesterday, formatDistanceToNow } from "date-fns";
+import { format, isToday, isYesterday } from "date-fns";
 import "./team-chat.css";
 
 /**
@@ -36,6 +30,10 @@ import "./team-chat.css";
 const TeamChat = () => {
     const { user } = useAuth();
     const toast = useToast();
+
+    // Use employeeId for all chat operations (employees table PK)
+    // user.employeeId is set by AuthContext when merging auth user with employee record
+    const employeeId = user?.employeeId;
 
     // State
     const [conversations, setConversations] = useState([]);
@@ -47,8 +45,8 @@ const TeamChat = () => {
     const [isSending, setIsSending] = useState(false);
     const [showNewChatModal, setShowNewChatModal] = useState(false);
     const [showMobileConversations, setShowMobileConversations] = useState(true);
-    const [onlineUsers, setOnlineUsers] = useState({});
-    const [typingUsers, setTypingUsers] = useState([]);
+    const [onlineUsers] = useState({});
+    const [typingUsers] = useState([]);
 
     const messagesEndRef = useRef(null);
     const messageInputRef = useRef(null);
@@ -56,11 +54,14 @@ const TeamChat = () => {
     // Load conversations
     useEffect(() => {
         const loadConversations = async () => {
-            if (!user?.id) return;
+            if (!employeeId) {
+                setIsLoading(false);
+                return;
+            }
 
             setIsLoading(true);
             try {
-                const { data, error } = await chatService.getConversations(user.id);
+                const { data, error } = await chatService.getConversations(employeeId);
                 if (error) throw error;
                 setConversations(data || []);
             } catch (err) {
@@ -72,7 +73,7 @@ const TeamChat = () => {
         };
 
         loadConversations();
-    }, [user?.id, toast]);
+    }, [employeeId, toast]);
 
     // Load messages when conversation changes
     useEffect(() => {
@@ -85,7 +86,9 @@ const TeamChat = () => {
                 setMessages(data || []);
 
                 // Mark as read
-                await chatService.markAsRead(activeConversation.id, user.id);
+                if (employeeId) {
+                    await chatService.markAsRead(activeConversation.id, employeeId);
+                }
             } catch (err) {
                 console.error("Failed to load messages:", err);
                 toast.error("Failed to load messages");
@@ -93,7 +96,7 @@ const TeamChat = () => {
         };
 
         loadMessages();
-    }, [activeConversation?.id, user?.id, toast]);
+    }, [activeConversation?.id, employeeId, toast]);
 
     // Scroll to bottom on new messages
     useEffect(() => {
@@ -107,7 +110,12 @@ const TeamChat = () => {
         const subscription = chatService.subscribeToMessages(
             activeConversation.id,
             (newMsg) => {
-                setMessages((prev) => [...prev, newMsg.new]);
+                // Avoid duplicate if we already added it optimistically
+                setMessages((prev) => {
+                    const exists = prev.some(m => m.id === newMsg.id);
+                    if (exists) return prev;
+                    return [...prev, newMsg];
+                });
             }
         );
 
@@ -143,35 +151,55 @@ const TeamChat = () => {
     const handleSendMessage = async (e) => {
         e?.preventDefault();
 
-        if (!newMessage.trim() || !activeConversation?.id || isSending) return;
+        if (!newMessage.trim() || !activeConversation?.id || isSending || !employeeId) return;
 
         setIsSending(true);
         const messageContent = newMessage.trim();
         setNewMessage("");
 
+        // Optimistically add message immediately
+        const optimisticMsg = {
+            id: `optimistic-${Date.now()}`,
+            content: messageContent,
+            sender_id: employeeId,
+            sender: { name: user?.name, avatar: user?.avatar },
+            created_at: new Date().toISOString(),
+            read_by: [],
+        };
+        setMessages((prev) => [...prev, optimisticMsg]);
+
         try {
             const { data, error } = await chatService.sendMessage({
                 conversationId: activeConversation.id,
-                senderId: user.id,
+                senderId: employeeId,
                 content: messageContent,
                 type: "text",
             });
 
             if (error) throw error;
 
-            // Optimistically add message
-            setMessages((prev) => [...prev, {
-                id: data?.id || Date.now(),
-                content: messageContent,
-                sender_id: user.id,
-                sender: { name: user.name, avatar: user.avatar },
-                created_at: new Date().toISOString(),
-                read: false,
-            }]);
+            // Replace optimistic message with real one
+            if (data) {
+                setMessages((prev) =>
+                    prev.map(m => m.id === optimisticMsg.id ? {
+                        ...data,
+                        sender: data.sender || { name: user?.name, avatar: user?.avatar },
+                    } : m)
+                );
+            }
+
+            // Update conversation list with latest message
+            setConversations(prev => prev.map(c =>
+                c.id === activeConversation.id
+                    ? { ...c, last_message: messageContent, last_message_at: new Date().toISOString() }
+                    : c
+            ));
 
         } catch (err) {
             console.error("Failed to send message:", err);
             toast.error("Failed to send message");
+            // Remove optimistic message on error
+            setMessages((prev) => prev.filter(m => m.id !== optimisticMsg.id));
             setNewMessage(messageContent); // Restore message on error
         } finally {
             setIsSending(false);
@@ -189,14 +217,14 @@ const TeamChat = () => {
         if (!searchQuery) return true;
         const name = conv.is_group
             ? conv.name
-            : conv.participants?.find(p => p.user_id !== user?.id)?.name || "";
+            : conv.participants?.find(p => p.user_id !== employeeId)?.name || "";
         return name.toLowerCase().includes(searchQuery.toLowerCase());
     });
 
     // Get conversation display name
     const getConversationName = (conv) => {
         if (conv.is_group) return conv.name;
-        const otherParticipant = conv.participants?.find(p => p.user_id !== user?.id);
+        const otherParticipant = conv.participants?.find(p => p.user_id !== employeeId);
         return otherParticipant?.name || "Unknown";
     };
 
@@ -205,7 +233,7 @@ const TeamChat = () => {
         if (conv.is_group) {
             return `https://api.dicebear.com/9.x/shapes/svg?seed=${conv.name}`;
         }
-        const otherParticipant = conv.participants?.find(p => p.user_id !== user?.id);
+        const otherParticipant = conv.participants?.find(p => p.user_id !== employeeId);
         return otherParticipant?.avatar ||
             `https://api.dicebear.com/9.x/initials/svg?seed=${otherParticipant?.name || 'U'}`;
     };
@@ -251,11 +279,11 @@ const TeamChat = () => {
     };
 
     // Render message
-    const renderMessage = (msg, index, messages) => {
-        const isOwn = msg.sender_id === user?.id;
-        const showAvatar = index === 0 || messages[index - 1]?.sender_id !== msg.sender_id;
+    const renderMessage = (msg, index, allMessages) => {
+        const isOwn = msg.sender_id === employeeId;
+        const showAvatar = index === 0 || allMessages[index - 1]?.sender_id !== msg.sender_id;
         const showTimestamp = index === 0 ||
-            new Date(msg.created_at) - new Date(messages[index - 1]?.created_at) > 300000; // 5 minutes
+            new Date(msg.created_at) - new Date(allMessages[index - 1]?.created_at) > 300000; // 5 minutes
 
         return (
             <div
@@ -284,7 +312,7 @@ const TeamChat = () => {
                         </div>
                         {isOwn && (
                             <span className="chat-message-status">
-                                {msg.read ? <CheckCheck size={14} /> : <Check size={14} />}
+                                {msg.read_by?.length > 0 ? <CheckCheck size={14} /> : <Check size={14} />}
                             </span>
                         )}
                     </div>
@@ -292,6 +320,18 @@ const TeamChat = () => {
             </div>
         );
     };
+
+    // No employee ID — show error state
+    if (!employeeId && !isLoading) {
+        return (
+            <div className="chat-container">
+                <div className="chat-loading">
+                    <MessageCircle size={40} />
+                    <span>Unable to load chat. Please refresh the page.</span>
+                </div>
+            </div>
+        );
+    }
 
     // Loading state
     if (isLoading) {
@@ -476,12 +516,18 @@ const TeamChat = () => {
                 <NewChatModal
                     onClose={() => setShowNewChatModal(false)}
                     onCreateConversation={(conv) => {
-                        setConversations((prev) => [conv, ...prev]);
+                        setConversations((prev) => {
+                            // Avoid duplicates
+                            const exists = prev.some(c => c.id === conv.id);
+                            if (exists) return prev;
+                            return [conv, ...prev];
+                        });
                         setActiveConversation(conv);
+                        setShowMobileConversations(false);
                         setShowNewChatModal(false);
                         toast.success("Conversation created!");
                     }}
-                    currentUserId={user?.id}
+                    currentEmployeeId={employeeId}
                 />
             )}
         </div>
@@ -491,35 +537,33 @@ const TeamChat = () => {
 /**
  * NewChatModal - Modal for creating new conversations
  */
-const NewChatModal = ({ onClose, onCreateConversation, currentUserId }) => {
+const NewChatModal = ({ onClose, onCreateConversation, currentEmployeeId }) => {
     const [searchQuery, setSearchQuery] = useState("");
     const [employees, setEmployees] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [isGroup, setIsGroup] = useState(false);
     const [groupName, setGroupName] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    const [isCreating, setIsCreating] = useState(false);
     const toast = useToast();
 
-    // Load employees
+    // Load employees from the employees table
     useEffect(() => {
         const loadEmployees = async () => {
             try {
-                const { data } = await chatService.getOnlineStatus([]);
-                // For demo, use mock data if no employees
-                setEmployees(data?.users || [
-                    { id: "1", name: "John Doe", avatar: null, department: "Engineering" },
-                    { id: "2", name: "Jane Smith", avatar: null, department: "Design" },
-                    { id: "3", name: "Mike Johnson", avatar: null, department: "Marketing" },
-                ]);
+                const { data, error } = await chatService.getEmployees();
+                if (error) throw error;
+                setEmployees(data || []);
             } catch (err) {
                 console.error("Failed to load employees:", err);
+                toast.error("Failed to load employees");
             } finally {
                 setIsLoading(false);
             }
         };
 
         loadEmployees();
-    }, []);
+    }, [toast]);
 
     const handleCreateConversation = async () => {
         if (selectedUsers.length === 0) {
@@ -532,6 +576,7 @@ const NewChatModal = ({ onClose, onCreateConversation, currentUserId }) => {
             return;
         }
 
+        setIsCreating(true);
         try {
             let result;
             if (isGroup) {
@@ -539,11 +584,11 @@ const NewChatModal = ({ onClose, onCreateConversation, currentUserId }) => {
                     name: groupName,
                     description: "",
                     memberIds: selectedUsers.map(u => u.id),
-                    createdBy: currentUserId,
+                    createdBy: currentEmployeeId,
                 });
             } else {
                 result = await chatService.createDirectConversation(
-                    currentUserId,
+                    currentEmployeeId,
                     selectedUsers[0].id
                 );
             }
@@ -553,6 +598,8 @@ const NewChatModal = ({ onClose, onCreateConversation, currentUserId }) => {
         } catch (err) {
             console.error("Failed to create conversation:", err);
             toast.error("Failed to create conversation");
+        } finally {
+            setIsCreating(false);
         }
     };
 
@@ -571,8 +618,8 @@ const NewChatModal = ({ onClose, onCreateConversation, currentUserId }) => {
 
     const filteredEmployees = employees.filter(
         (emp) =>
-            emp.id !== currentUserId &&
-            emp.name.toLowerCase().includes(searchQuery.toLowerCase())
+            emp.id !== currentEmployeeId &&
+            emp.name?.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
@@ -689,9 +736,11 @@ const NewChatModal = ({ onClose, onCreateConversation, currentUserId }) => {
                     <button
                         className="chat-modal-create"
                         onClick={handleCreateConversation}
-                        disabled={selectedUsers.length === 0 || (isGroup && !groupName.trim())}
+                        disabled={selectedUsers.length === 0 || (isGroup && !groupName.trim()) || isCreating}
                     >
-                        {isGroup ? "Create Group" : "Start Chat"}
+                        {isCreating ? (
+                            <Loader2 size={16} className="animate-spin" />
+                        ) : isGroup ? "Create Group" : "Start Chat"}
                     </button>
                 </div>
             </div>
