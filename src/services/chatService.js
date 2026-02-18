@@ -2,48 +2,75 @@ import { supabase } from "../lib/supabase.js";
 
 /**
  * Chat Service - Handles all team chat operations
+ * NOTE: employees table uses `name` and `avatar` columns (not first_name/last_name/avatar_url)
  */
 export const chatService = {
     /**
-     * Get all conversations for a user
-     * @param {string} userId - User ID
+     * Get all conversations for a user (by their employee ID)
+     * @param {string} employeeId - Employee ID (from employees table, NOT auth user ID)
      * @returns {Promise<{data: Array, error: Error|null}>}
      */
-    async getConversations(userId) {
+    async getConversations(employeeId) {
         try {
-            // Get direct conversations where user is a participant
+            // Get direct conversations where employee is a participant
             const { data: directConvos, error: directError } = await supabase
                 .from("conversations")
                 .select(`
                     *,
-                    participant1:employees!conversations_participant1_id_fkey(id, first_name, last_name, avatar_url, email),
-                    participant2:employees!conversations_participant2_id_fkey(id, first_name, last_name, avatar_url, email)
+                    participant1:employees!conversations_participant1_id_fkey(id, name, avatar),
+                    participant2:employees!conversations_participant2_id_fkey(id, name, avatar)
                 `)
-                .or(`participant1_id.eq.${userId},participant2_id.eq.${userId}`)
+                .or(`participant1_id.eq.${employeeId},participant2_id.eq.${employeeId}`)
                 .eq("type", "direct")
-                .order("last_message_at", { ascending: false });
+                .order("last_message_at", { ascending: false, nullsFirst: false });
 
             if (directError) throw directError;
 
-            // Get group conversations where user is a member
-            const { data: groupConvos, error: groupError } = await supabase
+            // Get group conversations where employee is a member
+            const { data: groupMemberships, error: groupError } = await supabase
                 .from("conversation_members")
                 .select(`
                     conversation:conversations(
                         *,
                         members:conversation_members(
-                            employee:employees(id, first_name, last_name, avatar_url)
+                            employee:employees(id, name, avatar)
                         )
                     )
                 `)
-                .eq("employee_id", userId);
+                .eq("employee_id", employeeId);
 
             if (groupError) throw groupError;
 
-            const conversations = [
-                ...(directConvos || []).map(c => ({ ...c, conversationType: 'direct' })),
-                ...(groupConvos || []).map(m => ({ ...m.conversation, conversationType: 'group' }))
-            ].sort((a, b) => new Date(b.last_message_at || b.created_at) - new Date(a.last_message_at || a.created_at));
+            // Normalize direct conversations to have a `participants` array
+            const normalizedDirect = (directConvos || []).map(c => {
+                const participants = [c.participant1, c.participant2].filter(Boolean).map(p => ({
+                    user_id: p.id,
+                    name: p.name,
+                    avatar: p.avatar,
+                }));
+                return {
+                    ...c,
+                    is_group: false,
+                    participants,
+                };
+            });
+
+            // Normalize group conversations
+            const normalizedGroups = (groupMemberships || [])
+                .map(m => m.conversation)
+                .filter(Boolean)
+                .map(c => ({
+                    ...c,
+                    is_group: true,
+                    participants: (c.members || []).map(m => ({
+                        user_id: m.employee?.id,
+                        name: m.employee?.name,
+                        avatar: m.employee?.avatar,
+                    })),
+                }));
+
+            const conversations = [...normalizedDirect, ...normalizedGroups]
+                .sort((a, b) => new Date(b.last_message_at || b.created_at) - new Date(a.last_message_at || a.created_at));
 
             return { data: conversations, error: null };
         } catch (error) {
@@ -65,14 +92,25 @@ export const chatService = {
                 .from("messages")
                 .select(`
                     *,
-                    sender:employees(id, first_name, last_name, avatar_url)
+                    sender:employees(id, name, avatar)
                 `)
                 .eq("conversation_id", conversationId)
                 .order("created_at", { ascending: false })
                 .range(offset, offset + limit - 1);
 
             if (error) throw error;
-            return { data: (data || []).reverse(), error: null };
+
+            // Normalize sender to have consistent shape
+            const normalized = (data || []).reverse().map(msg => ({
+                ...msg,
+                sender: msg.sender ? {
+                    id: msg.sender.id,
+                    name: msg.sender.name,
+                    avatar: msg.sender.avatar,
+                } : null,
+            }));
+
+            return { data: normalized, error: null };
         } catch (error) {
             console.error("Error fetching messages:", error);
             return { data: [], error };
@@ -97,7 +135,7 @@ export const chatService = {
                 })
                 .select(`
                     *,
-                    sender:employees(id, first_name, last_name, avatar_url)
+                    sender:employees(id, name, avatar)
                 `)
                 .single();
 
@@ -120,37 +158,57 @@ export const chatService = {
     },
 
     /**
-     * Create a direct conversation
-     * @param {string} userId1 - First user ID
-     * @param {string} userId2 - Second user ID
+     * Create a direct conversation between two employees
+     * @param {string} employeeId1 - First employee ID
+     * @param {string} employeeId2 - Second employee ID
      * @returns {Promise<{data: Object|null, error: Error|null}>}
      */
-    async createDirectConversation(userId1, userId2) {
+    async createDirectConversation(employeeId1, employeeId2) {
         try {
             // Check if conversation already exists
             const { data: existing } = await supabase
                 .from("conversations")
-                .select("*")
+                .select(`
+                    *,
+                    participant1:employees!conversations_participant1_id_fkey(id, name, avatar),
+                    participant2:employees!conversations_participant2_id_fkey(id, name, avatar)
+                `)
                 .eq("type", "direct")
-                .or(`and(participant1_id.eq.${userId1},participant2_id.eq.${userId2}),and(participant1_id.eq.${userId2},participant2_id.eq.${userId1})`)
+                .or(`and(participant1_id.eq.${employeeId1},participant2_id.eq.${employeeId2}),and(participant1_id.eq.${employeeId2},participant2_id.eq.${employeeId1})`)
                 .maybeSingle();
 
             if (existing) {
-                return { data: existing, error: null };
+                const participants = [existing.participant1, existing.participant2].filter(Boolean).map(p => ({
+                    user_id: p.id,
+                    name: p.name,
+                    avatar: p.avatar,
+                }));
+                return { data: { ...existing, is_group: false, participants }, error: null };
             }
 
             const { data, error } = await supabase
                 .from("conversations")
                 .insert({
                     type: "direct",
-                    participant1_id: userId1,
-                    participant2_id: userId2,
+                    participant1_id: employeeId1,
+                    participant2_id: employeeId2,
                 })
-                .select()
+                .select(`
+                    *,
+                    participant1:employees!conversations_participant1_id_fkey(id, name, avatar),
+                    participant2:employees!conversations_participant2_id_fkey(id, name, avatar)
+                `)
                 .single();
 
             if (error) throw error;
-            return { data, error: null };
+
+            const participants = [data.participant1, data.participant2].filter(Boolean).map(p => ({
+                user_id: p.id,
+                name: p.name,
+                avatar: p.avatar,
+            }));
+
+            return { data: { ...data, is_group: false, participants }, error: null };
         } catch (error) {
             console.error("Error creating conversation:", error);
             return { data: null, error };
@@ -178,8 +236,9 @@ export const chatService = {
 
             if (convError) throw convError;
 
-            // Add members
-            const members = memberIds.map(id => ({
+            // Add members (include creator as admin)
+            const allMemberIds = [...new Set([createdBy, ...memberIds])];
+            const members = allMemberIds.map(id => ({
                 conversation_id: conversation.id,
                 employee_id: id,
                 role: id === createdBy ? 'admin' : 'member'
@@ -191,7 +250,14 @@ export const chatService = {
 
             if (memberError) throw memberError;
 
-            return { data: conversation, error: null };
+            return {
+                data: {
+                    ...conversation,
+                    is_group: true,
+                    participants: allMemberIds.map(id => ({ user_id: id })),
+                },
+                error: null
+            };
         } catch (error) {
             console.error("Error creating group:", error);
             return { data: null, error };
@@ -201,18 +267,31 @@ export const chatService = {
     /**
      * Mark messages as read
      * @param {string} conversationId - Conversation ID
-     * @param {string} userId - User ID
+     * @param {string} employeeId - Employee ID
      * @returns {Promise<{error: Error|null}>}
      */
-    async markAsRead(conversationId, userId) {
+    async markAsRead(conversationId, employeeId) {
         try {
-            const { error } = await supabase
+            // Use a raw SQL approach via RPC or just update read_by array
+            // Simple approach: fetch unread messages and update them
+            const { data: unread } = await supabase
                 .from("messages")
-                .update({ read_by: supabase.sql`array_append(read_by, ${userId})` })
+                .select("id, read_by")
                 .eq("conversation_id", conversationId)
-                .not("read_by", "cs", `{${userId}}`);
+                .not("sender_id", "eq", employeeId);
 
-            if (error) throw error;
+            if (!unread || unread.length === 0) return { error: null };
+
+            // Update each message that hasn't been read by this user
+            const toUpdate = unread.filter(msg => !msg.read_by?.includes(employeeId));
+
+            for (const msg of toUpdate) {
+                await supabase
+                    .from("messages")
+                    .update({ read_by: [...(msg.read_by || []), employeeId] })
+                    .eq("id", msg.id);
+            }
+
             return { error: null };
         } catch (error) {
             console.error("Error marking as read:", error);
@@ -223,7 +302,7 @@ export const chatService = {
     /**
      * Subscribe to new messages in a conversation
      * @param {string} conversationId - Conversation ID
-     * @param {Function} callback - Callback for new messages
+     * @param {Function} callback - Callback receiving the full message object
      * @returns {Object} Subscription object
      */
     subscribeToMessages(conversationId, callback) {
@@ -241,11 +320,20 @@ export const chatService = {
                     // Fetch full message with sender info
                     const { data } = await supabase
                         .from("messages")
-                        .select(`*, sender:employees(id, first_name, last_name, avatar_url)`)
+                        .select(`*, sender:employees(id, name, avatar)`)
                         .eq("id", payload.new.id)
                         .single();
 
-                    if (data) callback(data);
+                    if (data) {
+                        callback({
+                            ...data,
+                            sender: data.sender ? {
+                                id: data.sender.id,
+                                name: data.sender.name,
+                                avatar: data.sender.avatar,
+                            } : null,
+                        });
+                    }
                 }
             )
             .subscribe();
@@ -253,13 +341,13 @@ export const chatService = {
 
     /**
      * Subscribe to conversation updates
-     * @param {string} userId - User ID
+     * @param {string} employeeId - Employee ID
      * @param {Function} callback - Callback for updates
      * @returns {Object} Subscription object
      */
-    subscribeToConversations(userId, callback) {
+    subscribeToConversations(employeeId, callback) {
         return supabase
-            .channel(`conversations:${userId}`)
+            .channel(`conversations:${employeeId}`)
             .on(
                 "postgres_changes",
                 {
@@ -275,12 +363,36 @@ export const chatService = {
     },
 
     /**
+     * Get all employees (for new conversation modal)
+     * @returns {Promise<{data: Array, error: Error|null}>}
+     */
+    async getEmployees() {
+        try {
+            const { data, error } = await supabase
+                .from("employees")
+                .select("id, name, avatar, department, role, status")
+                .eq("status", "Active")
+                .order("name");
+
+            if (error) throw error;
+            return { data: data || [], error: null };
+        } catch (error) {
+            console.error("Error fetching employees:", error);
+            return { data: [], error };
+        }
+    },
+
+    /**
      * Get online status of users
-     * @param {Array} userIds - Array of user IDs
+     * @param {Array} userIds - Array of employee IDs
      * @returns {Promise<{data: Object, error: Error|null}>}
      */
     async getOnlineStatus(userIds) {
         try {
+            if (!userIds || userIds.length === 0) {
+                return { data: {}, error: null };
+            }
+
             const { data, error } = await supabase
                 .from("user_presence")
                 .select("*")
@@ -305,16 +417,16 @@ export const chatService = {
 
     /**
      * Update user's online status
-     * @param {string} userId - User ID
+     * @param {string} employeeId - Employee ID
      * @param {boolean} online - Online status
      * @returns {Promise<{error: Error|null}>}
      */
-    async updatePresence(userId, online) {
+    async updatePresence(employeeId, online) {
         try {
             const { error } = await supabase
                 .from("user_presence")
                 .upsert({
-                    user_id: userId,
+                    user_id: employeeId,
                     online,
                     last_seen: new Date().toISOString()
                 });
@@ -330,16 +442,15 @@ export const chatService = {
     /**
      * Search messages
      * @param {string} query - Search query
-     * @param {string} userId - User ID to limit search to their conversations
      * @returns {Promise<{data: Array, error: Error|null}>}
      */
-    async searchMessages(query, userId) {
+    async searchMessages(query) {
         try {
             const { data, error } = await supabase
                 .from("messages")
                 .select(`
                     *,
-                    sender:employees(id, first_name, last_name),
+                    sender:employees(id, name),
                     conversation:conversations(id, name, type)
                 `)
                 .ilike("content", `%${query}%`)
@@ -357,16 +468,16 @@ export const chatService = {
     /**
      * Delete a message
      * @param {string} messageId - Message ID
-     * @param {string} userId - User ID (for permission check)
+     * @param {string} employeeId - Employee ID (for permission check)
      * @returns {Promise<{error: Error|null}>}
      */
-    async deleteMessage(messageId, userId) {
+    async deleteMessage(messageId, employeeId) {
         try {
             const { error } = await supabase
                 .from("messages")
                 .delete()
                 .eq("id", messageId)
-                .eq("sender_id", userId);
+                .eq("sender_id", employeeId);
 
             if (error) throw error;
             return { error: null };
@@ -380,10 +491,10 @@ export const chatService = {
      * Edit a message
      * @param {string} messageId - Message ID
      * @param {string} content - New content
-     * @param {string} userId - User ID (for permission check)
+     * @param {string} employeeId - Employee ID (for permission check)
      * @returns {Promise<{data: Object|null, error: Error|null}>}
      */
-    async editMessage(messageId, content, userId) {
+    async editMessage(messageId, content, employeeId) {
         try {
             const { data, error } = await supabase
                 .from("messages")
@@ -392,7 +503,7 @@ export const chatService = {
                     edited_at: new Date().toISOString()
                 })
                 .eq("id", messageId)
-                .eq("sender_id", userId)
+                .eq("sender_id", employeeId)
                 .select()
                 .single();
 
@@ -407,17 +518,17 @@ export const chatService = {
     /**
      * Add reaction to a message
      * @param {string} messageId - Message ID
-     * @param {string} userId - User ID
+     * @param {string} employeeId - Employee ID
      * @param {string} emoji - Emoji reaction
      * @returns {Promise<{error: Error|null}>}
      */
-    async addReaction(messageId, userId, emoji) {
+    async addReaction(messageId, employeeId, emoji) {
         try {
             const { error } = await supabase
                 .from("message_reactions")
                 .insert({
                     message_id: messageId,
-                    user_id: userId,
+                    user_id: employeeId,
                     emoji
                 });
 
@@ -432,17 +543,17 @@ export const chatService = {
     /**
      * Remove reaction from a message
      * @param {string} messageId - Message ID
-     * @param {string} userId - User ID
+     * @param {string} employeeId - Employee ID
      * @param {string} emoji - Emoji reaction
      * @returns {Promise<{error: Error|null}>}
      */
-    async removeReaction(messageId, userId, emoji) {
+    async removeReaction(messageId, employeeId, emoji) {
         try {
             const { error } = await supabase
                 .from("message_reactions")
                 .delete()
                 .eq("message_id", messageId)
-                .eq("user_id", userId)
+                .eq("user_id", employeeId)
                 .eq("emoji", emoji);
 
             if (error) throw error;
