@@ -31,4 +31,15 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# Agent / tool directories
 .agent
+.opencode
+
+# Supabase CLI temp files
+supabase/.temp
+
+# One-off dev/migration scripts (should not be committed)
+apply-sql.cjs
+apply-sql-robust.cjs
+verify-supabase.cjs

@@ -1,4 +1,5 @@
 // Aurora PWA Service Worker
+/* global clients */
 const CACHE_NAME = 'aurora-v1';
 const STATIC_ASSETS = [
     '/',
