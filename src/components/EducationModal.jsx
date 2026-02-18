@@ -15,11 +15,11 @@ const EducationModal = ({
 
     useEffect(() => {
         if (employee?.education && Array.isArray(employee.education)) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setEducationList(employee.education.map((edu, idx) => ({ ...edu, id: idx })));
         } else {
             setEducationList([]);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [employee?.id, employee?.education]);
 
     const addEducation = () => {

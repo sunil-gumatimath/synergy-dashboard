@@ -8,7 +8,7 @@ import { useAuth } from "../../contexts/AuthContext";
  * Shows children only if user is authenticated, otherwise shows login page
  */
 const ProtectedRoute = ({ children, allowedRoles }) => {
-    const { user, loading } = useAuth();
+    const { user } = useAuth();
 
     // If not authenticated, redirect to login page
     if (!user) {

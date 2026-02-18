@@ -7,7 +7,6 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { performanceService } from "../../services/performanceService";
-import { format } from "date-fns";
 import "./performance-reviews.css";
 
 const statusConfig = {
@@ -25,9 +24,9 @@ const PerformanceReviews = () => {
     const [goals, setGoals] = useState([]);
     const [analytics, setAnalytics] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedReview, setSelectedReview] = useState(null);
-    const [showNewReviewModal, setShowNewReviewModal] = useState(false);
-    const [showNewGoalModal, setShowNewGoalModal] = useState(false);
+    const [_selectedReview, setSelectedReview] = useState(null);
+    const [_showNewReviewModal, setShowNewReviewModal] = useState(false);
+    const [_showNewGoalModal, setShowNewGoalModal] = useState(false);
     const [filterStatus, setFilterStatus] = useState("all");
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -46,7 +45,7 @@ const PerformanceReviews = () => {
                 setReviews(r.data || []);
                 setGoals(g.data || []);
                 setAnalytics(a.data);
-            } catch (err) {
+            } catch (_e) {
                 toast.error("Failed to load performance data");
             } finally {
                 setIsLoading(false);

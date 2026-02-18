@@ -16,6 +16,11 @@ export const ToastProvider = ({ children }) => {
     // Generate unique ID for each toast
     const generateId = () => `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
+    // Remove a toast by ID
+    const removeToast = useCallback((id) => {
+        setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    }, []);
+
     // Add a new toast
     const showToast = useCallback((type, message, options = {}) => {
         const id = generateId();
@@ -38,12 +43,7 @@ export const ToastProvider = ({ children }) => {
         }
 
         return id;
-    }, []);
-
-    // Remove a toast by ID
-    const removeToast = useCallback((id) => {
-        setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    }, []);
+    }, [removeToast]);
 
     // Convenience methods
     const success = useCallback((message, options) => showToast("success", message, options), [showToast]);
