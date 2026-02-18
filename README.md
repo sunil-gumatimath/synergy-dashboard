@@ -1,5 +1,7 @@
 # Synergy EMS
 
+[**Demo Link**](https://synergy-emp-crm.vercel.app/) – Try Synergy EMS live
+
 Synergy EMS is a full-featured employee management platform built with React and Supabase.  
 It covers HR operations, team productivity, and internal collaboration in one web app.
 
