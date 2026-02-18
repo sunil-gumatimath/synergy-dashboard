@@ -7,6 +7,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# npm / yarn / pnpm lockfiles — this project uses bun only
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.npmrc
+
 node_modules
 dist
 dist-ssr
