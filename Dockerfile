@@ -4,7 +4,7 @@
 # ===================================================
 
 # Stage 1: Build Stage
-FROM oven/bun:1-alpine AS builder
+FROM oven/bun:1.1.13-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -32,6 +32,9 @@ RUN bun run build
 
 # Stage 2: Production Stage
 FROM nginx:alpine AS production
+
+# Install wget for health check
+RUN apk add --no-cache wget
 
 # Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf

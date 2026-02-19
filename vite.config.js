@@ -7,6 +7,9 @@ export default defineConfig({
   server: {
     port: 5173,
   },
+  esbuild: {
+    drop: ["console", "debugger"],
+  },
   build: {
     // Increase chunk size warning limit slightly (default is 500kB)
     chunkSizeWarningLimit: 600,
@@ -31,13 +34,7 @@ export default defineConfig({
     cssCodeSplit: true,
     // Optimize dependencies
     sourcemap: false,
-    minify: "terser",
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
+    minify: "esbuild",
   },
   // Pre-bundle heavy dependencies
   optimizeDeps: {
