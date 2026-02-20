@@ -522,3 +522,68 @@
 .skeleton-stagger>*:nth-child(8) {
     animation-delay: 0.7s;
 }
+
+/* ================================================
+   DARK MODE OVERRIDES
+   ================================================ */
+
+/* Override the CSS custom properties so all skeleton shimmer
+   elements automatically use dark tones in dark mode */
+.dark {
+    --skeleton-base: #1e293b;
+    --skeleton-highlight: #334155;
+}
+
+/* Base shimmer in dark mode */
+.dark .skeleton {
+    background: linear-gradient(90deg,
+            var(--skeleton-base, #1e293b) 25%,
+            var(--skeleton-highlight, #334155) 50%,
+            var(--skeleton-base, #1e293b) 75%);
+    background-size: 200% 100%;
+}
+
+/* Wave variant */
+.dark .skeleton--wave {
+    background: linear-gradient(90deg,
+            #1e293b 0%,
+            #2d3f55 20%,
+            #1e293b 40%);
+    background-size: 200% 100%;
+}
+
+/* Override card/container backgrounds */
+.dark .skeleton-card,
+.dark .skeleton-table,
+.dark .skeleton-stat-card,
+.dark .skeleton-chart,
+.dark .skeleton-employee-card,
+.dark .skeleton-task-card,
+.dark .skeleton-event-card,
+.dark .skeleton-filter-bar,
+.dark .skeleton-leave-card,
+.dark .skeleton-settings-section,
+.dark .skeleton-calendar,
+.dark .skeleton-time-entry,
+.dark .skeleton-report-card {
+    background: var(--bg-surface);
+    border-color: var(--border);
+}
+
+/* Table header in dark mode */
+.dark .skeleton-table-header {
+    background: var(--bg-secondary);
+    border-bottom-color: var(--border);
+}
+
+/* Row / list item separators */
+.dark .skeleton-table-row,
+.dark .skeleton-list-item,
+.dark .skeleton-settings-item {
+    border-bottom-color: var(--border);
+}
+
+/* Employee details separator */
+.dark .skeleton-employee-details {
+    border-top-color: var(--border);
+}

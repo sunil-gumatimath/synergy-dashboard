@@ -203,49 +203,47 @@
     }
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-    .toast {
-        background: rgba(31, 41, 55, 0.95);
-        border-color: rgba(75, 85, 99, 0.5);
-    }
+/* Dark Mode Support - class-based */
+.dark .toast {
+    background: rgba(31, 41, 55, 0.95);
+    border-color: rgba(75, 85, 99, 0.5);
+}
 
-    .toast__message {
-        color: #f3f4f6;
-    }
+.dark .toast__message {
+    color: #f3f4f6;
+}
 
-    .toast__close {
-        color: #9ca3af;
-    }
+.dark .toast__close {
+    color: #9ca3af;
+}
 
-    .toast__close:hover {
-        background: rgba(255, 255, 255, 0.1);
-        color: #f3f4f6;
-    }
+.dark .toast__close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f3f4f6;
+}
 
-    .toast__progress {
-        background: rgba(255, 255, 255, 0.1);
-    }
+.dark .toast__progress {
+    background: rgba(255, 255, 255, 0.1);
+}
 
-    .toast--success {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 148, 100, 0.1) 100%);
-        border-color: rgba(16, 185, 129, 0.4);
-    }
+.dark .toast--success {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 148, 100, 0.1) 100%);
+    border-color: rgba(16, 185, 129, 0.4);
+}
 
-    .toast--error {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
-        border-color: rgba(239, 68, 68, 0.4);
-    }
+.dark .toast--error {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
+    border-color: rgba(239, 68, 68, 0.4);
+}
 
-    .toast--warning {
-        background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.1) 100%);
-        border-color: rgba(245, 158, 11, 0.4);
-    }
+.dark .toast--warning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.1) 100%);
+    border-color: rgba(245, 158, 11, 0.4);
+}
 
-    .toast--info {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
-        border-color: rgba(59, 130, 246, 0.4);
-    }
+.dark .toast--info {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+    border-color: rgba(59, 130, 246, 0.4);
 }
 
 /* Responsive */
