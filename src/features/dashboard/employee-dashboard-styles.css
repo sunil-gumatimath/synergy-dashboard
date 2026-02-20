@@ -671,3 +671,46 @@
         font-size: 0.8rem;
     }
 }
+
+/* Dark Mode Overrides for Employee Dashboard */
+.dark .emp-dash-welcome {
+    background: var(--bg-surface);
+    border-color: var(--border);
+}
+
+.dark .emp-dash-quote {
+    background: rgba(79, 70, 229, 0.1);
+}
+
+.dark .emp-dash-quick-action,
+.dark .emp-dash-stat-card,
+.dark .emp-dash-task-card,
+.dark .emp-dash-events-list {
+    background: var(--bg-surface);
+    border-color: var(--border);
+}
+
+.dark .emp-dash-empty-state {
+    background: var(--bg-surface);
+    border-color: var(--border);
+}
+
+.dark .emp-dash-event-date {
+    background: rgba(79, 70, 229, 0.1);
+}
+
+.dark .emp-dash-stat-card.indigo .emp-dash-stat-icon {
+    background: rgba(79, 70, 229, 0.15);
+}
+
+.dark .emp-dash-stat-card.green .emp-dash-stat-icon {
+    background: rgba(16, 185, 129, 0.15);
+}
+
+.dark .emp-dash-stat-card.purple .emp-dash-stat-icon {
+    background: rgba(139, 92, 246, 0.15);
+}
+
+.dark .skeleton {
+    background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+}
