@@ -97,10 +97,10 @@ const SupportView = () => {
 
     const getStatusColor = (status) => {
         switch (status) {
-            case "resolved": return "text-green-600 bg-green-50 border-green-200";
-            case "in_progress": return "text-blue-600 bg-blue-50 border-blue-200";
-            case "closed": return "text-gray-600 bg-gray-100 border-gray-300";
-            default: return "text-orange-600 bg-orange-50 border-orange-200";
+            case "resolved": return "text-green-600 bg-green-50 border-green-200 dark:text-green-400 dark:bg-green-500/15 dark:border-green-500/30";
+            case "in_progress": return "text-blue-600 bg-blue-50 border-blue-200 dark:text-blue-400 dark:bg-blue-500/15 dark:border-blue-500/30";
+            case "closed": return "text-gray-600 bg-gray-100 border-gray-300 dark:text-gray-400 dark:bg-gray-500/15 dark:border-gray-500/30";
+            default: return "text-orange-600 bg-orange-50 border-orange-200 dark:text-orange-400 dark:bg-orange-500/15 dark:border-orange-500/30";
         }
     };
 
@@ -148,7 +148,7 @@ const SupportView = () => {
             {/* Stats Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div className="card p-4 flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-500/15 text-blue-600 dark:text-blue-400 flex items-center justify-center">
                         <Clock size={20} />
                     </div>
                     <div>
@@ -157,7 +157,7 @@ const SupportView = () => {
                     </div>
                 </div>
                 <div className="card p-4 flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-green-50 dark:bg-green-500/15 text-green-600 dark:text-green-400 flex items-center justify-center">
                         <CheckCircle size={20} />
                     </div>
                     <div>
@@ -166,7 +166,7 @@ const SupportView = () => {
                     </div>
                 </div>
                 <div className="card p-4 flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-500/15 text-purple-600 dark:text-purple-400 flex items-center justify-center">
                         <MessageSquare size={20} />
                     </div>
                     <div>
@@ -276,7 +276,7 @@ const SupportView = () => {
                     </div>
                 ) : (
                     <div className="flex-1 flex flex-col items-center justify-center text-muted p-8">
-                        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
                             <MessageSquare size={32} className="opacity-50" />
                         </div>
                         <p>No tickets found. Raise a new ticket to get started.</p>
