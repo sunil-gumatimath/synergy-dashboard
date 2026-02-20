@@ -4,6 +4,14 @@
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-light: var(--primary-light);
+  --color-main: var(--bg-main);
+  --color-secondary: var(--bg-secondary);
+  --color-tertiary: var(--bg-tertiary);
+  --color-muted: var(--text-muted);
+  --color-light: var(--text-light);
+  --color-border-color: var(--border-color);
+  --color-danger-color: var(--danger-color);
+  --color-danger-bg: var(--danger-bg);
 }
 
 :root {
