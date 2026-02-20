@@ -1,6 +1,6 @@
 import React, { useState, lazy, Suspense } from "react";
 import PropTypes from "prop-types";
-import { Plus, Edit, Trash, Calendar, User } from "lucide-react";
+import { Plus, Edit, Trash, Calendar, User, FileText, CheckCircle, AlertTriangle, Users } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 const AddNoteModal = lazy(() => import("./AddNoteModal"));
 const EditNoteModal = lazy(() => import("./EditNoteModal"));
@@ -21,26 +21,27 @@ const NotesList = ({
 
   const [actionLoading, setActionLoading] = useState(false);
 
+  // Re-mapped Tailwind backgrounds to custom timeline colors and styles to fit seamlessly in the Enterprise Theme
   const getCategoryColor = (category) => {
     const colors = {
-      performance: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-      general: "bg-gray-500/10 text-gray-500 border-gray-500/20",
-      disciplinary: "bg-red-500/10 text-red-500 border-red-500/20",
-      praise: "bg-green-500/10 text-green-500 border-green-500/20",
-      meeting: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-      other: "bg-gray-500/10 text-gray-500 border-gray-500/20",
+      performance: "text-blue-600 bg-blue-50 border-blue-200",
+      general: "text-gray-600 bg-gray-50 border-gray-200",
+      disciplinary: "text-red-600 bg-red-50 border-red-200",
+      praise: "text-green-600 bg-green-50 border-green-200",
+      meeting: "text-purple-600 bg-purple-50 border-purple-200",
+      other: "text-gray-600 bg-gray-50 border-gray-200",
     };
     return colors[category] || colors.other;
   };
 
   const getCategoryIcon = (category) => {
     const icons = {
-      performance: "📊",
-      general: "📝",
-      disciplinary: "⚠️",
-      praise: "⭐",
-      meeting: "💼",
-      other: "📄",
+      performance: <FileText size={16} />,
+      general: <FileText size={16} />,
+      disciplinary: <AlertTriangle size={16} />,
+      praise: <CheckCircle size={16} />,
+      meeting: <Users size={16} />,
+      other: <FileText size={16} />,
     };
     return icons[category] || icons.other;
   };
@@ -71,102 +72,114 @@ const NotesList = ({
 
   if (isLoading) {
     return (
-      <div className="card employee-detail-section">
-        <h2 className="section-title">Notes</h2>
-        <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-color"></div>
+      <div className="emp-detail__card">
+        <div className="emp-detail__card-header">
+          <h3 className="emp-detail__card-title">
+            <FileText size={18} />
+            Notes & Activity Log
+          </h3>
+        </div>
+        <div className="emp-detail__card-body flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
       </div>
     );
   }
 
+  // Sort notes so newest is generally at top of timeline
+  const sortedNotes = notes ? [...notes].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) : [];
+
   return (
-    <div className="card employee-detail-section">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="section-title mb-0">Notes</h2>
+    <div className="emp-detail__card">
+      <div className="emp-detail__card-header">
+        <h3 className="emp-detail__card-title">
+          <FileText size={18} />
+          Notes & Activity Log
+        </h3>
         <button
-          className="btn btn-primary btn-sm"
+          className="emp-detail__btn emp-detail__btn--primary emp-detail__btn--sm"
           onClick={() => setShowAddModal(true)}
         >
           <Plus size={16} />
-          Add Note
+          Log Activity
         </button>
       </div>
 
-      {notes && notes.length > 0 ? (
-        <div className="space-y-3">
-          {notes.map((note) => (
-            <div
-              key={note.id}
-              className="p-4 bg-secondary rounded-lg border border-border-color hover:border-primary-color transition-all"
-            >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl">
-                    {getCategoryIcon(note.category)}
-                  </span>
-                  <h3 className="font-semibold text-main">{note.title}</h3>
+      <div className="emp-detail__card-body">
+        {sortedNotes && sortedNotes.length > 0 ? (
+          <div className="emp-detail__timeline pt-4 pb-2 px-2">
+            {sortedNotes.map((note) => (
+              <div key={note.id} className="emp-detail__timeline-item group">
+                <div className={`emp-detail__timeline-marker ${note.category === 'disciplinary' ? 'border-red-500 text-red-500' : ''} ${note.category === 'praise' ? 'border-green-500 text-green-500' : ''}`}>
+                  {getCategoryIcon(note.category)}
                 </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    className="p-1.5 hover:bg-tertiary rounded transition-colors"
-                    onClick={() => handleEditNote(note)}
-                    title="Edit note"
-                  >
-                    <Edit size={14} className="text-muted hover:text-main" />
-                  </button>
-                  <button
-                    className="p-1.5 hover:bg-tertiary rounded transition-colors"
-                    onClick={() => handleDeleteNote(note)}
-                    title="Delete note"
-                  >
-                    <Trash
-                      size={14}
-                      className="text-muted hover:text-danger-color"
-                    />
-                  </button>
+
+                <div className="emp-detail__timeline-content relative">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h4 className="font-bold text-main text-base mb-1">{note.title}</h4>
+                      <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-muted">
+                        <span className="flex items-center gap-1.5">
+                          <User size={13} className="text-primary opacity-80" />
+                          <span className="text-main">by {note.created_by}</span>
+                        </span>
+                        <span className="text-border-color">•</span>
+                        <span className="flex items-center gap-1.5 opacity-80 decoration-dotted underline-offset-4 hover:underline cursor-help" title={new Date(note.created_at).toLocaleString()}>
+                          <Calendar size={13} />
+                          {formatDistanceToNow(new Date(note.created_at), { addSuffix: true })}
+                        </span>
+                        <span className="text-border-color">•</span>
+                        <span className={`px-2 py-0.5 rounded-full border text-[10px] tracking-wide uppercase ${getCategoryColor(note.category)}`}>
+                          {note.category}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Action buttons appear gracefully on hover of the timeline content */}
+                    <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity absolute right-4 top-4 bg-surface rounded-lg shadow-sm border border-border-color p-1">
+                      <button
+                        className="p-1.5 hover:bg-primary-light hover:text-primary rounded-md transition-colors text-muted"
+                        onClick={() => handleEditNote(note)}
+                        title="Edit log"
+                      >
+                        <Edit size={14} />
+                      </button>
+                      <button
+                        className="p-1.5 hover:bg-danger-bg hover:text-danger-color rounded-md transition-colors text-muted"
+                        onClick={() => handleDeleteNote(note)}
+                        title="Delete log"
+                      >
+                        <Trash size={14} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bg-main/40 rounded-xl p-4 border border-border-light text-muted text-sm leading-relaxed whitespace-pre-wrap">
+                    {note.content}
+                  </div>
                 </div>
               </div>
-
-              <p className="text-muted mb-3 whitespace-pre-wrap">
-                {note.content}
-              </p>
-
-              <div className="flex items-center gap-4 text-xs text-muted">
-                <span
-                  className={`px-2 py-1 rounded border ${getCategoryColor(note.category)}`}
-                >
-                  {note.category}
-                </span>
-                <div className="flex items-center gap-1">
-                  <Calendar size={12} />
-                  <span>
-                    {formatDistanceToNow(new Date(note.created_at), {
-                      addSuffix: true,
-                    })}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <User size={12} />
-                  <span>by {note.created_by}</span>
-                </div>
-              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="emp-detail__empty h-full w-full py-10 border-0 bg-transparent">
+            <div className="bg-main h-20 w-20 rounded-full flex items-center justify-center mx-auto mb-4 border border-border-color">
+              <FileText size={32} className="opacity-30 text-muted" />
             </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-3">📝</div>
-          <p className="text-muted mb-4">No notes yet</p>
-          <button
-            className="btn btn-primary"
-            onClick={() => setShowAddModal(true)}
-          >
-            <Plus size={16} />
-            Add First Note
-          </button>
-        </div>
-      )}
+            <h3 className="text-lg font-bold text-main mb-2">No activity logged</h3>
+            <p className="text-muted text-sm mb-6 max-w-sm mx-auto text-center">
+              Keep track of performance reviews, general check-ins, or disciplinary notes for this employee.
+            </p>
+            <button
+              className="emp-detail__btn emp-detail__btn--primary"
+              onClick={() => setShowAddModal(true)}
+            >
+              <Plus size={16} />
+              Log First Entry
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Add Note Modal */}
       <Suspense fallback={null}>
@@ -204,7 +217,7 @@ const NotesList = ({
       <Suspense fallback={null}>
         <ConfirmModal
           isOpen={showDeleteModal}
-          title="Delete Note"
+          title="Delete Activity Log"
           message={`Are you sure you want to delete "${selectedNote?.title}"? This action cannot be undone.`}
           confirmText="Delete"
           cancelText="Cancel"
@@ -238,11 +251,6 @@ NotesList.propTypes = {
   onNoteUpdated: PropTypes.func.isRequired,
   onNoteDeleted: PropTypes.func.isRequired,
   isLoading: PropTypes.bool,
-};
-
-NotesList.defaultProps = {
-  notes: [],
-  isLoading: false,
 };
 
 export default NotesList;

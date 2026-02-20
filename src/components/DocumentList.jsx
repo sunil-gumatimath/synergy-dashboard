@@ -1,6 +1,6 @@
 import React, { useState, lazy, Suspense } from "react";
 import PropTypes from "prop-types";
-import { Upload, Download, Trash, Calendar } from "lucide-react";
+import { Upload, Download, Trash, Calendar, Folder } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 const DocumentUploadModal = lazy(() => import("./DocumentUploadModal"));
 const ConfirmModal = lazy(() => import("./ui/ConfirmModal"));
@@ -69,21 +69,29 @@ const DocumentList = ({
 
   if (isLoading) {
     return (
-      <div className="card employee-detail-section">
-        <h2 className="section-title">Documents</h2>
-        <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-color"></div>
+      <div className="emp-detail__card">
+        <div className="emp-detail__card-header">
+          <h3 className="emp-detail__card-title">
+            <Folder size={18} />
+            Documents
+          </h3>
+        </div>
+        <div className="emp-detail__card-body flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="card employee-detail-section">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="section-title mb-0">Documents</h2>
+    <div className="emp-detail__card">
+      <div className="emp-detail__card-header">
+        <h3 className="emp-detail__card-title">
+          <Folder size={18} />
+          Documents
+        </h3>
         <button
-          className="btn btn-primary btn-sm"
+          className="emp-detail__btn emp-detail__btn--primary emp-detail__btn--sm"
           onClick={() => setShowUploadModal(true)}
         >
           <Upload size={16} />
@@ -91,90 +99,87 @@ const DocumentList = ({
         </button>
       </div>
 
-      {documents && documents.length > 0 ? (
-        <div className="space-y-2">
-          {documents.map((document) => (
-            <div
-              key={document.id}
-              className="flex items-center justify-between p-3 bg-secondary rounded-lg border border-border-color hover:border-primary-color transition-all"
-            >
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <span className="text-2xl flex-shrink-0">
-                  {getDocumentIcon(document.mime_type)}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-main truncate">
-                    {document.name}
-                  </h4>
-                  <div className="flex items-center gap-3 text-xs text-muted mt-1">
-                    <span
-                      className={`px-2 py-0.5 rounded border ${getDocumentTypeColor(document.type)}`}
-                    >
-                      {document.type}
-                    </span>
-                    <span>
-                      {documentService.formatFileSize(document.file_size)}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <Calendar size={10} />
-                      <span>
-                        {formatDistanceToNow(new Date(document.uploaded_at), {
-                          addSuffix: true,
-                        })}
+      <div className="emp-detail__card-body">
+        {documents && documents.length > 0 ? (
+          <div className="space-y-3">
+            {documents.map((document) => (
+              <div
+                key={document.id}
+                className="flex items-center justify-between p-4 bg-secondary rounded-xl border border-border-color hover:border-primary transition-all duration-300 hover:shadow-sm"
+              >
+                <div className="flex items-center gap-4 flex-1 min-w-0">
+                  <span className="text-3xl flex-shrink-0 bg-main p-2 rounded-lg border border-border-color">
+                    {getDocumentIcon(document.mime_type)}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-main truncate text-sm">
+                      {document.name}
+                    </h4>
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-muted mt-1.5 font-medium">
+                      <span
+                        className={`px-2 py-0.5 rounded-md border ${getDocumentTypeColor(document.type)}`}
+                      >
+                        {document.type}
                       </span>
+                      <span>
+                        {documentService.formatFileSize(document.file_size)}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <Calendar size={12} className="text-light" />
+                        <span>
+                          {formatDistanceToNow(new Date(document.uploaded_at), {
+                            addSuffix: true,
+                          })}
+                        </span>
+                      </div>
                     </div>
+                    {document.notes && (
+                      <p className="text-xs text-muted mt-2 italic bg-main/50 p-2 rounded border border-border-light inline-block w-full truncate">
+                        {document.notes}
+                      </p>
+                    )}
                   </div>
-                  {document.notes && (
-                    <p className="text-xs text-muted mt-1 italic">
-                      {document.notes}
-                    </p>
-                  )}
+                </div>
+
+                <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+                  <button
+                    className="p-2.5 bg-main hover:bg-primary-light hover:text-primary rounded-lg transition-colors border border-border-color hover:border-primary-light text-muted"
+                    onClick={() => handleDownload(document)}
+                    disabled={downloadingId === document.id}
+                    title="Download document"
+                  >
+                    {downloadingId === document.id ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                    ) : (
+                      <Download size={16} />
+                    )}
+                  </button>
+                  <button
+                    className="p-2.5 bg-main hover:bg-danger-bg hover:text-danger-color rounded-lg transition-colors border border-border-color hover:border-danger-bg text-muted"
+                    onClick={() => handleDeleteDocument(document)}
+                    title="Delete document"
+                  >
+                    <Trash size={16} />
+                  </button>
                 </div>
               </div>
-
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <button
-                  className="p-2 hover:bg-tertiary rounded transition-colors"
-                  onClick={() => handleDownload(document)}
-                  disabled={downloadingId === document.id}
-                  title="Download document"
-                >
-                  {downloadingId === document.id ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-color"></div>
-                  ) : (
-                    <Download
-                      size={16}
-                      className="text-muted hover:text-main"
-                    />
-                  )}
-                </button>
-                <button
-                  className="p-2 hover:bg-tertiary rounded transition-colors"
-                  onClick={() => handleDeleteDocument(document)}
-                  title="Delete document"
-                >
-                  <Trash
-                    size={16}
-                    className="text-muted hover:text-danger-color"
-                  />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-12">
-          <div className="text-6xl mb-3">📁</div>
-          <p className="text-muted mb-4">No documents uploaded yet</p>
-          <button
-            className="btn btn-primary"
-            onClick={() => setShowUploadModal(true)}
-          >
-            <Upload size={16} />
-            Upload First Document
-          </button>
-        </div>
-      )}
+            ))}
+          </div>
+        ) : (
+          <div className="emp-detail__empty h-full w-full py-8 border-0 bg-transparent">
+            <Folder size={48} className="emp-detail__empty-icon opacity-30 text-muted" />
+            <h3 className="text-lg font-bold text-main mt-4 mb-2">No documents uploaded</h3>
+            <p className="text-muted text-sm mb-6">Upload credentials, contracts, or identification.</p>
+            <button
+              className="emp-detail__btn emp-detail__btn--primary"
+              onClick={() => setShowUploadModal(true)}
+            >
+              <Upload size={16} />
+              Upload First Document
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Upload Document Modal */}
       <Suspense fallback={null}>
@@ -227,11 +232,6 @@ DocumentList.propTypes = {
   onDocumentAdded: PropTypes.func.isRequired,
   onDocumentDeleted: PropTypes.func.isRequired,
   isLoading: PropTypes.bool,
-};
-
-DocumentList.defaultProps = {
-  documents: [],
-  isLoading: false,
 };
 
 export default DocumentList;
