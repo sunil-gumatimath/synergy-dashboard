@@ -2,22 +2,22 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import {
-  Users,
-  LayoutDashboard,
-  Calendar,
-  Settings,
-  LogOut,
-  ChevronRight,
-  ChevronLeft,
-  ClipboardList,
-  LifeBuoy,
-  Home,
-  Umbrella,
-  Timer,
-  FileText,
-  MessageCircle,
-  Target,
-} from "lucide-react";
+  HiOutlineUsers as Users,
+  HiOutlineSquares2X2 as LayoutDashboard,
+  HiOutlineCalendarDays as Calendar,
+  HiOutlineCog6Tooth as Settings,
+  HiArrowRightOnRectangle as LogOut,
+  HiChevronRight as ChevronRight,
+  HiChevronLeft as ChevronLeft,
+  HiOutlineClipboardDocumentList as ClipboardList,
+  HiOutlineLifebuoy as LifeBuoy,
+  HiOutlineHome as Home,
+  HiOutlineSparkles as Umbrella,
+  HiOutlineClock as Timer,
+  HiOutlineDocumentText as FileText,
+  HiOutlineChatBubbleLeftEllipsis as MessageCircle,
+  HiOutlineCheckBadge as Target,
+} from "react-icons/hi2";
 
 import { useAuth } from "../../contexts/AuthContext";
 import SynergyLogo from "../common/SynergyLogo";

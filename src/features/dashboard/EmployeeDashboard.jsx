@@ -3,23 +3,23 @@ import { useAuth } from "../../contexts/AuthContext";
 import { taskService } from "../../services/taskService";
 import { calendarService } from "../../services/calendarService";
 import {
-    CheckCircle,
-    Clock,
-    Calendar as CalendarIcon,
-    ListTodo,
-    RefreshCw,
-    ClipboardList,
-    CalendarPlus,
-    FileText,
-    Timer,
-    Sparkles,
-    AlertCircle,
-    ArrowRight,
-    Coffee,
-    Sun,
-    Moon,
-    Sunrise,
-} from "lucide-react";
+    MdCheckCircleOutline as CheckCircle,
+    MdOutlineAccessTime as Clock,
+    MdOutlineCalendarToday as CalendarIcon,
+    MdOutlineFormatListBulleted as ListTodo,
+    MdOutlineRefresh as RefreshCw,
+    MdOutlineAssignment as ClipboardList,
+    MdOutlineEditCalendar as CalendarPlus,
+    MdOutlineDescription as FileText,
+    MdOutlineTimer as Timer,
+    MdOutlineAutoAwesome as Sparkles,
+    MdOutlineErrorOutline as AlertCircle,
+    MdOutlineArrowForward as ArrowRight,
+    MdOutlineLocalCafe as Coffee,
+    MdOutlineLightMode as Sun,
+    MdOutlineDarkMode as Moon,
+    MdOutlineWbTwilight as Sunrise,
+} from "react-icons/md";
 import { Link } from "react-router-dom";
 import "./employee-dashboard-styles.css";
 

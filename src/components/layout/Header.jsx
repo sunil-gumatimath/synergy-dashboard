@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { Menu, Search, X } from "lucide-react";
+import {
+  HiOutlineBars3 as Menu,
+  HiOutlineMagnifyingGlass as Search,
+  HiOutlineXMark as X,
+  HiOutlineSun as Sun,
+  HiOutlineMoon as Moon,
+} from "react-icons/hi2";
 import { useAuth } from "../../contexts/AuthContext";
+import { useTheme } from "../../contexts/ThemeContext";
 import { employeeService } from "../../services/employeeService";
 import NotificationPanel from "../NotificationPanel";
 import PropTypes from "prop-types";
@@ -10,6 +17,11 @@ const Header = ({ onMobileMenuToggle }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { effectiveTheme, updateTheme } = useTheme();
+
+  const toggleTheme = () => {
+    updateTheme(effectiveTheme === "dark" ? "light" : "dark");
+  };
 
   // Search state
   const [searchQuery, setSearchQuery] = useState("");
@@ -189,8 +201,15 @@ const Header = ({ onMobileMenuToggle }) => {
       </div>
 
       <div className="header-actions">
+        <button
+          onClick={toggleTheme}
+          className="icon-btn"
+          aria-label="Toggle theme"
+        >
+          {effectiveTheme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+        </button>
         <NotificationPanel />
-        <Link to="/profile" className="user-profile cursor-pointer hover:bg-gray-100 rounded-lg transition-colors">
+        <Link to="/profile" className="user-profile cursor-pointer hover:bg-[var(--bg-body)] rounded-lg transition-colors">
           <div className="text-right hidden sm:block">
             <p className="text-sm font-medium text-main">{getUserName()}</p>
             <p className="text-xs text-muted">{user?.email}</p>
