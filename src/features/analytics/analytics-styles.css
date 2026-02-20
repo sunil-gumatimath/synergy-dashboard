@@ -689,3 +689,43 @@
     font-size: 0.65rem;
   }
 }
+
+/* Dark Mode Overrides for Analytics */
+.dark .analytics-quick-stats {
+  background: var(--bg-surface);
+  border-color: var(--border);
+}
+
+.dark .analytics-quick-stat-item:hover {
+  background: var(--bg-body);
+}
+
+.dark .analytics-insight-item.primary {
+  background: rgba(79, 70, 229, 0.1) !important;
+  border-color: rgba(79, 70, 229, 0.3);
+}
+
+.dark .analytics-insight-item.primary .analytics-insight-label,
+.dark .analytics-insight-item.primary .analytics-insight-value {
+  color: #818cf8 !important;
+}
+
+.dark .analytics-insight-item.purple {
+  background: rgba(147, 51, 234, 0.1) !important;
+  border-color: rgba(147, 51, 234, 0.3);
+}
+
+.dark .analytics-insight-item.purple .analytics-insight-label,
+.dark .analytics-insight-item.purple .analytics-insight-value {
+  color: #c084fc !important;
+}
+
+.dark .analytics-insight-item.orange {
+  background: rgba(245, 158, 11, 0.1) !important;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.dark .analytics-insight-item.orange .analytics-insight-label,
+.dark .analytics-insight-item.orange .analytics-insight-value {
+  color: #fbbf24 !important;
+}
