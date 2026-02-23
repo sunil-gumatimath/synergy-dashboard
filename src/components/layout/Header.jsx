@@ -12,12 +12,24 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { employeeService } from "../../services/employeeService";
 import NotificationPanel from "../NotificationPanel";
 import PropTypes from "prop-types";
+import { useUIStore } from "../../store/uiStore";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
-const Header = ({ onMobileMenuToggle }) => {
+const Header = () => {
+  const toggleMobileMenu = useUIStore((state) => state.toggleMobileMenu);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { effectiveTheme, updateTheme } = useTheme();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/login');
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   const toggleTheme = () => {
     updateTheme(effectiveTheme === "dark" ? "light" : "dark");
@@ -130,7 +142,7 @@ const Header = ({ onMobileMenuToggle }) => {
         {/* Mobile Menu Button - Only visible on mobile */}
         <button
           className="mobile-menu-btn-header"
-          onClick={onMobileMenuToggle}
+          onClick={toggleMobileMenu}
           aria-label="Toggle menu"
         >
           <Menu size={24} />
@@ -209,25 +221,54 @@ const Header = ({ onMobileMenuToggle }) => {
           {effectiveTheme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
         </button>
         <NotificationPanel />
-        <Link to="/profile" className="user-profile cursor-pointer hover:bg-[var(--bg-body)] rounded-lg transition-colors">
-          <div className="text-right hidden sm:block">
-            <p className="text-sm font-medium text-main">{getUserName()}</p>
-            <p className="text-xs text-muted">{user?.email}</p>
-          </div>
-          <img
-            src={`https://api.dicebear.com/9.x/micah/svg?seed=${getAvatarSeed()}`}
-            alt={getUserName()}
-            className="user-avatar"
-          />
-        </Link>
+        <NotificationPanel />
+
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger asChild>
+            <button className="user-profile cursor-pointer hover:bg-[var(--bg-body)] rounded-lg transition-colors border-none bg-transparent flex items-center gap-3">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-medium text-main">{getUserName()}</p>
+                <p className="text-xs text-muted">{user?.email}</p>
+              </div>
+              <img
+                src={`https://api.dicebear.com/9.x/micah/svg?seed=${getAvatarSeed()}`}
+                alt={getUserName()}
+                className="user-avatar"
+              />
+            </button>
+          </DropdownMenu.Trigger>
+
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              className="dropdown-content min-w-[200px] bg-white dark:bg-[var(--bg-surface)] rounded-lg shadow-lg border border-[var(--border-color)] p-1 z-50 animate-in fade-in zoom-in-95"
+              sideOffset={8}
+              align="end"
+            >
+              <DropdownMenu.Label className="px-3 py-2 text-xs font-semibold text-muted uppercase tracking-wider">
+                My Account
+              </DropdownMenu.Label>
+
+              <DropdownMenu.Item className="dropdown-item flex items-center gap-2 px-3 py-2 outline-none cursor-default select-none rounded-[4px] hover:bg-[var(--bg-body)] w-full text-left" onSelect={() => navigate('/profile')}>
+                Profile Settings
+              </DropdownMenu.Item>
+
+              <DropdownMenu.Separator className="h-[1px] bg-[var(--border-color)] my-1" />
+
+              <DropdownMenu.Item
+                className="dropdown-item flex items-center gap-2 px-3 py-2 outline-none cursor-default select-none rounded-[4px] text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 w-full text-left font-medium"
+                onSelect={handleSignOut}
+              >
+                Sign Out
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
       </div>
     </header>
   );
 };
 
-Header.propTypes = {
-  onMobileMenuToggle: PropTypes.func,
-};
+Header.propTypes = {};
 
 export default Header;
 

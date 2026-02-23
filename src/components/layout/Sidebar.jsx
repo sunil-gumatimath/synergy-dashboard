@@ -22,8 +22,11 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import SynergyLogo from "../common/SynergyLogo";
 import { useNotifications } from "../../contexts/NotificationContext";
+import { useUIStore } from "../../store/uiStore";
 
-const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
+const Sidebar = ({ activeTab }) => {
+  const isMobileMenuOpen = useUIStore((state) => state.isMobileMenuOpen);
+  const setMobileMenuOpen = useUIStore((state) => state.setMobileMenuOpen);
   const { user, signOut } = useAuth();
   const { notifications: allNotifications } = useNotifications();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -219,7 +222,7 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
                     <Link
                       key={item.id}
                       to={item.path}
-                      onClick={() => setIsMobileMenuOpen(false)}
+                      onClick={() => setMobileMenuOpen(false)}
                       className={`nav-item ${activeTab === item.id ? "active" : ""}`}
                       data-tooltip={item.label}
                     >
@@ -268,7 +271,7 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
       {isMobileMenuOpen && (
         <div
           className="mobile-overlay"
-          onClick={() => setIsMobileMenuOpen(false)}
+          onClick={() => setMobileMenuOpen(false)}
         />
       )}
     </>
@@ -277,8 +280,6 @@ const Sidebar = ({ activeTab, isMobileMenuOpen, setIsMobileMenuOpen }) => {
 
 Sidebar.propTypes = {
   activeTab: PropTypes.string.isRequired,
-  isMobileMenuOpen: PropTypes.bool.isRequired,
-  setIsMobileMenuOpen: PropTypes.func.isRequired,
 };
 
 export default Sidebar;
