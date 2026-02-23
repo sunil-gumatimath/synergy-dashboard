@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { AlertTriangle, X } from "lucide-react";
+import * as Dialog from "@radix-ui/react-dialog";
 
 const ConfirmModal = ({
   isOpen,
@@ -46,57 +47,61 @@ const ConfirmModal = ({
   };
 
   return (
-    <div
-      className="modal-overlay"
-      onClick={!isLoading ? handleClose : undefined}
-    >
-      <div
-        className="modal-content max-w-md animate-scale-in"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="p-6 flex flex-col items-center text-center">
-          <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${getIconColor()}`}>
-            <AlertTriangle size={32} strokeWidth={2} />
+    <Dialog.Root open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="modal-overlay" />
+        <Dialog.Content
+          className="modal-content max-w-md animate-scale-in"
+          aria-describedby={undefined}
+        >
+          <div className="p-6 flex flex-col items-center text-center">
+            <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${getIconColor()}`}>
+              <AlertTriangle size={32} strokeWidth={2} />
+            </div>
+
+            <Dialog.Title asChild>
+              <h3 className="text-xl font-bold text-main mb-2">{title}</h3>
+            </Dialog.Title>
+
+            <Dialog.Description asChild>
+              <p className="text-muted leading-relaxed mb-8 max-w-xs mx-auto">
+                {message}
+              </p>
+            </Dialog.Description>
+
+            <div className="flex gap-3 w-full">
+              <button
+                type="button"
+                onClick={handleClose}
+                disabled={isLoading}
+                className="btn btn-ghost flex-1 justify-center border-border"
+              >
+                {cancelText}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!isLoading) {
+                    onConfirm();
+                  }
+                }}
+                disabled={isLoading}
+                className={`btn flex-1 justify-center ${getButtonClass()} ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  confirmText
+                )}
+              </button>
+            </div>
           </div>
-
-          <h3 className="text-xl font-bold text-main mb-2">{title}</h3>
-
-          <p className="text-muted leading-relaxed mb-8 max-w-xs mx-auto">
-            {message}
-          </p>
-
-          <div className="flex gap-3 w-full">
-            <button
-              type="button"
-              onClick={handleClose}
-              disabled={isLoading}
-              className="btn btn-ghost flex-1 justify-center border-border"
-            >
-              {cancelText}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (!isLoading) {
-                  onConfirm();
-                }
-              }}
-              disabled={isLoading}
-              className={`btn flex-1 justify-center ${getButtonClass()} ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
-            >
-              {isLoading ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                confirmText
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 };
 
