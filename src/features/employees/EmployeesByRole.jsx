@@ -149,10 +149,10 @@ const RoleSection = ({ role, employees, isExpanded, onToggle }) => {
                                             <StatusDot status={emp.status} />
                                             <span
                                                 className={`emp-status-text ${emp.status === "Active"
-                                                        ? "status-active"
-                                                        : emp.status === "On Leave"
-                                                            ? "status-leave"
-                                                            : "status-inactive"
+                                                    ? "status-active"
+                                                    : emp.status === "On Leave"
+                                                        ? "status-leave"
+                                                        : "status-inactive"
                                                     }`}
                                             >
                                                 {emp.status || "Unknown"}
@@ -198,6 +198,7 @@ const EmployeesByRole = () => {
     }, []);
 
     useEffect(() => {
+        // eslint-disable-next-line
         fetchEmployees();
     }, [fetchEmployees]);
 

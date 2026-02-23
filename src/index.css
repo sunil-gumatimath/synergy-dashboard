@@ -1,17 +1,26 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-primary-light: var(--primary-light);
-  --color-main: var(--bg-main);
-  --color-secondary: var(--bg-secondary);
-  --color-tertiary: var(--bg-tertiary);
-  --color-muted: var(--text-muted);
-  --color-light: var(--text-light);
-  --color-border-color: var(--border-color);
-  --color-danger-color: var(--danger-color);
-  --color-danger-bg: var(--danger-bg);
+  /* Primary brand colors */
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-light: #eef2ff;
+
+  /* Background colors */
+  --color-main: #f3f4f6;
+  --color-secondary: #f8fafc;
+  --color-tertiary: #f1f5f9;
+
+  /* Text colors */
+  --color-muted: #6b7280;
+  --color-light: #9ca3af;
+
+  /* Border & status colors */
+  --color-border-color: #e5e7eb;
+  --color-danger-color: #ef4444;
+  --color-danger-bg: #fef2f2;
 }
 
 :root {
