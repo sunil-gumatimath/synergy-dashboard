@@ -6,6 +6,7 @@ import React, {
   Suspense,
   lazy,
 } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { UserPlus, Users, RefreshCw, Download, Search, X, LayoutGrid, List } from "lucide-react";
 import "./employees-styles.css";
 import { employeeService } from "../../services/employeeService";
@@ -28,22 +29,45 @@ const EditEmployeeModal = lazy(
 const ConfirmModal = lazy(() => import("../../components/ui/ConfirmModal"));
 
 const EmployeeList = () => {
+  const queryClient = useQueryClient();
   const [viewMode, setViewMode] = useState("cards"); // "cards" | "byRole"
-  const [employees, setEmployees] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
+
+  const { data: employees = [], isLoading, isFetching, isError } = useQuery({
+    queryKey: ['employees'],
+    queryFn: async () => {
+      const { data, error } = await employeeService.getAll();
+      if (error) throw error;
+      return data || [];
+    }
+  });
+
+  const isRefreshing = isFetching && !isLoading;
+
+  // Toast state
+  const [toast, setToast] = useState(null);
+
+  // React Query error handling
+  useEffect(() => {
+    let timeoutId;
+    if (isError) {
+      timeoutId = setTimeout(() => {
+        setToast({
+          type: "error",
+          message: "Failed to load employees. Please try again.",
+        });
+      }, 0);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [isError]);
 
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-
-  // Toast state
-  const [toast, setToast] = useState(null);
 
   // Bulk selection state
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState(new Set());
@@ -67,34 +91,10 @@ const EmployeeList = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  const fetchEmployees = useCallback(async (showRefresh = false) => {
-    if (showRefresh) {
-      setIsRefreshing(true);
-    } else {
-      setIsLoading(true);
-    }
-
-    const { data, error } = await employeeService.getAll();
-
-    if (error) {
-      setToast({
-        type: "error",
-        message: "Failed to load employees. Please try again.",
-      });
-      setEmployees([]);
-    } else {
-      setEmployees(data || []);
-    }
-
-    setIsLoading(false);
-    setIsRefreshing(false);
-  }, []);
-
-  // Fetch employees on mount
-  useEffect(() => {
-    // eslint-disable-next-line
-    fetchEmployees();
-  }, [fetchEmployees]);
+  // Refactored to trigger React Query invalidation
+  const fetchEmployees = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ['employees'] });
+  }, [queryClient]);
 
   // Supabase Realtime subscription for live updates
   useEffect(() => {

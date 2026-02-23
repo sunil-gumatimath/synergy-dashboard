@@ -12,7 +12,10 @@ import ProfilePage from "./pages/ProfilePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import LoginPage from "./pages/LoginPage";
 import { useAuth } from "./contexts/AuthContext";
+import { useUIStore } from "./store/uiStore";
 import "./components/common/Avatar.css";
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from './lib/queryClient';
 
 const AnalyticsDashboard = React.lazy(
   () => import("./features/analytics/AnalyticsDashboard"),
@@ -58,7 +61,7 @@ const HomeRedirect = () => {
 function App() {
   const location = useLocation();
   const { user, loading } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const setMobileMenuOpen = useUIStore((state) => state.setMobileMenuOpen);
 
   // Check if current route is a public route (no auth required)
   const isPublicRoute = location.pathname === "/login" ||
@@ -85,14 +88,10 @@ function App() {
 
   const activeTab = getActiveTab();
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
   // Close mobile menu when route changes
   React.useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [location.pathname]);
+    setMobileMenuOpen(false);
+  }, [location.pathname, setMobileMenuOpen]);
 
   // Show loading spinner while checking auth
   if (loading) {
@@ -129,194 +128,192 @@ function App() {
 
   // Main authenticated app layout
   return (
-    <div className="app-container">
-      <Sidebar
-        activeTab={activeTab}
-        isMobileMenuOpen={isMobileMenuOpen}
-        setIsMobileMenuOpen={setIsMobileMenuOpen}
-      />
+    <QueryClientProvider client={queryClient}>
+      <div className="app-container">
+        <Sidebar activeTab={activeTab} />
 
-      <main className="main-content">
-        <Header onMobileMenuToggle={toggleMobileMenu} />
+        <main className="main-content">
+          <Header />
 
-        <Routes>
-          <Route path="/" element={<HomeRedirect />} />
+          <Routes>
+            <Route path="/" element={<HomeRedirect />} />
 
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute allowedRoles={['Employee', 'Admin', 'Manager']}>
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute allowedRoles={['Employee', 'Admin', 'Manager']}>
+                  <Suspense
+                    fallback={
+                      <LoadingSpinner size="lg" message="Loading dashboard..." />
+                    }
+                  >
+                    <EmployeeDashboard />
+                  </Suspense>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/analytics"
+              element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <Suspense
+                    fallback={
+                      <LoadingSpinner size="lg" message="Loading analytics..." />
+                    }
+                  >
+                    <AnalyticsDashboard />
+                  </Suspense>
+                </ProtectedRoute>
+              }
+            />
+
+
+            <Route
+              path="/employees"
+              element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <>
+                    <Stats />
+                    <EmployeeList />
+                  </>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/employees/:id"
+              element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <EmployeeDetailPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/calendar"
+              element={
                 <Suspense
                   fallback={
-                    <LoadingSpinner size="lg" message="Loading dashboard..." />
+                    <LoadingSpinner size="lg" message="Loading calendar..." />
                   }
                 >
-                  <EmployeeDashboard />
+                  <CalendarView />
                 </Suspense>
-              </ProtectedRoute>
-            }
-          />
+              }
+            />
 
-          <Route
-            path="/analytics"
-            element={
-              <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+            <Route
+              path="/tasks"
+              element={
                 <Suspense
                   fallback={
-                    <LoadingSpinner size="lg" message="Loading analytics..." />
+                    <LoadingSpinner size="lg" message="Loading tasks..." />
                   }
                 >
-                  <AnalyticsDashboard />
+                  <TasksView />
                 </Suspense>
-              </ProtectedRoute>
-            }
-          />
+              }
+            />
 
-
-          <Route
-            path="/employees"
-            element={
-              <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
-                <>
-                  <Stats />
-                  <EmployeeList />
-                </>
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/employees/:id"
-            element={
-              <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
-                <EmployeeDetailPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/calendar"
-            element={
-              <Suspense
-                fallback={
-                  <LoadingSpinner size="lg" message="Loading calendar..." />
-                }
-              >
-                <CalendarView />
-              </Suspense>
-            }
-          />
-
-          <Route
-            path="/tasks"
-            element={
-              <Suspense
-                fallback={
-                  <LoadingSpinner size="lg" message="Loading tasks..." />
-                }
-              >
-                <TasksView />
-              </Suspense>
-            }
-          />
-
-          <Route
-            path="/support"
-            element={
-              <Suspense
-                fallback={
-                  <LoadingSpinner size="lg" message="Loading support..." />
-                }
-              >
-                <SupportView />
-              </Suspense>
-            }
-          />
-
-          <Route
-            path="/leave"
-            element={
-              <Suspense
-                fallback={
-                  <LoadingSpinner size="lg" message="Loading leave management..." />
-                }
-              >
-                <LeaveManagement />
-              </Suspense>
-            }
-          />
-
-          <Route
-            path="/timetracking"
-            element={
-              <Suspense
-                fallback={
-                  <LoadingSpinner size="lg" message="Loading time tracking..." />
-                }
-              >
-                <TimeTracking />
-              </Suspense>
-            }
-          />
-
-          <Route
-            path="/reports"
-            element={
-              <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+            <Route
+              path="/support"
+              element={
                 <Suspense
                   fallback={
-                    <LoadingSpinner size="lg" message="Loading reports..." />
+                    <LoadingSpinner size="lg" message="Loading support..." />
                   }
                 >
-                  <ReportsView />
+                  <SupportView />
                 </Suspense>
-              </ProtectedRoute>
-            }
-          />
+              }
+            />
 
-          <Route
-            path="/chat"
-            element={
-              <Suspense
-                fallback={
-                  <LoadingSpinner size="lg" message="Loading chat..." />
-                }
-              >
-                <TeamChat />
-              </Suspense>
-            }
-          />
-
-          <Route
-            path="/performance"
-            element={
-              <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Employee']}>
+            <Route
+              path="/leave"
+              element={
                 <Suspense
                   fallback={
-                    <LoadingSpinner size="lg" message="Loading performance reviews..." />
+                    <LoadingSpinner size="lg" message="Loading leave management..." />
                   }
                 >
-                  <PerformanceReviews />
+                  <LeaveManagement />
                 </Suspense>
-              </ProtectedRoute>
-            }
-          />
+              }
+            />
 
-          <Route path="/settings" element={<SettingsView />} />
+            <Route
+              path="/timetracking"
+              element={
+                <Suspense
+                  fallback={
+                    <LoadingSpinner size="lg" message="Loading time tracking..." />
+                  }
+                >
+                  <TimeTracking />
+                </Suspense>
+              }
+            />
 
-          <Route path="/profile" element={<ProfilePage />} />
+            <Route
+              path="/reports"
+              element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                  <Suspense
+                    fallback={
+                      <LoadingSpinner size="lg" message="Loading reports..." />
+                    }
+                  >
+                    <ReportsView />
+                  </Suspense>
+                </ProtectedRoute>
+              }
+            />
 
-          <Route
-            path="*"
-            element={
-              <div className="flex items-center justify-center h-64 text-muted">
-                Page not found
-              </div>
-            }
-          />
-        </Routes>
-      </main>
-    </div>
+            <Route
+              path="/chat"
+              element={
+                <Suspense
+                  fallback={
+                    <LoadingSpinner size="lg" message="Loading chat..." />
+                  }
+                >
+                  <TeamChat />
+                </Suspense>
+              }
+            />
+
+            <Route
+              path="/performance"
+              element={
+                <ProtectedRoute allowedRoles={['Admin', 'Manager', 'Employee']}>
+                  <Suspense
+                    fallback={
+                      <LoadingSpinner size="lg" message="Loading performance reviews..." />
+                    }
+                  >
+                    <PerformanceReviews />
+                  </Suspense>
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="/settings" element={<SettingsView />} />
+
+            <Route path="/profile" element={<ProfilePage />} />
+
+            <Route
+              path="*"
+              element={
+                <div className="flex items-center justify-center h-64 text-muted">
+                  Page not found
+                </div>
+              }
+            />
+          </Routes>
+        </main>
+      </div>
+    </QueryClientProvider>
   );
 }
 
