@@ -221,7 +221,6 @@ const Header = () => {
           {effectiveTheme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
         </button>
         <NotificationPanel />
-        <NotificationPanel />
 
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>

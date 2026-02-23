@@ -1,31 +1,29 @@
 import React, { useState, useEffect, Suspense, lazy } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-    Briefcase,
-    Building2,
-    Calendar,
-    Edit,
-    Trash2,
-    UserCircle,
-    TrendingUp,
-    Clock,
-    Phone,
-    MapPin,
-    Hash,
-    User,
-    Download,
-    IndianRupee,
-    Landmark,
-    GraduationCap,
-    CreditCard,
-    ChevronRight,
-    Folder,
-    Award,
-    Target,
-    Plus,
-    Mail,
-    ArrowLeft,
-} from "lucide-react";
+    FiBriefcase,
+    FiCalendar,
+    FiEdit2,
+    FiTrash2,
+    FiUser,
+    FiTrendingUp,
+    FiClock,
+    FiPhone,
+    FiMapPin,
+    FiHash,
+    FiDownload,
+    FiCreditCard,
+    FiChevronRight,
+    FiFolder,
+    FiAward,
+    FiTarget,
+    FiPlus,
+    FiMail,
+    FiArrowLeft
+} from "react-icons/fi";
+import { MdOutlineBusiness, MdCurrencyRupee, MdOutlineAccountBalance } from "react-icons/md";
+import { FaGraduationCap } from "react-icons/fa";
+
 import { employeeService } from "../services/employeeService";
 import noteService from "../services/noteService";
 import documentService from "../services/documentService";
@@ -248,7 +246,7 @@ Exported: ${new Date().toLocaleString()}
             <div className="emp-detail__stats-grid">
                 <div className="emp-detail__stat-card">
                     <div className="emp-detail__stat-icon emp-detail__stat-icon--success">
-                        <TrendingUp size={24} />
+                        <FiTrendingUp size={24} />
                     </div>
                     <div className="emp-detail__stat-info">
                         <h4>{employee.performance_score ? `${employee.performance_score}%` : "—"}</h4>
@@ -257,7 +255,7 @@ Exported: ${new Date().toLocaleString()}
                 </div>
                 <div className="emp-detail__stat-card">
                     <div className="emp-detail__stat-icon emp-detail__stat-icon--primary">
-                        <Clock size={24} />
+                        <FiClock size={24} />
                     </div>
                     <div className="emp-detail__stat-info">
                         <h4>{getEmploymentDuration(employee.join_date)}</h4>
@@ -266,7 +264,7 @@ Exported: ${new Date().toLocaleString()}
                 </div>
                 <div className="emp-detail__stat-card">
                     <div className="emp-detail__stat-icon emp-detail__stat-icon--info">
-                        <IndianRupee size={24} />
+                        <MdCurrencyRupee size={24} />
                     </div>
                     <div className="emp-detail__stat-info">
                         <h4>{employee.salary ? `₹${employee.salary.toLocaleString()}` : "—"}</h4>
@@ -275,7 +273,7 @@ Exported: ${new Date().toLocaleString()}
                 </div>
                 <div className="emp-detail__stat-card">
                     <div className="emp-detail__stat-icon emp-detail__stat-icon--warning">
-                        <Target size={24} />
+                        <FiTarget size={24} />
                     </div>
                     <div className="emp-detail__stat-info">
                         <h4>{employee.projects_completed ?? "—"}</h4>
@@ -288,49 +286,49 @@ Exported: ${new Date().toLocaleString()}
             <div className="emp-detail__card">
                 <div className="emp-detail__card-header">
                     <h3 className="emp-detail__card-title">
-                        <Briefcase />
+                        <FiBriefcase />
                         Employment Details
                     </h3>
                 </div>
                 <div className="emp-detail__card-body">
                     <div className="emp-detail__info-grid">
                         <div className="emp-detail__info-item">
-                            <div className="emp-detail__info-icon"><Hash size={18} /></div>
+                            <div className="emp-detail__info-icon"><FiHash size={18} /></div>
                             <div className="emp-detail__info-content">
                                 <div className="emp-detail__info-label">Employee ID</div>
                                 <div className="emp-detail__info-value">EMP{String(employee.id).slice(0, 8).toUpperCase()}</div>
                             </div>
                         </div>
                         <div className="emp-detail__info-item">
-                            <div className="emp-detail__info-icon"><Briefcase size={18} /></div>
+                            <div className="emp-detail__info-icon"><FiBriefcase size={18} /></div>
                             <div className="emp-detail__info-content">
                                 <div className="emp-detail__info-label">Job Title</div>
                                 <div className="emp-detail__info-value">{employee.role}</div>
                             </div>
                         </div>
                         <div className="emp-detail__info-item">
-                            <div className="emp-detail__info-icon"><Building2 size={18} /></div>
+                            <div className="emp-detail__info-icon"><MdOutlineBusiness size={18} /></div>
                             <div className="emp-detail__info-content">
                                 <div className="emp-detail__info-label">Department</div>
                                 <div className="emp-detail__info-value">{employee.department}</div>
                             </div>
                         </div>
                         <div className="emp-detail__info-item">
-                            <div className="emp-detail__info-icon"><Calendar size={18} /></div>
+                            <div className="emp-detail__info-icon"><FiCalendar size={18} /></div>
                             <div className="emp-detail__info-content">
                                 <div className="emp-detail__info-label">Join Date</div>
                                 <div className="emp-detail__info-value">{formatDate(employee.join_date)}</div>
                             </div>
                         </div>
                         <div className="emp-detail__info-item">
-                            <div className="emp-detail__info-icon"><User size={18} /></div>
+                            <div className="emp-detail__info-icon"><FiUser size={18} /></div>
                             <div className="emp-detail__info-content">
                                 <div className="emp-detail__info-label">Reporting Manager</div>
                                 <div className="emp-detail__info-value">{employee.manager || "Not Assigned"}</div>
                             </div>
                         </div>
                         <div className="emp-detail__info-item">
-                            <div className="emp-detail__info-icon"><Award size={18} /></div>
+                            <div className="emp-detail__info-icon"><FiAward size={18} /></div>
                             <div className="emp-detail__info-content">
                                 <div className="emp-detail__info-label">Employment Type</div>
                                 <div className="emp-detail__info-value">{employee.employment_type || "Full-time"}</div>
@@ -346,14 +344,14 @@ Exported: ${new Date().toLocaleString()}
         <div className="emp-detail__card">
             <div className="emp-detail__card-header">
                 <h3 className="emp-detail__card-title">
-                    <Landmark />
+                    <MdOutlineAccountBalance />
                     Bank & Payment Details
                 </h3>
                 <button
                     className="emp-detail__btn emp-detail__btn--secondary emp-detail__btn--sm"
                     onClick={() => setShowBankModal(true)}
                 >
-                    <Edit size={14} />
+                    <FiEdit2 size={14} />
                     {employee.bank_details ? "Edit" : "Add"}
                 </button>
             </div>
@@ -361,28 +359,28 @@ Exported: ${new Date().toLocaleString()}
                 {employee.bank_details ? (
                     <div className="emp-detail__info-grid">
                         <div className="emp-detail__info-item">
-                            <div className="emp-detail__info-icon"><Landmark size={18} /></div>
+                            <div className="emp-detail__info-icon"><MdOutlineAccountBalance size={18} /></div>
                             <div className="emp-detail__info-content">
                                 <div className="emp-detail__info-label">Bank Name</div>
                                 <div className="emp-detail__info-value">{employee.bank_details.bankName || "—"}</div>
                             </div>
                         </div>
                         <div className="emp-detail__info-item">
-                            <div className="emp-detail__info-icon"><CreditCard size={18} /></div>
+                            <div className="emp-detail__info-icon"><FiCreditCard size={18} /></div>
                             <div className="emp-detail__info-content">
                                 <div className="emp-detail__info-label">Account Number</div>
                                 <div className="emp-detail__info-value">{employee.bank_details.accountNumber || "—"}</div>
                             </div>
                         </div>
                         <div className="emp-detail__info-item">
-                            <div className="emp-detail__info-icon"><Hash size={18} /></div>
+                            <div className="emp-detail__info-icon"><FiHash size={18} /></div>
                             <div className="emp-detail__info-content">
                                 <div className="emp-detail__info-label">IFSC Code</div>
                                 <div className="emp-detail__info-value">{employee.bank_details.ifscCode || "—"}</div>
                             </div>
                         </div>
                         <div className="emp-detail__info-item">
-                            <div className="emp-detail__info-icon"><MapPin size={18} /></div>
+                            <div className="emp-detail__info-icon"><FiMapPin size={18} /></div>
                             <div className="emp-detail__info-content">
                                 <div className="emp-detail__info-label">Branch</div>
                                 <div className="emp-detail__info-value">{employee.bank_details.branch || "—"}</div>
@@ -391,7 +389,7 @@ Exported: ${new Date().toLocaleString()}
                     </div>
                 ) : (
                     <div className="emp-detail__empty">
-                        <Landmark size={48} className="emp-detail__empty-icon" />
+                        <MdOutlineAccountBalance size={48} className="emp-detail__empty-icon" />
                         <h3>No Bank Details</h3>
                         <p>Payment information has not been added for this employee yet.</p>
                         <button
@@ -399,7 +397,7 @@ Exported: ${new Date().toLocaleString()}
                             onClick={() => setShowBankModal(true)}
                             style={{ marginTop: '16px' }}
                         >
-                            <Plus size={16} />
+                            <FiPlus size={16} />
                             Add Bank Details
                         </button>
                     </div>
@@ -412,14 +410,14 @@ Exported: ${new Date().toLocaleString()}
         <div className="emp-detail__card">
             <div className="emp-detail__card-header">
                 <h3 className="emp-detail__card-title">
-                    <GraduationCap />
+                    <FaGraduationCap />
                     Education History
                 </h3>
                 <button
                     className="emp-detail__btn emp-detail__btn--secondary emp-detail__btn--sm"
                     onClick={() => setShowEducationModal(true)}
                 >
-                    <Edit size={14} />
+                    <FiEdit2 size={14} />
                     {employee.education && employee.education.length > 0 ? "Edit" : "Add"}
                 </button>
             </div>
@@ -429,7 +427,7 @@ Exported: ${new Date().toLocaleString()}
                         {employee.education.map((edu, idx) => (
                             <div key={idx} className="emp-detail__timeline-item">
                                 <div className="emp-detail__timeline-marker">
-                                    <GraduationCap size={12} />
+                                    <FaGraduationCap size={12} />
                                 </div>
                                 <div className="emp-detail__timeline-content">
                                     <h4 className="emp-detail__timeline-title">{edu.degree}</h4>
@@ -444,7 +442,7 @@ Exported: ${new Date().toLocaleString()}
                     </div>
                 ) : (
                     <div className="emp-detail__empty">
-                        <GraduationCap size={48} className="emp-detail__empty-icon" />
+                        <FaGraduationCap size={48} className="emp-detail__empty-icon" />
                         <h3>No Education Records</h3>
                         <p>Education history has not been added for this employee.</p>
                         <button
@@ -452,7 +450,7 @@ Exported: ${new Date().toLocaleString()}
                             onClick={() => setShowEducationModal(true)}
                             style={{ marginTop: '16px' }}
                         >
-                            <Plus size={16} />
+                            <FiPlus size={16} />
                             Add Education
                         </button>
                     </div>
@@ -482,10 +480,10 @@ Exported: ${new Date().toLocaleString()}
     );
 
     const tabs = [
-        { id: "overview", label: "Overview", icon: <UserCircle size={16} /> },
-        { id: "finance", label: "Finance", icon: <IndianRupee size={16} /> },
-        { id: "education", label: "Education", icon: <GraduationCap size={16} /> },
-        { id: "documents", label: "Documents", icon: <Folder size={16} /> },
+        { id: "overview", label: "Overview", icon: <FiUser size={16} /> },
+        { id: "finance", label: "Finance", icon: <MdCurrencyRupee size={16} /> },
+        { id: "education", label: "Education", icon: <FaGraduationCap size={16} /> },
+        { id: "documents", label: "Documents", icon: <FiFolder size={16} /> },
     ];
 
     // Loading state
@@ -571,11 +569,11 @@ Exported: ${new Date().toLocaleString()}
         return (
             <div className="emp-detail">
                 <div className="emp-detail__error">
-                    <UserCircle size={64} className="emp-detail__error-icon" />
+                    <FiUser size={64} className="emp-detail__error-icon" />
                     <h3>Employee Not Found</h3>
                     <p>The employee you're looking for doesn't exist or has been removed.</p>
                     <button className="emp-detail__btn emp-detail__btn--primary" onClick={() => navigate("/employees")}>
-                        <ArrowLeft size={18} />
+                        <FiArrowLeft size={18} />
                         Back to Employees
                     </button>
                 </div>
@@ -591,7 +589,7 @@ Exported: ${new Date().toLocaleString()}
                     <button className="emp-detail__breadcrumb-link" onClick={() => navigate("/employees")}>
                         Employees
                     </button>
-                    <ChevronRight size={14} className="emp-detail__breadcrumb-sep" />
+                    <FiChevronRight size={14} className="emp-detail__breadcrumb-sep" />
                     <span className="emp-detail__breadcrumb-current">{employee.name}</span>
                 </nav>
 
@@ -610,7 +608,7 @@ Exported: ${new Date().toLocaleString()}
                         <div className="emp-detail__info">
                             <h1 className="emp-detail__name">{employee.name}</h1>
                             <p className="emp-detail__role">
-                                <Briefcase size={16} />
+                                <FiBriefcase size={16} />
                                 {employee.role}
                             </p>
                             <div className="emp-detail__badges">
@@ -618,22 +616,22 @@ Exported: ${new Date().toLocaleString()}
                                     {employee.status}
                                 </span>
                                 <span className="emp-detail__badge emp-detail__badge--dept">
-                                    <Building2 size={12} />
+                                    <MdOutlineBusiness size={12} />
                                     {employee.department}
                                 </span>
                             </div>
                         </div>
                         <div className="emp-detail__actions">
                             <button className="emp-detail__btn emp-detail__btn--secondary" onClick={exportProfile}>
-                                <Download size={16} />
+                                <FiDownload size={16} />
                                 Export
                             </button>
                             <button className="emp-detail__btn emp-detail__btn--primary" onClick={() => setShowEditModal(true)}>
-                                <Edit size={16} />
+                                <FiEdit2 size={16} />
                                 Edit
                             </button>
                             <button className="emp-detail__btn emp-detail__btn--danger" onClick={() => setShowDeleteModal(true)}>
-                                <Trash2 size={16} />
+                                <FiTrash2 size={16} />
                             </button>
                         </div>
                     </div>
@@ -647,28 +645,28 @@ Exported: ${new Date().toLocaleString()}
                         <div className="emp-detail__card">
                             <div className="emp-detail__card-header">
                                 <h3 className="emp-detail__card-title">
-                                    <User />
+                                    <FiUser />
                                     Contact Info
                                 </h3>
                             </div>
                             <div className="emp-detail__card-body">
                                 <div className="emp-detail__contact-list">
                                     <div className="emp-detail__contact-item">
-                                        <div className="emp-detail__contact-icon"><Mail size={16} /></div>
+                                        <div className="emp-detail__contact-icon"><FiMail size={16} /></div>
                                         <div className="emp-detail__contact-content">
                                             <div className="emp-detail__contact-label">Email</div>
                                             <div className="emp-detail__contact-value">{employee.email}</div>
                                         </div>
                                     </div>
                                     <div className="emp-detail__contact-item">
-                                        <div className="emp-detail__contact-icon"><Phone size={16} /></div>
+                                        <div className="emp-detail__contact-icon"><FiPhone size={16} /></div>
                                         <div className="emp-detail__contact-content">
                                             <div className="emp-detail__contact-label">Phone</div>
                                             <div className="emp-detail__contact-value">{employee.phone || "Not provided"}</div>
                                         </div>
                                     </div>
                                     <div className="emp-detail__contact-item">
-                                        <div className="emp-detail__contact-icon"><MapPin size={16} /></div>
+                                        <div className="emp-detail__contact-icon"><FiMapPin size={16} /></div>
                                         <div className="emp-detail__contact-content">
                                             <div className="emp-detail__contact-label">Location</div>
                                             <div className="emp-detail__contact-value">{employee.location || "Not specified"}</div>
@@ -682,7 +680,7 @@ Exported: ${new Date().toLocaleString()}
                         <div className="emp-detail__card">
                             <div className="emp-detail__card-header">
                                 <h3 className="emp-detail__card-title">
-                                    <TrendingUp />
+                                    <FiTrendingUp />
                                     Quick Stats
                                 </h3>
                             </div>

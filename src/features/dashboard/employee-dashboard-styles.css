@@ -711,6 +711,18 @@
     background: rgba(139, 92, 246, 0.15);
 }
 
+.dark .emp-dash-empty-icon.success {
+    background: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    /* emerald-400 */
+}
+
+.dark .emp-dash-empty-icon.info {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    /* blue-400 */
+}
+
 .dark .skeleton {
     background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
 }
