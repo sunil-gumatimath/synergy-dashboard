@@ -35,7 +35,7 @@ import {
   AlertCircle,
   ArrowUpRight,
   ArrowDownRight,
-} from "lucide-react";
+} from "../../lib/icons";
 import { employeeService } from "../../services/employeeService";
 import { taskService } from "../../services/taskService";
 import "./analytics-styles.css";

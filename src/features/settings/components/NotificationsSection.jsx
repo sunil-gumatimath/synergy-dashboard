@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Bell } from "lucide-react";
+import { Bell } from "../../../lib/icons";
 
 // Notification type configuration
 const notificationTypes = [

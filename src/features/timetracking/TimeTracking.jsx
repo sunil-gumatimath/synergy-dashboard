@@ -11,7 +11,7 @@ import {
     Timer,
     TrendingUp,
     AlertCircle,
-} from "lucide-react";
+} from "../../lib/icons";
 import { timeTrackingService } from "../../services/timeTrackingService.js";
 import { useAuth } from "../../contexts/AuthContext";
 import { SkeletonTimeEntry, SkeletonStatCard, Skeleton } from "../../components/common/Skeleton";

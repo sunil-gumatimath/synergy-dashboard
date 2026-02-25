@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Search, Filter, MessageSquare, Clock, CheckCircle, AlertCircle, LifeBuoy, X, Trash2 } from "lucide-react";
+import { Plus, Search, Filter, MessageSquare, Clock, CheckCircle, AlertCircle, LifeBuoy, X, Trash2 } from "../../lib/icons";
 import { supportService } from "../../services/supportService";
 import CreateTicketModal from "./CreateTicketModal";
 import ConfirmModal from "../../components/ui/ConfirmModal";

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { X, Calendar, Clock, FileText, AlertCircle } from "lucide-react";
+import { X, Calendar, Clock, FileText, AlertCircle } from "../../lib/icons";
 import { leaveService } from "../../services/leaveService.js";
 
 const ApplyLeaveModal = ({

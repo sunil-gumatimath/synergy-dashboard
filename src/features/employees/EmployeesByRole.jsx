@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Shield, Users, UserCheck, RefreshCw, ChevronDown, ChevronUp, Mail, Building2, Calendar, Activity } from "lucide-react";
+import { Shield, Users, UserCheck, RefreshCw, ChevronDown, ChevronUp, Mail, Building2, Calendar, Activity } from "../../lib/icons";
 import { supabase } from "../../lib/supabase";
 import "./employees-by-role-styles.css";
 

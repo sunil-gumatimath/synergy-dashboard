@@ -143,4 +143,134 @@ export const authService = {
 
     return data;
   },
+
+  // ─── MFA (Multi-Factor Authentication) ───────────────────────
+
+  /**
+   * Enroll a new TOTP MFA factor
+   * Returns a QR code URI and secret for the authenticator app
+   * @param {string} friendlyName - Display name for the factor (e.g. "My Authenticator")
+   * @returns {Promise<{data: Object|null, error: Error|null}>}
+   */
+  async enrollMFA(friendlyName = "Synergy EMS") {
+    try {
+      const { data, error } = await supabase.auth.mfa.enroll({
+        factorType: "totp",
+        friendlyName,
+      });
+      if (error) throw error;
+      // data contains: id, type, totp.qr_code, totp.secret, totp.uri
+      return { data, error: null };
+    } catch (error) {
+      console.error("MFA enroll error:", error);
+      return { data: null, error };
+    }
+  },
+
+  /**
+   * Verify and activate MFA factor after enrollment
+   * Must be called with a valid TOTP code from the authenticator app
+   * @param {string} factorId - The factor ID from enrollment
+   * @param {string} code - 6-digit TOTP code from authenticator
+   * @returns {Promise<{data: Object|null, error: Error|null}>}
+   */
+  async verifyMFA(factorId, code) {
+    try {
+      // Create a challenge first
+      const { data: challenge, error: challengeError } =
+        await supabase.auth.mfa.challenge({ factorId });
+      if (challengeError) throw challengeError;
+
+      // Verify the challenge with the TOTP code
+      const { data, error } = await supabase.auth.mfa.verify({
+        factorId,
+        challengeId: challenge.id,
+        code,
+      });
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      console.error("MFA verify error:", error);
+      return { data: null, error };
+    }
+  },
+
+  /**
+   * Remove/unenroll an MFA factor
+   * @param {string} factorId - The factor ID to unenroll
+   * @returns {Promise<{error: Error|null}>}
+   */
+  async unenrollMFA(factorId) {
+    try {
+      const { error } = await supabase.auth.mfa.unenroll({ factorId });
+      if (error) throw error;
+      return { error: null };
+    } catch (error) {
+      console.error("MFA unenroll error:", error);
+      return { error };
+    }
+  },
+
+  /**
+   * List all enrolled MFA factors for the current user
+   * @returns {Promise<{factors: Array, error: Error|null}>}
+   */
+  async listMFAFactors() {
+    try {
+      const { data, error } = await supabase.auth.mfa.listFactors();
+      if (error) throw error;
+      return { factors: data?.totp || [], error: null };
+    } catch (error) {
+      console.error("List MFA factors error:", error);
+      return { factors: [], error };
+    }
+  },
+
+  /**
+   * Get the current MFA Assurance level
+   * Returns 'aal1' (password only) or 'aal2' (password + MFA)
+   * @returns {Promise<{level: string|null, error: Error|null}>}
+   */
+  async getMFAAssuranceLevel() {
+    try {
+      const { data, error } =
+        await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (error) throw error;
+      return {
+        currentLevel: data.currentLevel,
+        nextLevel: data.nextLevel,
+        currentAuthenticationMethods: data.currentAuthenticationMethods,
+        error: null,
+      };
+    } catch (error) {
+      console.error("Get MFA assurance level error:", error);
+      return { currentLevel: null, nextLevel: null, error };
+    }
+  },
+
+  /**
+   * Create an MFA challenge and verify with code (for login flow)
+   * Used when user has MFA enabled and needs to provide second factor
+   * @param {string} factorId - The factor ID to challenge
+   * @param {string} code - 6-digit TOTP code
+   * @returns {Promise<{data: Object|null, error: Error|null}>}
+   */
+  async challengeAndVerifyMFA(factorId, code) {
+    try {
+      const { data: challenge, error: challengeError } =
+        await supabase.auth.mfa.challenge({ factorId });
+      if (challengeError) throw challengeError;
+
+      const { data, error } = await supabase.auth.mfa.verify({
+        factorId,
+        challengeId: challenge.id,
+        code,
+      });
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      console.error("MFA challenge/verify error:", error);
+      return { data: null, error };
+    }
+  },
 };

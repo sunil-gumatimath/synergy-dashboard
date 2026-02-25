@@ -3,7 +3,7 @@ import {
     Target, Star, TrendingUp, Users, Calendar, Clock, ChevronRight, Plus,
     Filter, Search, BarChart3, Award, MessageSquare, CheckCircle, AlertCircle,
     XCircle, Loader2, Eye, Edit2, Send, User, Flag, ArrowUp, ArrowDown, Minus,
-} from "lucide-react";
+} from "../../lib/icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { performanceService } from "../../services/performanceService";

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Palette, Sun, Moon, Monitor, Check } from "lucide-react";
+import { Palette, Sun, Moon, Monitor, Check } from "../../../lib/icons";
 
 // Theme options
 const themeOptions = [
