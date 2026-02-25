@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { X, Calendar, Clock, MapPin, Type, Repeat } from "lucide-react";
+import { X, Calendar, Clock, MapPin, Type, Repeat } from "../../lib/icons";
 import { format } from "date-fns";
 import "./calendar-styles.css";
 

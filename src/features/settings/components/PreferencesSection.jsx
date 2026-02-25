@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Globe, Clock, Calendar } from "lucide-react";
+import { Globe, Clock, Calendar } from "../../../lib/icons";
 
 /**
  * Preferences Section Component

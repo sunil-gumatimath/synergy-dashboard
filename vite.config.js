@@ -27,7 +27,7 @@ export default defineConfig({
           "supabase-vendor": ["@supabase/supabase-js"],
 
           // Split icons and utilities
-          "ui-vendor": ["lucide-react", "date-fns", "prop-types"],
+          "ui-vendor": ["react-icons", "date-fns", "prop-types"],
         },
       },
     },
@@ -39,6 +39,6 @@ export default defineConfig({
   },
   // Pre-bundle heavy dependencies
   optimizeDeps: {
-    include: ["recharts", "@supabase/supabase-js", "lucide-react"],
+    include: ["recharts", "@supabase/supabase-js", "react-icons"],
   },
 });

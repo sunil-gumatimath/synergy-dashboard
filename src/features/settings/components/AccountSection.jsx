@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { User, Camera, Mail, Smartphone, AlertCircle } from "lucide-react";
+import { User, Camera, Mail, Smartphone, AlertCircle } from "../../../lib/icons";
 
 /**
  * Account Section Component

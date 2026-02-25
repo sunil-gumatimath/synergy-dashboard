@@ -3,7 +3,7 @@ import {
     FileText, Download, Printer, Calendar, Users, Clock,
     ClipboardList, Umbrella, BarChart3, RefreshCw, TrendingUp,
     TrendingDown, ChevronDown, Building2
-} from 'lucide-react';
+} from '../../lib/icons';
 import {
     getAttendanceReport, getLeaveReport, getTaskReport,
     getTimeTrackingReport, getEmployeeSummaryReport,

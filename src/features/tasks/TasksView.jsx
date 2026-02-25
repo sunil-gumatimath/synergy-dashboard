@@ -3,7 +3,7 @@ import {
     Plus, Search, Filter, MoreHorizontal, Calendar, User, Flag,
     Clock, CheckCircle2, Circle, Timer, AlertCircle, ChevronDown,
     X, Trash2, Edit3, Eye, Tag, GripVertical
-} from 'lucide-react';
+} from '../../lib/icons';
 import { taskService } from '../../services/taskService.js';
 import { employeeService } from '../../services/employeeService.js';
 

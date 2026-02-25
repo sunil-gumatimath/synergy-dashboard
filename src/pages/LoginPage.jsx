@@ -9,7 +9,7 @@ import {
   Check,
   X,
   Mail,
-} from "lucide-react";
+} from "../lib/icons";
 import SynergyLogo from "../components/common/SynergyLogo";
 import "../index.css";
 import "./login-styles.css";

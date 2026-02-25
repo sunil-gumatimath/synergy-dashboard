@@ -13,7 +13,7 @@ import {
     ClipboardList,
     Calendar,
     LifeBuoy,
-} from "lucide-react";
+} from "../lib/icons";
 import { useNotifications } from "../contexts/NotificationContext";
 import { formatDistanceToNow } from "date-fns";
 import "./notification-panel-styles.css";

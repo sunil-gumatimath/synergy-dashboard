@@ -14,7 +14,7 @@ import {
     CheckCircle,
     XCircle,
     Trash2,
-} from "lucide-react";
+} from "../../lib/icons";
 import { leaveService } from "../../services/leaveService.js";
 import { useAuth } from "../../contexts/AuthContext";
 import { SkeletonLeaveCard, SkeletonStatCard, SkeletonTable, Skeleton } from "../../components/common/Skeleton";

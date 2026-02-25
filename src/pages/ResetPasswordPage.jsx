@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { Lock, Eye, EyeOff, CheckCircle, AlertCircle, ArrowLeft } from "lucide-react";
+import { Lock, Eye, EyeOff, CheckCircle, AlertCircle } from "../lib/icons";
+import { HiOutlineArrowLeft as ArrowLeft } from "react-icons/hi2";
 import { authService } from "../services/authService";
 import "./ResetPasswordPage.css";
 

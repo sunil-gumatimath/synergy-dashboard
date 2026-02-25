@@ -17,7 +17,7 @@ import {
     parseISO,
     addYears,
 } from "date-fns";
-import { ChevronLeft, ChevronRight, MapPin, Plus, Award, Clock, Trash2, Edit2, Calendar, Repeat } from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Plus, Award, Clock, Trash2, Edit2, Calendar, Repeat } from "../../lib/icons";
 import { employeeService } from "../../services/employeeService";
 import { calendarService } from "../../services/calendarService";
 import { Skeleton } from "../../components/common/Skeleton";

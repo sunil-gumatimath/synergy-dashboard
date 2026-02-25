@@ -11,7 +11,7 @@ import {
   LogOut,
   Loader2,
   X
-} from "lucide-react";
+} from "../../lib/icons";
 import { SkeletonSettingsSection, Skeleton } from "../../components/common/Skeleton";
 import { useToast } from "../../contexts/ToastContext";
 import { useAuth } from "../../contexts/AuthContext";

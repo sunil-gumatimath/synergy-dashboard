@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, Save, AlertCircle, Loader2 } from "lucide-react";
+import { X, Save, AlertCircle, Loader2 } from "../../lib/icons";
 
 const CreateTicketModal = ({ isOpen, onClose, onSubmit, isLoading, ticketToEdit = null }) => {
     const [formData, setFormData] = useState({

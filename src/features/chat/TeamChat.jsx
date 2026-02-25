@@ -17,7 +17,7 @@ import {
     Hash,
     ChevronLeft,
     Loader2,
-} from "lucide-react";
+} from "../../lib/icons";
 import { useAuth } from "../../contexts/AuthContext";
 import { useToast } from "../../contexts/ToastContext";
 import { chatService } from "../../services/chatService";

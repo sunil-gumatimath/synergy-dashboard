@@ -3,11 +3,13 @@ import React, {
   useMemo,
   useEffect,
   useCallback,
+  useRef,
   Suspense,
   lazy,
 } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { UserPlus, Users, RefreshCw, Download, Search, X, LayoutGrid, List } from "lucide-react";
+import { UserPlus, Users, RefreshCw, Download, Search, X, LayoutGrid, List } from "../../lib/icons";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import "./employees-styles.css";
 import { employeeService } from "../../services/employeeService";
 import { supabase } from "../../lib/supabase";
@@ -590,18 +592,13 @@ const EmployeeList = () => {
           )}
 
           {filteredAndSortedEmployees.length > 0 ? (
-            <div className="employees-grid">
-              {filteredAndSortedEmployees.map((employee) => (
-                <EmployeeCard
-                  key={employee.id}
-                  employee={employee}
-                  onEdit={openEditModal}
-                  onDelete={openDeleteModal}
-                  isSelected={selectedEmployeeIds.has(employee.id)}
-                  onToggleSelect={handleToggleSelect}
-                />
-              ))}
-            </div>
+            <VirtualizedEmployeeGrid
+              employees={filteredAndSortedEmployees}
+              selectedEmployeeIds={selectedEmployeeIds}
+              onEdit={openEditModal}
+              onDelete={openDeleteModal}
+              onToggleSelect={handleToggleSelect}
+            />
           ) : (
             <div className="card employees-empty">
               <Users size={64} className="employees-empty-icon" />
@@ -684,5 +681,102 @@ const EmployeeList = () => {
     </div>
   );
 };
+
+/**
+ * VirtualizedEmployeeGrid — renders employee cards with virtual scrolling
+ * for large datasets (>50). For small lists, renders normally.
+ */
+const VIRTUAL_THRESHOLD = 50;
+const ROW_HEIGHT = 260; // Approximate height of an employee card row
+const COLUMNS = 3; // Number of columns in the grid (matches CSS)
+
+const VirtualizedEmployeeGrid = React.memo(
+  ({ employees, selectedEmployeeIds, onEdit, onDelete, onToggleSelect }) => {
+    const parentRef = useRef(null);
+    const useVirtual = employees.length > VIRTUAL_THRESHOLD;
+
+    // Group employees into rows of COLUMNS
+    const rows = useMemo(() => {
+      if (!useVirtual) return [];
+      const result = [];
+      for (let i = 0; i < employees.length; i += COLUMNS) {
+        result.push(employees.slice(i, i + COLUMNS));
+      }
+      return result;
+    }, [employees, useVirtual]);
+
+    const virtualizer = useVirtualizer({
+      count: useVirtual ? rows.length : 0,
+      getScrollElement: () => parentRef.current,
+      estimateSize: () => ROW_HEIGHT,
+      overscan: 3,
+    });
+
+    // Simple rendering for small lists
+    if (!useVirtual) {
+      return (
+        <div className="employees-grid">
+          {employees.map((employee) => (
+            <EmployeeCard
+              key={employee.id}
+              employee={employee}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              isSelected={selectedEmployeeIds.has(employee.id)}
+              onToggleSelect={onToggleSelect}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    // Virtual rendering for large lists
+    return (
+      <div
+        ref={parentRef}
+        className="employees-virtual-scroll"
+        style={{
+          height: "calc(100vh - 340px)",
+          overflow: "auto",
+          contain: "strict",
+        }}
+      >
+        <div
+          style={{
+            height: `${virtualizer.getTotalSize()}px`,
+            width: "100%",
+            position: "relative",
+          }}
+        >
+          {virtualizer.getVirtualItems().map((virtualRow) => (
+            <div
+              key={virtualRow.key}
+              className="employees-grid"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
+            >
+              {rows[virtualRow.index].map((employee) => (
+                <EmployeeCard
+                  key={employee.id}
+                  employee={employee}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                  isSelected={selectedEmployeeIds.has(employee.id)}
+                  onToggleSelect={onToggleSelect}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+);
+VirtualizedEmployeeGrid.displayName = "VirtualizedEmployeeGrid";
 
 export default React.memo(EmployeeList);
