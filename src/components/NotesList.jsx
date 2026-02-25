@@ -1,6 +1,6 @@
 import React, { useState, lazy, Suspense } from "react";
 import PropTypes from "prop-types";
-import { Plus, Edit, Trash, Calendar, User, FileText, CheckCircle, AlertTriangle, Users } from "lucide-react";
+import { Plus, Edit, Trash, Calendar, User, FileText, CheckCircle, AlertTriangle, Users } from "../lib/icons";
 import { formatDistanceToNow } from "date-fns";
 const AddNoteModal = lazy(() => import("./AddNoteModal"));
 const EditNoteModal = lazy(() => import("./EditNoteModal"));

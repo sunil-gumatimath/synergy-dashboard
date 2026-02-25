@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { X, GraduationCap, Building, Calendar, Award, Plus, Trash2, AlertCircle, Save } from "lucide-react";
+import { X, GraduationCap, Building, Calendar, Award, Plus, Trash2, AlertCircle, Save } from "../lib/icons";
 
 const EducationModal = ({
     isOpen,

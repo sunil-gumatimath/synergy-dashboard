@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { X, AlertCircle } from "lucide-react";
+import { X, AlertCircle } from "../lib/icons";
 import noteService from "../services/noteService";
 
 const CATEGORIES = [

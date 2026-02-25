@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown } from "../lib/icons";
 import "./sort-controls-styles.css";
 
 const SortControls = ({ sortBy, sortOrder, onSortChange }) => {
