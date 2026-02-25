@@ -1,6 +1,6 @@
 // Synergy PWA Service Worker
 /* global clients */
-const CACHE_NAME = 'synergy-v1';
+const CACHE_NAME = 'synergy-v2';
 const STATIC_ASSETS = [
     '/',
     '/index.html',

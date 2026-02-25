@@ -239,22 +239,28 @@ const Header = () => {
 
           <DropdownMenu.Portal>
             <DropdownMenu.Content
-              className="dropdown-content min-w-[200px] bg-white dark:bg-[var(--bg-surface)] rounded-lg shadow-lg border border-[var(--border-color)] p-1 z-50 animate-in fade-in zoom-in-95"
+              className={`dropdown-content w-[240px] overflow-hidden rounded-2xl shadow-xl border p-3 space-y-1.5 z-50 animate-in fade-in zoom-in-95 ${effectiveTheme === "dark"
+                  ? "bg-[#131a28] border-[#1e293b]"
+                  : "bg-white border-gray-200"
+                }`}
+              style={{ borderRadius: '20px', padding: '12px', width: '240px' }}
               sideOffset={8}
+              collisionPadding={8}
               align="end"
             >
-              <DropdownMenu.Label className="px-3 py-2 text-xs font-semibold text-muted uppercase tracking-wider">
+              <DropdownMenu.Label className={`px-4 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider ${effectiveTheme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                 My Account
               </DropdownMenu.Label>
 
-              <DropdownMenu.Item className="dropdown-item flex items-center gap-2 px-3 py-2 outline-none cursor-default select-none rounded-[4px] hover:bg-[var(--bg-body)] w-full text-left" onSelect={() => navigate('/profile')}>
+              <DropdownMenu.Item className={`dropdown-item flex items-center gap-2 px-4 py-2.5 outline-none cursor-pointer select-none rounded-xl w-full text-left transition-colors ${effectiveTheme === 'dark' ? 'text-gray-200 hover:bg-[#1e293b] data-[highlighted]:bg-[#1e293b]' : 'text-gray-900 hover:bg-gray-100 data-[highlighted]:bg-gray-100'}`} style={{ borderRadius: '14px', padding: '10px 16px' }} onSelect={() => navigate('/profile')}>
                 Profile Settings
               </DropdownMenu.Item>
 
-              <DropdownMenu.Separator className="h-[1px] bg-[var(--border-color)] my-1" />
+              <DropdownMenu.Separator className={`h-[1px] my-1 mx-1 ${effectiveTheme === 'dark' ? 'bg-[#1e293b]' : 'bg-gray-200'}`} />
 
               <DropdownMenu.Item
-                className="dropdown-item flex items-center gap-2 px-3 py-2 outline-none cursor-default select-none rounded-[4px] text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 w-full text-left font-medium"
+                className={`dropdown-item flex items-center gap-2 px-4 py-2.5 outline-none cursor-pointer select-none rounded-xl w-full text-left font-medium transition-colors ${effectiveTheme === 'dark' ? 'text-red-400 hover:bg-red-950/30 data-[highlighted]:bg-red-950/30' : 'text-red-600 hover:bg-red-50 data-[highlighted]:bg-red-50'}`}
+                style={{ borderRadius: '14px', padding: '10px 16px' }}
                 onSelect={handleSignOut}
               >
                 Sign Out
