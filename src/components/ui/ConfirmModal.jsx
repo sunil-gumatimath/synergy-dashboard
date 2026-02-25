@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle, X } from "../../lib/icons";
 import * as Dialog from "@radix-ui/react-dialog";
 
 const ConfirmModal = ({

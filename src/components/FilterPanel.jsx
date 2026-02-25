@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import { Filter, X, ChevronDown } from "lucide-react";
+import { Filter, X, ChevronDown } from "../lib/icons";
 import "./filter-panel-styles.css";
 
 const FilterPanel = ({ employees, filters, onFilterChange }) => {

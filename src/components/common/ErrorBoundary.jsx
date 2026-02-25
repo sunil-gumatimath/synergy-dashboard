@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { AlertTriangle, RefreshCw } from "lucide-react";
+import { AlertTriangle, RefreshCw } from "../../lib/icons";
 
 /**
  * ErrorBoundary - Catches JavaScript errors in child components

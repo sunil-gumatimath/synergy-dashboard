@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { X, AlertCircle, User, Shield } from "lucide-react";
+import { X, AlertCircle, User, Shield } from "../lib/icons";
 import Avatar from "./common/Avatar";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useForm } from "react-hook-form";

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import PropTypes from "prop-types";
-import { X, AlertCircle, Edit2, Phone, IndianRupee, Shield, Lock } from "lucide-react";
+import { X, AlertCircle, Edit2, Phone, IndianRupee, Shield, Lock } from "../lib/icons";
 import Avatar from "./common/Avatar";
 import { useAuth } from "../contexts/AuthContext";
 import * as Dialog from "@radix-ui/react-dialog";

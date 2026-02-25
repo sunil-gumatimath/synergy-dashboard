@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { CheckCircle, XCircle, Info, AlertTriangle, X } from "lucide-react";
+import { CheckCircle, XCircle, Info, AlertTriangle, X } from "../../lib/icons";
 import "./Toast.css";
 
 const Toast = ({ message, type = "success", onClose, duration = 4000 }) => {

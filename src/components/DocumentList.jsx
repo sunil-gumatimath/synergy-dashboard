@@ -1,6 +1,6 @@
 import React, { useState, lazy, Suspense } from "react";
 import PropTypes from "prop-types";
-import { Upload, Download, Trash, Calendar, Folder } from "lucide-react";
+import { Upload, Download, Trash, Calendar, Folder } from "../lib/icons";
 import { formatDistanceToNow } from "date-fns";
 const DocumentUploadModal = lazy(() => import("./DocumentUploadModal"));
 const ConfirmModal = lazy(() => import("./ui/ConfirmModal"));

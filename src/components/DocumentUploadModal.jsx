@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import PropTypes from "prop-types";
-import { X, Upload, AlertCircle, FileText } from "lucide-react";
+import { X, Upload, AlertCircle, FileText } from "../lib/icons";
 import documentService from "../services/documentService";
 
 const DOCUMENT_TYPES = [
