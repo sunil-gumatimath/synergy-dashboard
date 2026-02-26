@@ -111,6 +111,10 @@ export const employeeService = {
       if (updates.education !== undefined) updateData.education = updates.education;
       if (updates.performance_score !== undefined) updateData.performance_score = updates.performance_score;
 
+      // Handle type casting edge cases for PostgreSQL when resetting form fields
+      if (updateData.salary === "") updateData.salary = null;
+      if (updateData.join_date === "") updateData.join_date = null;
+
       const { data, error } = await supabase
         .from(TABLE_NAME)
         .update(updateData)
