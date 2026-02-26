@@ -11,7 +11,7 @@ import Avatar from "./common/Avatar";
  * Supports multi-select with checkbox
  */
 const EmployeeCard = memo(
-  ({ employee, onEdit, onDelete, isSelected, onToggleSelect }) => {
+  ({ employee, onEdit, onDelete, isSelected, onToggleSelect, isAdmin = true }) => {
     const navigate = useNavigate();
 
     const getStatusClass = (status) => {
@@ -107,24 +107,26 @@ const EmployeeCard = memo(
           </div>
         </div>
 
-        <div className="employee-actions">
-          <button
-            type="button"
-            className="employee-action-btn"
-            onClick={handleEdit}
-          >
-            <Edit size={16} />
-            Edit
-          </button>
-          <button
-            type="button"
-            className="employee-action-btn danger"
-            onClick={handleDelete}
-          >
-            <Trash size={16} />
-            Delete
-          </button>
-        </div>
+        {isAdmin && (
+          <div className="employee-actions">
+            <button
+              type="button"
+              className="employee-action-btn"
+              onClick={handleEdit}
+            >
+              <Edit size={16} />
+              Edit
+            </button>
+            <button
+              type="button"
+              className="employee-action-btn danger"
+              onClick={handleDelete}
+            >
+              <Trash size={16} />
+              Delete
+            </button>
+          </div>
+        )}
       </div>
     );
   },
@@ -146,6 +148,7 @@ EmployeeCard.propTypes = {
   onDelete: PropTypes.func.isRequired,
   isSelected: PropTypes.bool,
   onToggleSelect: PropTypes.func,
+  isAdmin: PropTypes.bool,
 };
 
 export default EmployeeCard;

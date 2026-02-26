@@ -16,6 +16,7 @@ import { useUIStore } from "./store/uiStore";
 import "./components/common/Avatar.css";
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient';
+import { isAdminOrManagerRole } from "./utils/roles";
 
 const AnalyticsDashboard = React.lazy(
   () => import("./features/analytics/AnalyticsDashboard"),
@@ -51,7 +52,7 @@ const PerformanceReviews = React.lazy(
 
 const HomeRedirect = () => {
   const { user } = useAuth();
-  if (user?.role === 'Admin' || user?.role === 'Manager') {
+  if (isAdminOrManagerRole(user?.role)) {
     return <Navigate to="/analytics" replace />;
   }
   return <Navigate to="/dashboard" replace />;

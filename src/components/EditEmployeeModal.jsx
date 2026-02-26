@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { X, AlertCircle, Edit2, Phone, IndianRupee, Shield, Lock } from "../lib/icons";
 import Avatar from "./common/Avatar";
 import { useAuth } from "../contexts/AuthContext";
+import { isAdminRole } from "../utils/roles";
 import * as Dialog from "@radix-ui/react-dialog";
 
 const ROLES = ["Admin", "Manager", "Employee"];
@@ -15,7 +16,7 @@ const EditEmployeeModal = ({
   isLoading = false,
 }) => {
   const { user: currentUser } = useAuth();
-  const isAdmin = currentUser?.role === "Admin";
+  const isAdmin = isAdminRole(currentUser?.role);
   // Initialize form data based on employee prop
   const initialFormData = useMemo(() => {
     if (employee) {
@@ -112,14 +113,6 @@ const EditEmployeeModal = ({
       newErrors.email = "Please enter a valid email";
     }
 
-    if (!formData.role.trim()) {
-      newErrors.role = "Role is required";
-    }
-
-    if (!formData.department) {
-      newErrors.department = "Department is required";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -131,7 +124,17 @@ const EditEmployeeModal = ({
       return;
     }
 
-    await onSubmit(employee.id, formData);
+    const payload = { ...formData };
+
+    // Avoid overwriting optional fields with empty strings
+    if (!String(payload.role || "").trim()) delete payload.role;
+    if (!String(payload.department || "").trim()) delete payload.department;
+    if (!String(payload.manager || "").trim()) payload.manager = null;
+    if (!String(payload.location || "").trim()) payload.location = null;
+    if (!String(payload.address || "").trim()) payload.address = null;
+    if (!String(payload.phone || "").trim()) payload.phone = null;
+
+    await onSubmit(employee.id, payload);
   };
 
   const handleChange = (field, value) => {

@@ -23,6 +23,8 @@ import {
 } from "react-icons/fi";
 import { MdOutlineBusiness, MdCurrencyRupee, MdOutlineAccountBalance } from "react-icons/md";
 import { FaGraduationCap } from "react-icons/fa";
+import { useAuth } from "../contexts/AuthContext";
+import { isAdminRole } from "../utils/roles";
 
 import { employeeService } from "../services/employeeService";
 import noteService from "../services/noteService";
@@ -43,6 +45,8 @@ const EducationModal = lazy(() => import("../components/EducationModal"));
 const EmployeeDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user: currentUser } = useAuth();
+    const isAdmin = isAdminRole(currentUser?.role);
     const [employee, setEmployee] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
@@ -347,13 +351,15 @@ Exported: ${new Date().toLocaleString()}
                     <MdOutlineAccountBalance />
                     Bank & Payment Details
                 </h3>
-                <button
-                    className="emp-detail__btn emp-detail__btn--secondary emp-detail__btn--sm"
-                    onClick={() => setShowBankModal(true)}
-                >
-                    <FiEdit2 size={14} />
-                    {employee.bank_details ? "Edit" : "Add"}
-                </button>
+                {isAdmin && (
+                    <button
+                        className="emp-detail__btn emp-detail__btn--secondary emp-detail__btn--sm"
+                        onClick={() => setShowBankModal(true)}
+                    >
+                        <FiEdit2 size={14} />
+                        {employee.bank_details ? "Edit" : "Add"}
+                    </button>
+                )}
             </div>
             <div className="emp-detail__card-body">
                 {employee.bank_details ? (
@@ -392,14 +398,16 @@ Exported: ${new Date().toLocaleString()}
                         <MdOutlineAccountBalance size={48} className="emp-detail__empty-icon" />
                         <h3>No Bank Details</h3>
                         <p>Payment information has not been added for this employee yet.</p>
-                        <button
-                            className="emp-detail__btn emp-detail__btn--primary"
-                            onClick={() => setShowBankModal(true)}
-                            style={{ marginTop: '16px' }}
-                        >
-                            <FiPlus size={16} />
-                            Add Bank Details
-                        </button>
+                        {isAdmin && (
+                            <button
+                                className="emp-detail__btn emp-detail__btn--primary"
+                                onClick={() => setShowBankModal(true)}
+                                style={{ marginTop: '16px' }}
+                            >
+                                <FiPlus size={16} />
+                                Add Bank Details
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
@@ -413,13 +421,15 @@ Exported: ${new Date().toLocaleString()}
                     <FaGraduationCap />
                     Education History
                 </h3>
-                <button
-                    className="emp-detail__btn emp-detail__btn--secondary emp-detail__btn--sm"
-                    onClick={() => setShowEducationModal(true)}
-                >
-                    <FiEdit2 size={14} />
-                    {employee.education && employee.education.length > 0 ? "Edit" : "Add"}
-                </button>
+                {isAdmin && (
+                    <button
+                        className="emp-detail__btn emp-detail__btn--secondary emp-detail__btn--sm"
+                        onClick={() => setShowEducationModal(true)}
+                    >
+                        <FiEdit2 size={14} />
+                        {employee.education && employee.education.length > 0 ? "Edit" : "Add"}
+                    </button>
+                )}
             </div>
             <div className="emp-detail__card-body">
                 {employee.education && employee.education.length > 0 ? (
@@ -445,14 +455,16 @@ Exported: ${new Date().toLocaleString()}
                         <FaGraduationCap size={48} className="emp-detail__empty-icon" />
                         <h3>No Education Records</h3>
                         <p>Education history has not been added for this employee.</p>
-                        <button
-                            className="emp-detail__btn emp-detail__btn--primary"
-                            onClick={() => setShowEducationModal(true)}
-                            style={{ marginTop: '16px' }}
-                        >
-                            <FiPlus size={16} />
-                            Add Education
-                        </button>
+                        {isAdmin && (
+                            <button
+                                className="emp-detail__btn emp-detail__btn--primary"
+                                onClick={() => setShowEducationModal(true)}
+                                style={{ marginTop: '16px' }}
+                            >
+                                <FiPlus size={16} />
+                                Add Education
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
@@ -626,13 +638,17 @@ Exported: ${new Date().toLocaleString()}
                                 <FiDownload size={16} />
                                 Export
                             </button>
-                            <button className="emp-detail__btn emp-detail__btn--primary" onClick={() => setShowEditModal(true)}>
-                                <FiEdit2 size={16} />
-                                Edit
-                            </button>
-                            <button className="emp-detail__btn emp-detail__btn--danger" onClick={() => setShowDeleteModal(true)}>
-                                <FiTrash2 size={16} />
-                            </button>
+                            {isAdmin && (
+                                <>
+                                    <button className="emp-detail__btn emp-detail__btn--primary" onClick={() => setShowEditModal(true)}>
+                                        <FiEdit2 size={16} />
+                                        Edit
+                                    </button>
+                                    <button className="emp-detail__btn emp-detail__btn--danger" onClick={() => setShowDeleteModal(true)}>
+                                        <FiTrash2 size={16} />
+                                    </button>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

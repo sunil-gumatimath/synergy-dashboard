@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { authService } from "../services/authService";
 import { supabase } from "../lib/supabase";
+import { normalizeRole } from "../utils/roles";
 
 const AuthContext = createContext({});
 
@@ -26,19 +27,42 @@ export const AuthProvider = ({ children }) => {
         console.error("Error fetching employee profile:", error);
       }
 
-      // Role comes strictly from the employee table — no hardcoded fallbacks
-      const role = employee?.role || 'Employee';
+      let resolvedEmployee = employee;
+
+      // Auto-link auth.users.id -> employees.user_id when email matches.
+      // This helps role-aware RLS policies that depend on employees.user_id = auth.uid().
+      if (resolvedEmployee && !resolvedEmployee.user_id && authUser?.id) {
+        const { data: linkedEmployee, error: linkError } = await supabase
+          .from('employees')
+          .update({ user_id: authUser.id })
+          .eq('id', resolvedEmployee.id)
+          .is('user_id', null)
+          .select('*')
+          .maybeSingle();
+
+        if (linkError) {
+          console.warn('Could not auto-link employee user_id:', linkError.message || linkError);
+        } else if (linkedEmployee) {
+          resolvedEmployee = linkedEmployee;
+        }
+      }
+
+      // Role comes from employee table, normalized for consistent RBAC checks
+      const role = normalizeRole(resolvedEmployee?.role || 'Employee');
 
       setUser({
         ...authUser,
-        ...employee,
+        ...resolvedEmployee,
         role: role,
         id: authUser.id, // Keep auth ID as primary ID, or use employee.id as employeeId
-        employeeId: employee?.id
+        employeeId: resolvedEmployee?.id
       });
     } catch (err) {
       console.error("Error in fetchAndSetUser:", err);
-      setUser(authUser);
+      setUser({
+        ...authUser,
+        role: normalizeRole(authUser?.user_metadata?.role || "Employee"),
+      });
     }
   }, []);
 
@@ -131,7 +155,7 @@ export const AuthProvider = ({ children }) => {
     );
     if (!error && newUser) {
       // For new signups, they might not be in employees table yet
-      setUser({ ...newUser, role: 'Employee' });
+      setUser({ ...newUser, role: normalizeRole('Employee') });
     }
     return { user: newUser, error };
   };

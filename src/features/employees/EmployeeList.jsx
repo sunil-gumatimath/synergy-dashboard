@@ -21,6 +21,9 @@ import FilterPanel from "../../components/FilterPanel";
 import SortControls from "../../components/SortControls";
 import BulkActionToolbar from "../../components/BulkActionToolbar";
 import EmployeesByRole from "./EmployeesByRole";
+import { useAuth } from "../../contexts/AuthContext";
+import { isAdminRole } from "../../utils/roles";
+
 
 // Lazy load modals for better performance
 const AddEmployeeModal = lazy(
@@ -35,6 +38,8 @@ const DEFAULT_PAGE_SIZE = 20;
 
 const EmployeeList = () => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const isAdmin = isAdminRole(user?.role);
   const [viewMode, setViewMode] = useState("cards"); // "cards" | "byRole"
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -472,12 +477,14 @@ const EmployeeList = () => {
       {viewMode === "cards" && (
         <>
           {/* Bulk Action Toolbar */}
-          <BulkActionToolbar
-            selectedCount={selectedEmployeeIds.size}
-            onClearSelection={handleClearSelection}
-            onBulkDelete={handleBulkDelete}
-            onBulkStatusChange={handleBulkStatusChange}
-          />
+          {isAdmin && (
+            <BulkActionToolbar
+              selectedCount={selectedEmployeeIds.size}
+              onClearSelection={handleClearSelection}
+              onBulkDelete={handleBulkDelete}
+              onBulkStatusChange={handleBulkStatusChange}
+            />
+          )}
 
           <div className="employees-header">
             <div className="employees-search-wrapper">
@@ -521,14 +528,16 @@ const EmployeeList = () => {
                   className={isRefreshing ? "animate-spin" : ""}
                 />
               </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => setShowAddModal(true)}
-              >
-                <UserPlus size={18} />
-                <span>Add Employee</span>
-              </button>
+              {isAdmin && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => setShowAddModal(true)}
+                >
+                  <UserPlus size={18} />
+                  <span>Add Employee</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -558,7 +567,7 @@ const EmployeeList = () => {
                   </span>
                 )}
               </p>
-              {employees.length > 0 && (
+              {employees.length > 0 && isAdmin && (
                 <button
                   type="button"
                   className="btn btn-ghost btn-sm"
@@ -580,6 +589,7 @@ const EmployeeList = () => {
                 onEdit={openEditModal}
                 onDelete={openDeleteModal}
                 onToggleSelect={handleToggleSelect}
+                isAdmin={isAdmin}
               />
 
               {/* Server-side Pagination */}
@@ -683,7 +693,7 @@ const ROW_HEIGHT = 260;
 const COLUMNS = 3;
 
 const VirtualizedEmployeeGrid = React.memo(
-  ({ employees, selectedEmployeeIds, onEdit, onDelete, onToggleSelect }) => {
+  ({ employees, selectedEmployeeIds, onEdit, onDelete, onToggleSelect, isAdmin }) => {
     const parentRef = useRef(null);
     const useVirtual = employees.length > VIRTUAL_THRESHOLD;
 
@@ -714,6 +724,7 @@ const VirtualizedEmployeeGrid = React.memo(
               onDelete={onDelete}
               isSelected={selectedEmployeeIds.has(employee.id)}
               onToggleSelect={onToggleSelect}
+              isAdmin={isAdmin}
             />
           ))}
         </div>
@@ -757,6 +768,7 @@ const VirtualizedEmployeeGrid = React.memo(
                   onDelete={onDelete}
                   isSelected={selectedEmployeeIds.has(employee.id)}
                   onToggleSelect={onToggleSelect}
+                  isAdmin={isAdmin}
                 />
               ))}
             </div>

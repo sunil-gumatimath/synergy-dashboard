@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { isAllowedRole } from "../../utils/roles";
 
 /**
  * ProtectedRoute - Wrapper component that requires authentication
@@ -19,7 +20,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     if (user) {
         // Check for role-based access
         // If allowedRoles is provided and user's role is not in the list
-        if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+        if (allowedRoles && allowedRoles.length > 0 && !isAllowedRole(user.role, allowedRoles)) {
             // Redirect to home or show unauthorized message
             return (
                 <div className="min-h-screen flex items-center justify-center bg-gray-50">

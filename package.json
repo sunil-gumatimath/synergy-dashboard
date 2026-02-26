@@ -9,7 +9,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "preinstall": "npx only-allow bun"
+    "preinstall": "bunx only-allow bun"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",

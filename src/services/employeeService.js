@@ -115,6 +115,12 @@ export const employeeService = {
       if (updateData.salary === "") updateData.salary = null;
       if (updateData.join_date === "") updateData.join_date = null;
 
+      // Normalize optional text fields
+      if (updateData.phone === "") updateData.phone = null;
+      if (updateData.address === "") updateData.address = null;
+      if (updateData.location === "") updateData.location = null;
+      if (updateData.manager === "") updateData.manager = null;
+
       const { data, error } = await supabase
         .from(TABLE_NAME)
         .update(updateData)

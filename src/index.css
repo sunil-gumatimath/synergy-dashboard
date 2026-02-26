@@ -1491,13 +1491,18 @@ button {
 }
 
 .modal-content {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow:
     0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  width: 100%;
+  width: calc(100% - (var(--space-md) * 2));
   max-width: 640px;
   max-height: 90vh;
   overflow-y: auto;

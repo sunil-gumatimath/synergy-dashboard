@@ -180,7 +180,7 @@ synergy-crm/
 
 ---
 
-## Available NPM/Bun Scripts
+## Available Bun Scripts
 
 - `bun run dev` - Starts the Vite development server.
 - `bun run build` - Compiles the React application for production into `dist/`.
@@ -191,7 +191,7 @@ synergy-crm/
 
 ## Important Notes
 
-- **Package Manager Restrictions**: `npm install` is intentionally blocked by a `preinstall` script (`only-allow bun`). Always use `bun`.
+- **Package Manager Restrictions**: Non-Bun installs are blocked by a `preinstall` script (`bunx only-allow bun`). Always use `bun`.
 - **Environment Variables**: If environment variables are missing, the application will fall back to placeholder Supabase values, and authentication/data calls will silently fail.
 - **Microservices/Features**: The Team Chat feature requires specific migration tables (`conversations`, `messages`, `message_reactions`, `user_presence`) to function correctly.
 

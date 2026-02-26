@@ -1,5 +1,5 @@
 # Bun configuration for Synergy EMS
-# This project uses Bun exclusively — do not use npm, yarn, or pnpm
+# This project uses Bun exclusively
 
 [install]
 # Save exact versions to bun.lock
