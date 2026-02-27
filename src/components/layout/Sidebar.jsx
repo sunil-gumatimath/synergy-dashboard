@@ -12,11 +12,11 @@ import {
   HiOutlineClipboardDocumentList as ClipboardList,
   HiOutlineLifebuoy as LifeBuoy,
   HiOutlineHome as Home,
-  HiOutlineSparkles as Umbrella,
   HiOutlineClock as Timer,
   HiOutlineDocumentText as FileText,
   HiOutlineChatBubbleLeftEllipsis as MessageCircle,
   HiOutlineCheckBadge as Target,
+  HiOutlineSun as LeaveIcon,
 } from "react-icons/hi2";
 
 import { useAuth } from "../../contexts/AuthContext";
@@ -85,7 +85,7 @@ const Sidebar = ({ activeTab }) => {
           roles: ["Admin", "Manager", "Employee"],
         },
         {
-          icon: Umbrella,
+          icon: LeaveIcon,
           label: "Leave",
           id: "leave",
           path: "/leave",
