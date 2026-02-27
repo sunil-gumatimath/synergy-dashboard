@@ -7,21 +7,28 @@ const TABLE_NAME = "employees";
  */
 export const employeeService = {
   /**
-   * Fetch all employees
-   * @returns {Promise<{data: Array, error: Error|null}>}
+   * Fetch employees with optional pagination
+   * @param {Object} [options] - Query options
+   * @param {number} [options.page=1] - Page number (1-indexed)
+   * @param {number} [options.pageSize=50] - Rows per page
+   * @returns {Promise<{data: Array, count: number|null, error: Error|null}>}
    */
-  async getAll() {
+  async getAll({ page = 1, pageSize = 50 } = {}) {
     try {
-      const { data, error } = await supabase
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      const { data, error, count } = await supabase
         .from(TABLE_NAME)
-        .select("*")
-        .order("created_at", { ascending: false });
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
       if (error) throw error;
-      return { data, error: null };
+      return { data, count, error: null };
     } catch (error) {
       console.error("Error fetching employees:", error);
-      return { data: [], error };
+      return { data: [], count: 0, error };
     }
   },
 
@@ -156,34 +163,46 @@ export const employeeService = {
   /**
    * Search employees by name, email, or department
    * @param {string} query - Search query
-   * @returns {Promise<{data: Array, error: Error|null}>}
+   * @param {Object} [options] - Pagination options
+   * @param {number} [options.page=1] - Page number
+   * @param {number} [options.pageSize=50] - Rows per page
+   * @returns {Promise<{data: Array, count: number|null, error: Error|null}>}
    */
-  async search(query) {
+  async search(query, { page = 1, pageSize = 50 } = {}) {
     try {
-      const { data, error } = await supabase
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      const { data, error, count } = await supabase
         .from(TABLE_NAME)
-        .select("*")
+        .select("*", { count: "exact" })
         .or(
           `name.ilike.%${query}%,email.ilike.%${query}%,department.ilike.%${query}%`,
         )
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
       if (error) throw error;
-      return { data, error: null };
+      return { data, count, error: null };
     } catch (error) {
       console.error("Error searching employees:", error);
-      return { data: null, error };
+      return { data: null, count: 0, error };
     }
   },
 
   /**
    * Filter employees by department and/or status
    * @param {Object} filters - Filter criteria
-   * @returns {Promise<{data: Array, error: Error|null}>}
+   * @param {number} [filters.page=1] - Page number
+   * @param {number} [filters.pageSize=50] - Rows per page
+   * @returns {Promise<{data: Array, count: number|null, error: Error|null}>}
    */
-  async filter(filters = {}) {
+  async filter({ page = 1, pageSize = 50, ...filters } = {}) {
     try {
-      let query = supabase.from(TABLE_NAME).select("*");
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      let query = supabase.from(TABLE_NAME).select("*", { count: "exact" });
 
       if (filters.department) {
         query = query.eq("department", filters.department);
@@ -193,15 +212,15 @@ export const employeeService = {
         query = query.eq("status", filters.status);
       }
 
-      const { data, error } = await query.order("created_at", {
-        ascending: false,
-      });
+      const { data, error, count } = await query
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
       if (error) throw error;
-      return { data, error: null };
+      return { data, count, error: null };
     } catch (error) {
       console.error("Error filtering employees:", error);
-      return { data: null, error };
+      return { data: null, count: 0, error };
     }
   },
 };
