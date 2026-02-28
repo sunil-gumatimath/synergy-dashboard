@@ -6,10 +6,9 @@ dist
 dist-ssr
 build
 
-# Environment files (pass via build args instead)
-.env
-.env.local
-.env.*.local
+# Environment files (never send to Docker build context)
+.env*
+!.env.example
 
 # Version control
 .git
