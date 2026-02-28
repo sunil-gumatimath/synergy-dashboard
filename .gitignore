@@ -49,6 +49,9 @@ supabase/.cache
 .bun
 .vite
 
+# Accidental local home-dir mirror
+~/
+
 # Local database dumps
 *.sql.gz
 *.dump
