@@ -4,6 +4,7 @@ logs
 
 # Bun-only project artifacts
 bun.lockb
+bun.lock
 
 node_modules
 dist
@@ -51,6 +52,8 @@ supabase/.cache
 
 # Accidental local home-dir mirror
 ~/
+~/.bun/
+~/.bun/install/cache/
 
 # Local database dumps
 *.sql.gz
