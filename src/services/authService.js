@@ -1,5 +1,4 @@
 import { supabase } from "../lib/supabase";
-import { createClient } from "@supabase/supabase-js";
 
 /**
  * Authentication Service - Handles user authentication with Supabase
@@ -149,8 +148,9 @@ export const authService = {
 
   /**
    * Create a new auth user (called by admin when adding an employee).
-   * Uses a separate Supabase client so the admin's own session is NOT
-   * replaced by the newly created user's session.
+   * Uses a database RPC to insert directly into auth.users, bypassing
+   * Supabase's signUp() entirely. This avoids email rate limits and
+   * creates the user already confirmed.
    *
    * @param {string} email    - New user's email
    * @param {string} password - Initial password
@@ -159,25 +159,19 @@ export const authService = {
    */
   async adminCreateUser(email, password, metadata = {}) {
     try {
-      // Create a disposable client so signUp doesn't overwrite the admin session
-      const tempClient = createClient(
-        import.meta.env.VITE_SUPABASE_URL,
-        import.meta.env.VITE_SUPABASE_ANON_KEY,
-        { auth: { persistSession: false, autoRefreshToken: false } },
+      const { data: userId, error } = await supabase.rpc(
+        "admin_create_auth_user",
+        {
+          user_email: email,
+          user_password: password,
+          user_metadata: metadata,
+        },
       );
 
-      const { data, error } = await tempClient.auth.signUp({
-        email,
-        password,
-        options: {
-          data: metadata,
-          // skip email confirmation so the employee can log in immediately
-          emailRedirectTo: `${window.location.origin}/login`,
-        },
-      });
-
       if (error) throw error;
-      return { userId: data.user?.id ?? null, error: null };
+      if (!userId) throw new Error("Failed to create user account.");
+
+      return { userId, error: null };
     } catch (error) {
       console.error("Admin create user error:", error);
       return { userId: null, error };

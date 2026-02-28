@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { AlertTriangle, X } from "../../lib/icons";
+import { AlertTriangle } from "../../lib/icons";
 import * as Dialog from "@radix-ui/react-dialog";
 
 const ConfirmModal = ({
@@ -51,30 +51,32 @@ const ConfirmModal = ({
       <Dialog.Portal>
         <Dialog.Overlay className="modal-overlay" />
         <Dialog.Content
-          className="modal-content max-w-md animate-scale-in"
+          className="modal-content max-w-md rounded-2xl animate-scale-in"
           aria-describedby={undefined}
         >
-          <div className="p-6 flex flex-col items-center text-center">
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${getIconColor()}`}>
-              <AlertTriangle size={32} strokeWidth={2} />
+          <div className="p-6 sm:p-7">
+            <div className="flex flex-col items-center text-center">
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-4 ${getIconColor()}`}>
+                <AlertTriangle size={24} strokeWidth={2.2} />
+              </div>
+
+              <Dialog.Title asChild>
+                <h3 className="text-xl font-bold text-main mb-2">{title}</h3>
+              </Dialog.Title>
+
+              <Dialog.Description asChild>
+                <p className="text-sm sm:text-[15px] text-muted leading-relaxed mb-7 max-w-sm mx-auto">
+                  {message}
+                </p>
+              </Dialog.Description>
             </div>
 
-            <Dialog.Title asChild>
-              <h3 className="text-xl font-bold text-main mb-2">{title}</h3>
-            </Dialog.Title>
-
-            <Dialog.Description asChild>
-              <p className="text-muted leading-relaxed mb-8 max-w-xs mx-auto">
-                {message}
-              </p>
-            </Dialog.Description>
-
-            <div className="flex gap-3 w-full">
+            <div className="flex flex-col-reverse sm:flex-row gap-2.5 w-full">
               <button
                 type="button"
                 onClick={handleClose}
                 disabled={isLoading}
-                className="btn btn-ghost flex-1 justify-center border-border"
+                className="btn btn-ghost flex-1 justify-center border border-border-color rounded-full"
               >
                 {cancelText}
               </button>
@@ -86,7 +88,7 @@ const ConfirmModal = ({
                   }
                 }}
                 disabled={isLoading}
-                className={`btn flex-1 justify-center ${getButtonClass()} ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+                className={`btn flex-1 justify-center rounded-full ${getButtonClass()} ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
               >
                 {isLoading ? (
                   <>

@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabase";
+import { authService } from "./authService";
 
 const TABLE_NAME = "employees";
 
@@ -55,15 +56,47 @@ export const employeeService = {
 
   /**
    * Create a new employee
-   * @param {Object} employeeData - Employee data
+   * 1. Pre-check: ensure email doesn't already exist in employees table
+   * 2. Create a Supabase Auth user so the employee can log in
+   * 3. Insert an employee row linked to that auth user
+   * 4. Roll back auth user if employee insert fails
+   * @param {Object} employeeData - Employee data (includes password)
    * @returns {Promise<{data: Object|null, error: Error|null}>}
    */
   async create(employeeData) {
+    let createdUserId = null;
+
     try {
+      // Step 1: Pre-check — make sure the email isn't already in the employees table
+      const { data: existing } = await supabase
+        .from(TABLE_NAME)
+        .select("id")
+        .eq("email", employeeData.email)
+        .maybeSingle();
+
+      if (existing) {
+        throw new Error("An employee with this email already exists.");
+      }
+
+      // Step 2: Create the auth user so the employee can log in
+      const { userId, error: authError } = await authService.adminCreateUser(
+        employeeData.email,
+        employeeData.password,
+        {
+          full_name: employeeData.name,
+          role: employeeData.role,
+        },
+      );
+
+      if (authError) throw authError;
+      createdUserId = userId;
+
+      // Step 3: Insert the employee record, linking it to the auth user
       const { data, error } = await supabase
         .from(TABLE_NAME)
         .insert([
           {
+            user_id: userId,
             name: employeeData.name,
             email: employeeData.email,
             role: employeeData.role,
@@ -83,6 +116,14 @@ export const employeeService = {
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
+      // Roll back: if auth user was created but employee insert failed, clean up
+      if (createdUserId) {
+        await supabase
+          .rpc("admin_delete_auth_user", { target_user_id: createdUserId })
+          .catch((e) =>
+            console.warn("Failed to roll back auth user:", e.message),
+          );
+      }
       console.error("Error creating employee:", error);
       return { data: null, error };
     }
@@ -90,7 +131,8 @@ export const employeeService = {
 
   /**
    * Update an existing employee
-   * @param {number} id - Employee ID
+   * If email changes, also syncs the new email to auth.users
+   * @param {string} id - Employee ID
    * @param {Object} updates - Fields to update
    * @returns {Promise<{data: Object|null, error: Error|null}>}
    */
@@ -136,6 +178,22 @@ export const employeeService = {
         .single();
 
       if (error) throw error;
+
+      // If email was changed, also sync it to auth.users so the employee
+      // can log in with their new email address
+      if (updateData.email && data.user_id) {
+        const { error: emailSyncError } = await supabase.rpc(
+          "admin_update_auth_email",
+          { target_user_id: data.user_id, new_email: updateData.email },
+        );
+        if (emailSyncError) {
+          console.warn(
+            "Employee updated but failed to sync email to auth:",
+            emailSyncError.message,
+          );
+        }
+      }
+
       return { data, error: null };
     } catch (error) {
       console.error("Error updating employee:", error);
@@ -144,15 +202,45 @@ export const employeeService = {
   },
 
   /**
-   * Delete an employee
-   * @param {number} id - Employee ID
+   * Delete an employee and their auth account
+   * 1. Fetch the employee to get their user_id
+   * 2. Delete the employee row
+   * 3. Delete the associated auth user so they can't log in anymore
+   * @param {string} id - Employee ID
    * @returns {Promise<{success: boolean, error: Error|null}>}
    */
   async delete(id) {
     try {
-      const { error } = await supabase.from(TABLE_NAME).delete().eq("id", id);
+      // Step 1: Get the employee's user_id before deleting
+      const { data: employee, error: fetchError } = await supabase
+        .from(TABLE_NAME)
+        .select("user_id")
+        .eq("id", id)
+        .single();
 
+      if (fetchError) throw fetchError;
+
+      const authUserId = employee?.user_id;
+
+      // Step 2: Delete the employee row
+      const { error } = await supabase.from(TABLE_NAME).delete().eq("id", id);
       if (error) throw error;
+
+      // Step 3: Clean up the auth user (if one was linked)
+      if (authUserId) {
+        const { error: authDeleteError } = await supabase.rpc(
+          "admin_delete_auth_user",
+          { target_user_id: authUserId },
+        );
+        if (authDeleteError) {
+          // Log but don't fail — the employee was already deleted
+          console.warn(
+            "Employee deleted but failed to remove auth account:",
+            authDeleteError.message,
+          );
+        }
+      }
+
       return { success: true, error: null };
     } catch (error) {
       console.error("Error deleting employee:", error);

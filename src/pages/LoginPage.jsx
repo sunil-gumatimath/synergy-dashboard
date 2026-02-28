@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { authService } from "../services/authService";
 import {
@@ -16,6 +17,7 @@ import "./login-styles.css";
 
 const LoginPage = () => {
   const { signIn, signUp } = useAuth();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -110,7 +112,7 @@ const LoginPage = () => {
           localStorage.removeItem("synergy_remembered_email");
         }
 
-        const { error: signInError } = await signIn(
+        const { error: signInError, user: signedInUser } = await signIn(
           formData.email,
           formData.password,
         );
@@ -125,8 +127,10 @@ const LoginPage = () => {
           } else {
             setError(signInError.message || "Failed to sign in. Please try again.");
           }
+        } else if (signedInUser) {
+          // Redirect based on role: Employee → /dashboard, Admin/Manager → /analytics
+          navigate("/", { replace: true });
         }
-        // Success is handled by AuthContext redirecting to the app
       } else {
         const { error: signUpError } = await signUp(
           formData.email,

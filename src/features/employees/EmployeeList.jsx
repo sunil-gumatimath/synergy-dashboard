@@ -206,7 +206,7 @@ const EmployeeList = () => {
       } else {
         setToast({
           type: "success",
-          message: `${data.name} has been added successfully!`,
+          message: `${data?.name || employeeData.name} has been added successfully!`,
         });
         setShowAddModal(false);
         fetchEmployees();
@@ -233,7 +233,7 @@ const EmployeeList = () => {
       } else {
         setToast({
           type: "success",
-          message: `${data.name} has been updated successfully!`,
+          message: `${data?.name || "Employee"} has been updated successfully!`,
         });
         setShowEditModal(false);
         setSelectedEmployee(null);
