@@ -10,6 +10,7 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 import { useTheme } from "../../contexts/ThemeContext";
 import { employeeService } from "../../services/employeeService";
+import { isAdminOrManagerRole } from "../../utils/roles";
 import NotificationPanel from "../NotificationPanel";
 import Avatar from "../common/Avatar";
 import PropTypes from "prop-types";
@@ -22,6 +23,7 @@ const Header = () => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { effectiveTheme, updateTheme } = useTheme();
+  const canUseEmployeeSearch = isAdminOrManagerRole(user?.role);
 
   const handleSignOut = async () => {
     try {
@@ -58,6 +60,12 @@ const Header = () => {
   // Handle search
   useEffect(() => {
     const performSearch = async () => {
+      if (!canUseEmployeeSearch) {
+        setSearchResults([]);
+        setShowResults(false);
+        return;
+      }
+
       if (!searchQuery.trim()) {
         setSearchResults([]);
         return;
@@ -85,7 +93,7 @@ const Header = () => {
 
     const debounceTimer = setTimeout(performSearch, 300);
     return () => clearTimeout(debounceTimer);
-  }, [searchQuery]);
+  }, [searchQuery, canUseEmployeeSearch]);
 
   const handleResultClick = (employeeId) => {
     navigate(`/employees/${employeeId}`);
@@ -153,62 +161,64 @@ const Header = () => {
       </div>
 
       {/* Global Search */}
-      <div className="header-search-container" ref={searchRef}>
-        <div className="header-search-input-wrapper">
-          <Search size={18} className="header-search-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none', zIndex: 10 }} />
-          <input
-            type="text"
-            placeholder="Search employees..."
-            className="header-search-input" style={{ paddingLeft: '4rem' }}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => {
-              if (searchQuery) setShowResults(true);
-            }}
-          />
-          {searchQuery && (
-            <button
-              className="header-search-clear"
-              onClick={() => {
-                setSearchQuery("");
-                setSearchResults([]);
+      {canUseEmployeeSearch && (
+        <div className="header-search-container" ref={searchRef}>
+          <div className="header-search-input-wrapper">
+            <Search size={18} className="header-search-icon" style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', pointerEvents: 'none', zIndex: 10 }} />
+            <input
+              type="text"
+              placeholder="Search employees..."
+              className="header-search-input" style={{ paddingLeft: '4rem' }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => {
+                if (searchQuery) setShowResults(true);
               }}
-            >
-              <X size={14} />
-            </button>
-          )}
-        </div>
-
-        {/* Search Results Dropdown */}
-        {showResults && (
-          <div className="header-search-results">
-            {isSearching ? (
-              <div className="p-4 text-center text-sm text-muted">Searching...</div>
-            ) : searchResults.length > 0 ? (
-              <ul>
-                {searchResults.map(result => (
-                  <li key={result.id}>
-                    <button
-                      className="header-search-result-item"
-                      onClick={() => handleResultClick(result.id)}
-                    >
-                      <div className="header-search-avatar">
-                        {result.name.charAt(0)}
-                      </div>
-                      <div className="header-search-info">
-                        <p className="header-search-name">{result.name}</p>
-                        <p className="header-search-role">{result.role}</p>
-                      </div>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="p-4 text-center text-sm text-muted">No results found</div>
+            />
+            {searchQuery && (
+              <button
+                className="header-search-clear"
+                onClick={() => {
+                  setSearchQuery("");
+                  setSearchResults([]);
+                }}
+              >
+                <X size={14} />
+              </button>
             )}
           </div>
-        )}
-      </div>
+
+          {/* Search Results Dropdown */}
+          {showResults && (
+            <div className="header-search-results">
+              {isSearching ? (
+                <div className="p-4 text-center text-sm text-muted">Searching...</div>
+              ) : searchResults.length > 0 ? (
+                <ul>
+                  {searchResults.map(result => (
+                    <li key={result.id}>
+                      <button
+                        className="header-search-result-item"
+                        onClick={() => handleResultClick(result.id)}
+                      >
+                        <div className="header-search-avatar">
+                          {result.name.charAt(0)}
+                        </div>
+                        <div className="header-search-info">
+                          <p className="header-search-name">{result.name}</p>
+                          <p className="header-search-role">{result.role}</p>
+                        </div>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="p-4 text-center text-sm text-muted">No results found</div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="header-actions">
         <button

@@ -157,16 +157,16 @@ const SecuritySection = ({ settings, errors, isSaving, onUpdateSetting }) => {
                             <span>🔐 MFA is available for Admin and Manager accounts.</span>
                         </div>
                     ) : mfaLoading && !enrollData ? (
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "16px", color: "var(--text-secondary)" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "16px", color: "var(--text-muted)" }}>
                             <Loader2 size={18} className="animate-spin" /> Loading MFA status...
                         </div>
                     ) : (
                         <>
                             {mfaError && (
                                 <div style={{
-                                    padding: "10px 14px", background: "rgba(239,68,68,0.1)",
-                                    border: "1px solid rgba(239,68,68,0.2)", borderRadius: "8px",
-                                    color: "#ef4444", fontSize: "13px", display: "flex",
+                                    padding: "10px 14px", background: "var(--danger-bg)",
+                                    border: "1px solid var(--danger-color)", borderRadius: "8px",
+                                    color: "var(--danger-text)", fontSize: "13px", display: "flex",
                                     alignItems: "center", gap: "8px", marginBottom: "12px",
                                 }}>
                                     <AlertCircle size={14} /> {mfaError}
@@ -174,9 +174,9 @@ const SecuritySection = ({ settings, errors, isSaving, onUpdateSetting }) => {
                             )}
                             {mfaSuccess && (
                                 <div style={{
-                                    padding: "10px 14px", background: "rgba(16,185,129,0.1)",
-                                    border: "1px solid rgba(16,185,129,0.2)", borderRadius: "8px",
-                                    color: "#10b981", fontSize: "13px", display: "flex",
+                                    padding: "10px 14px", background: "var(--success-bg)",
+                                    border: "1px solid var(--success-color)", borderRadius: "8px",
+                                    color: "var(--success-text)", fontSize: "13px", display: "flex",
                                     alignItems: "center", gap: "8px", marginBottom: "12px",
                                 }}>
                                     <CheckCircle size={14} /> {mfaSuccess}
@@ -188,16 +188,16 @@ const SecuritySection = ({ settings, errors, isSaving, onUpdateSetting }) => {
                                     {mfaFactors.filter(f => f.status === "verified").map(factor => (
                                         <div key={factor.id} style={{
                                             display: "flex", alignItems: "center", justifyContent: "space-between",
-                                            padding: "12px 16px", background: "rgba(16,185,129,0.08)",
-                                            border: "1px solid rgba(16,185,129,0.2)", borderRadius: "10px",
+                                            padding: "12px 16px", background: "var(--success-bg)",
+                                            border: "1px solid var(--success-color)", borderRadius: "10px",
                                         }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                                                <CheckCircle size={18} style={{ color: "#10b981" }} />
+                                                <CheckCircle size={18} style={{ color: "var(--success-color)" }} />
                                                 <div>
-                                                    <div style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-primary)" }}>
+                                                    <div style={{ fontWeight: 600, fontSize: "14px", color: "var(--text-main)" }}>
                                                         {factor.friendly_name || "Authenticator App"}
                                                     </div>
-                                                    <div style={{ fontSize: "12px", color: "var(--text-secondary)" }}>
+                                                    <div style={{ fontSize: "12px", color: "var(--text-muted)" }}>
                                                         MFA enabled • TOTP Factor
                                                     </div>
                                                 </div>
@@ -207,8 +207,8 @@ const SecuritySection = ({ settings, errors, isSaving, onUpdateSetting }) => {
                                                 disabled={mfaLoading}
                                                 style={{
                                                     padding: "6px 12px", borderRadius: "6px",
-                                                    border: "1px solid rgba(239,68,68,0.3)",
-                                                    background: "rgba(239,68,68,0.08)", color: "#ef4444",
+                                                    border: "1px solid var(--danger-color)",
+                                                    background: "var(--danger-bg)", color: "var(--danger-text)",
                                                     cursor: "pointer", fontSize: "12px", fontWeight: 500,
                                                     display: "flex", alignItems: "center", gap: "4px",
                                                 }}
@@ -222,27 +222,27 @@ const SecuritySection = ({ settings, errors, isSaving, onUpdateSetting }) => {
 
                             {enrollData ? (
                                 <div style={{
-                                    padding: "20px", background: "var(--surface-secondary)",
-                                    borderRadius: "12px", border: "1px solid var(--border-color)",
+                                    padding: "20px", background: "var(--bg-body)",
+                                    borderRadius: "12px", border: "1px solid var(--border)",
                                 }}>
                                     <h4 style={{ marginBottom: "12px", fontSize: "15px", fontWeight: 600 }}>
                                         Scan QR Code with your Authenticator App
                                     </h4>
-                                    <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "16px" }}>
+                                    <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "16px" }}>
                                         Use Google Authenticator, Authy, or any TOTP-compatible app to scan this QR code.
                                     </p>
                                     <div style={{
                                         display: "flex", justifyContent: "center", padding: "16px",
-                                        background: "#fff", borderRadius: "8px", marginBottom: "16px",
+                                        background: "var(--bg-surface)", borderRadius: "8px", marginBottom: "16px",
                                     }}>
                                         <img src={enrollData.totp.qr_code} alt="MFA QR Code" style={{ width: "200px", height: "200px" }} />
                                     </div>
                                     <div style={{
-                                        padding: "10px 14px", background: "rgba(79,70,229,0.08)",
+                                        padding: "10px 14px", background: "var(--primary-light)",
                                         borderRadius: "8px", marginBottom: "16px", fontSize: "12px",
                                     }}>
-                                        <span style={{ color: "var(--text-secondary)" }}>Manual entry key: </span>
-                                        <code style={{ fontFamily: "monospace", fontWeight: 600, color: "var(--text-primary)", letterSpacing: "1px" }}>
+                                        <span style={{ color: "var(--text-muted)" }}>Manual entry key: </span>
+                                        <code style={{ fontFamily: "monospace", fontWeight: 600, color: "var(--text-main)", letterSpacing: "1px" }}>
                                             {enrollData.totp.secret}
                                         </code>
                                     </div>
@@ -255,8 +255,8 @@ const SecuritySection = ({ settings, errors, isSaving, onUpdateSetting }) => {
                                             maxLength={6}
                                             style={{
                                                 flex: 1, padding: "10px 14px", borderRadius: "8px",
-                                                border: "1px solid var(--border-color)",
-                                                background: "var(--surface-primary)", color: "var(--text-primary)",
+                                                border: "1px solid var(--border)",
+                                                background: "var(--bg-surface)", color: "var(--text-main)",
                                                 fontSize: "16px", fontFamily: "monospace",
                                                 letterSpacing: "4px", textAlign: "center",
                                             }}
@@ -276,7 +276,7 @@ const SecuritySection = ({ settings, errors, isSaving, onUpdateSetting }) => {
                                         style={{
                                             marginTop: "12px", padding: "6px 12px",
                                             background: "transparent", border: "none",
-                                            color: "var(--text-secondary)", cursor: "pointer", fontSize: "13px",
+                                            color: "var(--text-muted)", cursor: "pointer", fontSize: "13px",
                                         }}
                                     >
                                         Cancel Setup
@@ -284,7 +284,7 @@ const SecuritySection = ({ settings, errors, isSaving, onUpdateSetting }) => {
                                 </div>
                             ) : !hasVerifiedFactor ? (
                                 <div>
-                                    <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "12px" }}>
+                                    <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "12px" }}>
                                         Protect your admin account with TOTP-based two-factor authentication.
                                         You'll need an authenticator app like Google Authenticator or Authy.
                                     </p>

@@ -5,7 +5,7 @@ import { getInitials, getAvatarStyle } from '../../utils/avatarUtils.js';
 /**
  * Avatar Component — Displays user avatar
  *
- * Priority: src (uploaded photo) → initials fallback
+ * Priority: uploaded src → initials fallback
  */
 const Avatar = ({
     src,
@@ -29,8 +29,10 @@ const Avatar = ({
 
     const sizeClass = sizeClasses[size] || sizeClasses.md;
 
-    // Show uploaded photo if available and not errored
-    if (src && !imgError) {
+    const shouldShowImage = src && !imgError;
+
+    // Show uploaded photo if available and valid
+    if (shouldShowImage) {
         return (
             <div
                 className={`avatar ${sizeClass} ${className}`}

@@ -38,6 +38,7 @@ coverage
 # Agent / tool directories
 .agent
 .opencode
+.cursor/
 
 # Supabase CLI temp files
 supabase/.temp

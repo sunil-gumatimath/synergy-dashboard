@@ -103,6 +103,7 @@ export const employeeService = {
             department: employeeData.department,
             status: employeeData.status || "Active",
             gender: employeeData.gender || "other",
+            avatar: null,
             phone: employeeData.phone || null,
             address: employeeData.address || null,
             salary: employeeData.salary || 0,

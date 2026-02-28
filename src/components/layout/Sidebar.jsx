@@ -184,14 +184,20 @@ const Sidebar = ({ activeTab }) => {
           type="button"
           className="sidebar-collapse-toggle"
           onClick={toggleCollapse}
+          aria-controls="app-sidebar"
+          aria-expanded={!isCollapsed}
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          <span className="sr-only">
+            {isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          </span>
         </button>
 
         {/* Sidebar */}
         <aside
+          id="app-sidebar"
           className={`sidebar ${isMobileMenuOpen ? "mobile-open" : ""} ${isCollapsed ? "collapsed" : ""}`}
         >
           <div className="sidebar-header">
