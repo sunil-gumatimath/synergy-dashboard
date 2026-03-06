@@ -2,6 +2,15 @@ import { supabase } from "../lib/supabase";
 const STORAGE_BUCKET = "employee-documents";
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
+function extractStoragePath(fileRef) {
+  if (!fileRef) return null;
+  if (!fileRef.startsWith("http")) return fileRef;
+  const marker = `/${STORAGE_BUCKET}/`;
+  const idx = fileRef.indexOf(marker);
+  if (idx === -1) return null;
+  return fileRef.slice(idx + marker.length);
+}
+
 export const documentService = {
   /**
    * Get all documents for an employee
@@ -44,6 +53,15 @@ export const documentService = {
       const {
         data: { user },
       } = await supabase.auth.getUser();
+      let uploaderEmployeeId = null;
+      if (user?.id) {
+        const { data: uploader } = await supabase
+          .from("employees")
+          .select("id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        uploaderEmployeeId = uploader?.id || null;
+      }
 
       // Create unique file name
       const fileExt = file.name.split(".").pop();
@@ -56,11 +74,6 @@ export const documentService = {
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from(STORAGE_BUCKET)
-        .getPublicUrl(fileName);
-
       // Save document metadata to database
       const { data, error } = await supabase
         .from("employee_documents")
@@ -69,11 +82,9 @@ export const documentService = {
             employee_id: employeeId,
             name: file.name,
             type: metadata.type || "other",
-            file_url: urlData.publicUrl,
+            file_url: fileName,
             file_size: file.size,
-            mime_type: file.type,
-            uploaded_by: user?.email || "demo@company.com",
-            notes: metadata.notes || null,
+            uploaded_by: uploaderEmployeeId,
           },
         ])
         .select()
@@ -106,8 +117,7 @@ export const documentService = {
 
       if (fetchError) throw fetchError;
 
-      const fileUrl = doc.file_url;
-      const filePath = fileUrl.split(`${STORAGE_BUCKET}/`)[1];
+      const filePath = extractStoragePath(doc.file_url);
 
       if (filePath) {
         await supabase.storage.from(STORAGE_BUCKET).remove([filePath]);
@@ -129,21 +139,25 @@ export const documentService = {
 
   /**
    * Download a document
-   * @param {string} fileUrl - The file URL
+   * @param {string} fileRef - The storage path or legacy URL
    * @param {string} fileName - The original file name
    */
-  async download(fileUrl, fileName) {
+  async download(fileRef, fileName) {
     try {
-      // For SVG illustrations or placeholders, open in new tab
-      if (
-        fileUrl.includes("illustrations.popsy.co") ||
-        fileUrl.includes("placeholder.com")
-      ) {
-        window.open(fileUrl, "_blank");
-        return { success: true, error: null };
+      const filePath = extractStoragePath(fileRef);
+      if (!filePath) {
+        throw new Error("Invalid document path.");
       }
 
-      const response = await fetch(fileUrl);
+      const { data: signed, error: signedError } = await supabase.storage
+        .from(STORAGE_BUCKET)
+        .createSignedUrl(filePath, 60);
+
+      if (signedError || !signed?.signedUrl) {
+        throw signedError || new Error("Could not create secure download URL.");
+      }
+
+      const response = await fetch(signed.signedUrl);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
